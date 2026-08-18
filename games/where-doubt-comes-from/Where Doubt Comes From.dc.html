@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Where Doubt Comes From</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<x-dc><helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Source+Code+Pro:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0;background:#0d0f17;}
+@keyframes pop{0%{transform:scale(1);}40%{transform:scale(1.06);}100%{transform:scale(1);}}
+@keyframes floaty{0%{transform:translateY(0);}50%{transform:translateY(-8px);}100%{transform:translateY(0);}}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:.8;}50%{transform:scale(1.3);opacity:1;}}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+@keyframes drift{0%{transform:translate(0,0) scale(1);}33%{transform:translate(6vw,-4vw) scale(1.15);}66%{transform:translate(-5vw,4vw) scale(.92);}100%{transform:translate(0,0) scale(1);}}
+@keyframes drift2{0%{transform:translate(0,0) scale(1);}50%{transform:translate(-6vw,-3vw) scale(1.2);}100%{transform:translate(0,0) scale(1);}}
+@keyframes aurora{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes sheen{0%{transform:translateX(-130%);}100%{transform:translateX(240%);}}
+@keyframes spinSlow{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.16);border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+::selection{background:oklch(0.62 0.16 12 / .4);}
+</style>
+
+</helmet>
+<div style="{{ rootStyle }}">
+
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;">
+    <div style="{{ blobAStyle }}"></div>
+    <div style="{{ blobBStyle }}"></div>
+    <div style="{{ blobCStyle }}"></div>
+  </div>
+  <div style="position:absolute;inset:0;z-index:5;pointer-events:none;background-image:repeating-linear-gradient(0deg, rgba(0,0,0,.035) 0px, rgba(0,0,0,.035) 1px, transparent 1px, transparent 3px);mix-blend-mode:multiply;"></div>
+
+  <aside style="position:relative;z-index:1;flex:0 0 296px;background:#f6f8fc;border-right:3px solid #232a21;display:flex;flex-direction:column;height:100vh;">
+    <div style="padding:22px 20px 16px;border-bottom:3px solid #232a21;">
+      <div style="display:flex;align-items:center;gap:11px;">
+        <div style="width:38px;height:38px;border-radius:0;background:linear-gradient(140deg,oklch(0.58 0.09 158),oklch(0.58 0.08 205));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;font-family:'Press Start 2P',cursive;border:3px solid #232a21;box-shadow:3px 3px 0 #232a21;clip-path:polygon(0 6px,6px 6px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 6px) calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 6px),0 calc(100% - 6px));">i</div>
+        <div style="font-weight:400;font-size:9px;color:#2b3228;line-height:1.7;letter-spacing:0;font-family:'Press Start 2P',cursive;">Inference-Based CBT<br><span style="font-weight:400;font-size:8px;color:#8d9480;letter-spacing:.02em;">Foundations / Module 1</span></div>
+      </div>
+    </div>
+    <nav style="flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:3px;">
+      <sc-for list="{{ sidebarItems }}" as="it" hint-placeholder-count="10">
+        <button style="{{ it.rowStyle }}" data-target="{{ it.target }}" sc-camel-on-click="{{ onJump }}">
+          <span style="{{ it.dotStyle }}">{{ it.mark }}</span>
+          <span style="{{ it.labelStyle }}">{{ it.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="padding:14px 18px;border-top:3px solid #232a21;font-size:11.5px;color:#79806c;">Your progress saves automatically.</div>
+  </aside>
+
+  <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;height:100vh;min-width:0;">
+
+    <div style="flex:0 0 auto;display:flex;align-items:center;gap:24px;padding:15px 32px;border-bottom:3px solid #232a21;background:#f6f8fc;">
+      <div style="display:flex;flex-direction:column;min-width:0;">
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#79806c;">{{ moduleTitle }}</div>
+        <div style="font-weight:700;font-size:16px;color:#2b3228;white-space:nowrap;letter-spacing:-.01em;">{{ sectionLabel }}</div>
+      </div>
+      <div style="flex:1;display:flex;align-items:center;gap:13px;">
+        <div style="flex:1;height:16px;border-radius:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 8px,transparent 8px 14px);overflow:hidden;border:3px solid #232a21;">
+          <div style="{{ progressFillStyle }}"></div>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:#46526c;min-width:42px;text-align:right;">{{ progressPct }}%</div>
+      </div>
+    </div>
+
+    <div ref="{{ stageRef }}" style="{{ stageScrollStyle }}">
+      <div style="{{ stageInnerStyle }}">
+
+        <sc-if value="{{ isIntro }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ introCardStyle }}">
+            <div style="position:absolute;right:-20px;top:-70px;font-size:240px;font-weight:900;line-height:1;color:oklch(0.55 0.09 158 / .14);letter-spacing:-.05em;pointer-events:none;animation:floaty 7s ease-in-out infinite;animation-play-state:var(--mo,running);">?</div>
+            <div style="{{ eyebrowStyle }}">Inference-Based CBT / Interactive Module</div>
+            <h1 style="font-size:26px;line-height:1.55;margin:0 0 18px;letter-spacing:0;color:#232a21;font-weight:400;position:relative;font-family:'Press Start 2P',cursive;">{{ introTitle }}</h1>
+            <p style="font-size:18px;line-height:1.62;color:#545b4a;margin:0 0 26px;max-width:62ch;position:relative;">{{ introSub }}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;position:relative;">
+              <sc-for list="{{ introMeta }}" as="m" hint-placeholder-count="3">
+                <span style="display:inline-flex;align-items:center;padding:8px 15px;border-radius:4px;background:rgba(255,255,255,.05);color:#515848;font-size:11px;font-weight:600;border:2px solid #232a21;box-shadow:2px 2px 0 #232a21;">{{ m }}</span>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-top:32px;position:relative;">
+              <div style="background:oklch(0.56 0.13 255 / .14);border:1px solid oklch(0.62 0.13 255 / .5);border-radius:14px;padding:17px;box-shadow:0 0 26px -10px oklch(0.62 0.13 255);">
+                <div style="font-weight:700;font-size:14px;color:#2b3228;margin-bottom:6px;letter-spacing:-.01em;">Spot the crossover</div>
+                <div style="font-size:12.5px;color:#7d8470;line-height:1.5;">the moment imagination takes over from reality</div>
+              </div>
+              <div style="background:oklch(0.63 0.15 32 / .14);border:1px solid oklch(0.68 0.15 32 / .5);border-radius:14px;padding:17px;box-shadow:0 0 26px -10px oklch(0.68 0.15 32);">
+                <div style="font-weight:700;font-size:14px;color:#2b3228;margin-bottom:6px;letter-spacing:-.01em;">Sort &amp; decide</div>
+                <div style="font-size:12.5px;color:#7d8470;line-height:1.5;">tell obsessional doubt from the ordinary kind</div>
+              </div>
+              <div style="background:oklch(0.58 0.12 158 / .16);border:1px solid oklch(0.66 0.12 158 / .5);border-radius:14px;padding:17px;box-shadow:0 0 26px -10px oklch(0.66 0.12 158);">
+                <div style="font-weight:700;font-size:14px;color:#2b3228;margin-bottom:6px;letter-spacing:-.01em;">Drop the wrestling</div>
+                <div style="font-size:12.5px;color:#7d8470;line-height:1.5;">come back to felt sense — present, not paranoid</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSection }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ sectionCardStyle }}">
+            <div style="position:absolute;right:14px;top:-52px;font-size:270px;font-weight:900;line-height:1;opacity:.16;color:#fff;letter-spacing:-.05em;pointer-events:none;animation:floaty 9s ease-in-out infinite;animation-play-state:var(--mo,running);">{{ secNum }}</div>
+            <div style="position:absolute;left:-40px;bottom:-50px;width:200px;height:200px;border-radius:50%;border:2px solid rgba(255,255,255,.25);pointer-events:none;animation:floaty 6s ease-in-out infinite;animation-play-state:var(--mo,running);"></div>
+            <div style="position:relative;align-self:flex-start;background:rgba(0,0,0,.28);color:#fff;padding:8px 14px;border-radius:4px;font-size:9px;font-family:'Press Start 2P',cursive;letter-spacing:.06em;border:2px solid rgba(255,255,255,.7);box-shadow:3px 3px 0 rgba(0,0,0,.3);">SECTION {{ secNum }}</div>
+            <h2 style="font-size:24px;line-height:1.6;margin:18px 0 16px;font-weight:400;letter-spacing:0;position:relative;color:#fff;font-family:'Press Start 2P',cursive;">{{ secTitle }}</h2>
+            <p style="font-size:19px;line-height:1.5;opacity:.96;margin:0;max-width:48ch;position:relative;color:#fff;">{{ secSub }}</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isTeach }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ cardStyle }}">
+            <div style="{{ eyebrowStyle }}">{{ sectionLabel }}</div>
+            <h2 style="font-size:19px;line-height:1.65;margin:0 0 20px;font-weight:400;letter-spacing:0;color:#232a21;font-family:'Press Start 2P',cursive;">{{ heading }}</h2>
+            <div style="display:flex;flex-direction:column;gap:15px;">
+              <sc-for list="{{ body }}" as="p" hint-placeholder-count="2">
+                <p style="font-size:17px;line-height:1.7;color:#4c5670;margin:0;">{{ p }}</p>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ showTwoDoubts }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;">
+                <div style="background:oklch(0.56 0.13 255 / .12);border:1px solid oklch(0.62 0.13 255 / .55);border-radius:16px;padding:22px;box-shadow:0 0 30px -12px oklch(0.62 0.13 255);">
+                  <div style="width:42px;height:42px;border-radius:12px;background:oklch(0.6 0.13 255);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;box-shadow:0 0 18px -2px oklch(0.6 0.13 255);">✓</div>
+                  <div style="font-weight:700;font-size:18px;margin:14px 0 6px;color:#2b3228;letter-spacing:-.01em;">Normal doubt</div>
+                  <div style="font-size:14px;color:#7d8470;line-height:1.55;">Points at the <b style="color:#464c3d;">world</b>. There’s a real gap in what you know.</div>
+                </div>
+                <div style="background:oklch(0.63 0.15 32 / .12);border:1px solid oklch(0.68 0.15 32 / .55);border-radius:16px;padding:22px;box-shadow:0 0 30px -12px oklch(0.68 0.15 32);">
+                  <div style="width:42px;height:42px;border-radius:12px;background:oklch(0.66 0.15 32);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;box-shadow:0 0 18px -2px oklch(0.66 0.15 32);">?</div>
+                  <div style="font-weight:700;font-size:18px;margin:14px 0 6px;color:#2b3228;letter-spacing:-.01em;">Obsessional doubt</div>
+                  <div style="font-size:14px;color:#7d8470;line-height:1.55;">Points at your <b style="color:#464c3d;">imagination</b>. It invents a gap reality had already closed.</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showScale }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(0,0,0,.035);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:30px 24px;display:flex;align-items:flex-end;justify-content:center;gap:38px;margin-top:30px;">
+                <div style="text-align:center;">
+                  <div style="width:130px;height:130px;border-radius:16px;background:oklch(0.63 0.15 32 / .2);border:1px solid oklch(0.68 0.15 32 / .7);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;color:oklch(0.82 0.1 32);font-size:14px;line-height:1.3;box-shadow:0 0 34px -8px oklch(0.66 0.15 32);animation:floaty 4s ease-in-out infinite;animation-play-state:var(--mo,running);">Imagined<br>‘what if’</div>
+                  <div style="margin-top:14px;font-size:12px;color:#8d9480;">feels weighty…</div>
+                </div>
+                <div style="font-size:26px;color:#79806c;font-weight:900;padding-bottom:46px;">vs</div>
+                <div style="text-align:center;">
+                  <div style="width:130px;height:84px;border-radius:16px;background:oklch(0.58 0.12 158 / .18);border:1px solid oklch(0.66 0.12 158 / .7);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;color:oklch(0.84 0.12 158);font-size:14px;line-height:1.3;">What you<br>actually sensed</div>
+                  <div style="margin-top:14px;font-size:12px;color:#8d9480;">…gets ignored</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showFilm }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:16px;margin-top:30px;align-items:stretch;">
+                <div style="background:rgba(0,0,0,.3);border-radius:14px;padding:16px 16px 18px;border:3px solid #232a21;">
+                  <div style="font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8d9480;margin-bottom:11px;">The ‘what if’ / imagined</div>
+                  <div style="display:flex;gap:7px;">
+                    <div style="flex:1;height:56px;border-radius:6px;background:rgba(255,255,255,.07);"></div>
+                    <div style="flex:1;height:56px;border-radius:6px;background:rgba(0,0,0,.1);"></div>
+                    <div style="flex:1;height:56px;border-radius:6px;background:rgba(255,255,255,.07);"></div>
+                    <div style="flex:1;height:56px;border-radius:6px;background:rgba(0,0,0,.1);"></div>
+                  </div>
+                  <div style="font-size:11.5px;color:#79806c;margin-top:9px;line-height:1.45;">a reel your mind is running — not footage of what happened</div>
+                </div>
+                <div style="background:oklch(0.58 0.12 158 / .16);border:1px solid oklch(0.66 0.12 158 / .6);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:0 0 30px -12px oklch(0.66 0.12 158);">
+                  <div style="font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.78 0.12 158);margin-bottom:11px;">What you sensed</div>
+                  <div style="width:100%;height:64px;border-radius:8px;background:rgba(0,0,0,.05);border:1px solid oklch(0.66 0.12 158 / .5);display:flex;align-items:center;justify-content:center;font-weight:700;color:oklch(0.84 0.12 158);font-size:13px;">one real moment</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showBubble }}" hint-placeholder-val="{{ false }}">
+              <div style="position:relative;height:240px;background:rgba(0,0,0,.035);border:1px solid rgba(255,255,255,.1);border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:30px;">
+                <div style="position:absolute;width:330px;height:196px;border-radius:50%;border:1px solid rgba(255,255,255,.25);display:flex;align-items:flex-start;justify-content:center;padding-top:14px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8d9480;">Real situation</div>
+                <div style="position:absolute;width:184px;height:144px;border-radius:50%;border:2px dashed oklch(0.68 0.15 32);background:oklch(0.63 0.15 32 / .16);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px -8px oklch(0.66 0.15 32);animation:floaty 5s ease-in-out infinite;animation-play-state:var(--mo,running);">
+                  <div style="width:14px;height:14px;border-radius:50%;background:oklch(0.7 0.15 32);box-shadow:0 0 14px oklch(0.7 0.15 32);animation:pulseDot 2.4s ease-in-out infinite;animation-play-state:var(--mo,running);"></div>
+                  <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.82 0.12 32);margin-top:9px;">The bubble</div>
+                  <div style="font-size:11.5px;color:oklch(0.78 0.1 32);margin-top:2px;">you, reasoning</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showCasting }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(0,0,0,.3);border-radius:16px;padding:26px;position:relative;overflow:hidden;margin-top:30px;border:1px solid oklch(0.62 0.14 295 / .4);box-shadow:0 0 40px -16px oklch(0.62 0.14 295);background-image:radial-gradient(circle at 50% 12%, oklch(0.55 0.14 295 / .55), transparent 60%);">
+                <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.82 0.1 295);text-align:center;">The feared self casts every theme</div>
+                <div style="display:flex;gap:11px;justify-content:center;margin-top:18px;">
+                  <div style="flex:0 0 auto;width:108px;padding:16px 10px;border-radius:13px;background:rgba(255,255,255,.05);text-align:center;color:#8e9ab0;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,.1);">Careless</div>
+                  <div style="flex:0 0 auto;width:128px;padding:18px 10px;border-radius:13px;background:oklch(0.55 0.14 295 / .35);border:1px solid oklch(0.75 0.14 295);text-align:center;color:#fff;font-weight:700;font-size:14px;box-shadow:0 0 34px -2px oklch(0.62 0.14 295);">Dangerous<br><span style="font-size:10.5px;font-weight:500;opacity:.85;">the role you dread</span></div>
+                  <div style="flex:0 0 auto;width:108px;padding:16px 10px;border-radius:13px;background:rgba(255,255,255,.05);text-align:center;color:#8e9ab0;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,.1);">Immoral</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showRewind }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(0,0,0,.035);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:30px 24px 24px;margin-top:30px;">
+                <div style="display:flex;align-items:center;justify-content:center;">
+                  <div style="display:flex;flex-direction:column;align-items:center;width:78px;"><div style="width:20px;height:20px;border-radius:50%;background:oklch(0.62 0.12 158);box-shadow:0 0 12px oklch(0.62 0.12 158);"></div><div style="font-size:10.5px;color:#7d8470;margin-top:7px;text-align:center;font-weight:600;">reality</div></div>
+                  <div style="flex:0 0 36px;height:3px;background:rgba(255,255,255,.25);"></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;width:84px;"><div style="width:24px;height:24px;border-radius:50%;background:oklch(0.66 0.12 158);box-shadow:0 0 0 4px oklch(0.66 0.12 158 / .3),0 0 16px oklch(0.66 0.12 158);"></div><div style="font-size:10.5px;color:#464c3d;margin-top:7px;text-align:center;font-weight:700;">last real<br>moment</div></div>
+                  <div style="flex:0 0 36px;height:3px;background:rgba(255,255,255,.25);"></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;width:90px;"><div style="width:24px;height:24px;border-radius:50%;background:oklch(0.68 0.15 32);box-shadow:0 0 16px oklch(0.68 0.15 32);animation:pulseDot 2.2s ease-in-out infinite;animation-play-state:var(--mo,running);"></div><div style="font-size:10.5px;color:oklch(0.82 0.12 32);margin-top:7px;text-align:center;font-weight:700;">‘what if…’<br>crossover</div></div>
+                  <div style="flex:0 0 36px;height:3px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.2) 0 6px,transparent 6px 12px);"></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;width:78px;"><div style="width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.18);"></div><div style="font-size:10.5px;color:#79806c;margin-top:7px;text-align:center;">deeper in<br>the bubble</div></div>
+                </div>
+                <div style="text-align:center;margin-top:18px;font-size:13px;font-weight:700;color:oklch(0.78 0.12 200);">← Recovery means heading back this way, not forward</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showFrame }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(0,0,0,.035);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:26px 22px;margin-top:30px;">
+                <div style="display:flex;align-items:stretch;justify-content:center;gap:9px;flex-wrap:wrap;">
+                  <div style="flex:1;min-width:128px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:14px;text-align:center;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8d9480;">Trigger</div>
+                    <div style="font-size:14px;font-weight:700;color:#2b3228;margin-top:5px;line-height:1.3;">a cue lands</div>
+                  </div>
+                  <div style="display:flex;align-items:center;font-weight:900;color:#79806c;font-size:20px;">→</div>
+                  <div style="flex:1;min-width:128px;background:oklch(0.55 0.14 295 / .2);border:1px solid oklch(0.7 0.14 295 / .6);border-radius:12px;padding:14px;text-align:center;box-shadow:0 0 24px -12px oklch(0.62 0.14 295);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.8 0.12 295);">Feared self</div>
+                    <div style="font-size:14px;font-weight:700;color:#2b3228;margin-top:5px;line-height:1.3;">lights up</div>
+                  </div>
+                  <div style="display:flex;align-items:center;font-weight:900;color:#79806c;font-size:20px;">→</div>
+                  <div style="flex:1;min-width:128px;background:oklch(0.62 0.16 12 / .2);border:1px solid oklch(0.72 0.16 12 / .6);border-radius:12px;padding:14px;text-align:center;box-shadow:0 0 24px -12px oklch(0.66 0.16 12);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.82 0.13 12);">Wrestling</div>
+                    <div style="font-size:14px;font-weight:700;color:#2b3228;margin-top:5px;line-height:1.3;">the compulsion</div>
+                  </div>
+                </div>
+                <div style="text-align:center;font-size:12px;color:#8d9480;margin-top:10px;">checking · reassurance · evidence-gathering · rumination — and the wrestling is what keeps it alive</div>
+                <div style="height:1px;background:rgba(255,255,255,.1);margin:20px 0;"></div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;">
+                  <div style="background:oklch(0.58 0.12 158 / .2);border:1px solid oklch(0.66 0.12 158 / .7);border-radius:12px;padding:14px 18px;text-align:center;box-shadow:0 0 30px -10px oklch(0.66 0.12 158);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.8 0.12 158);">Treatment</div>
+                    <div style="font-size:15px;font-weight:900;color:#fff;margin-top:4px;">stop wrestling</div>
+                  </div>
+                  <div style="display:flex;align-items:center;font-weight:900;color:oklch(0.7 0.12 158);font-size:20px;">→</div>
+                  <div style="background:rgba(255,255,255,.05);border:1px solid rgba(0,0,0,.16);border-radius:12px;padding:14px 18px;text-align:center;">
+                    <div style="font-size:15px;font-weight:900;color:oklch(0.82 0.12 158);">shift to felt sense</div>
+                    <div style="font-size:12px;color:#8d9480;margin-top:3px;">present, not paranoid</div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showAnchors }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-top:30px;">
+                <div style="background:oklch(0.58 0.12 158 / .14);border:1px solid oklch(0.66 0.12 158 / .55);border-radius:14px;padding:22px 16px;text-align:center;box-shadow:0 0 30px -14px oklch(0.66 0.12 158);">
+                  <div style="width:34px;height:34px;border-radius:50%;background:oklch(0.64 0.12 158);margin:0 auto;box-shadow:0 0 18px oklch(0.64 0.12 158);animation:breathe 4s ease-in-out infinite;animation-play-state:var(--mo,running);"></div>
+                  <div style="font-weight:900;font-size:15px;color:#2b3228;margin-top:14px;">Notice the breath</div>
+                </div>
+                <div style="background:oklch(0.66 0.13 70 / .16);border:1px solid oklch(0.74 0.13 70 / .55);border-radius:14px;padding:22px 16px;text-align:center;box-shadow:0 0 30px -14px oklch(0.74 0.13 70);">
+                  <div style="width:38px;height:15px;border-radius:5px;background:oklch(0.72 0.13 70);margin:10px auto 0;box-shadow:0 0 16px oklch(0.72 0.13 70);"></div>
+                  <div style="font-weight:900;font-size:15px;color:#2b3228;margin-top:16px;">Feel the ground</div>
+                </div>
+                <div style="background:oklch(0.56 0.13 255 / .16);border:1px solid oklch(0.64 0.13 255 / .55);border-radius:14px;padding:22px 16px;text-align:center;box-shadow:0 0 30px -14px oklch(0.64 0.13 255);">
+                  <div style="width:32px;height:32px;border-radius:9px;background:oklch(0.62 0.13 255);margin:0 auto;box-shadow:0 0 18px oklch(0.62 0.13 255);animation:pulseDot 3s ease-in-out infinite;animation-play-state:var(--mo,running);"></div>
+                  <div style="font-weight:900;font-size:15px;color:#2b3228;margin-top:14px;">Be here</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showThemes }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(0,0,0,.035);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:26px 22px;margin-top:30px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+                  <div style="background:oklch(0.62 0.16 12 / .18);border:1px solid oklch(0.72 0.16 12 / .5);border-radius:11px;padding:11px;text-align:center;font-weight:700;font-size:13px;color:#f0d8d2;">Harm</div>
+                  <div style="background:oklch(0.55 0.14 295 / .18);border:1px solid oklch(0.7 0.14 295 / .5);border-radius:11px;padding:11px;text-align:center;font-weight:700;font-size:13px;color:#ddd5f2;">Scrupulosity</div>
+                  <div style="background:oklch(0.56 0.13 255 / .18);border:1px solid oklch(0.64 0.13 255 / .5);border-radius:11px;padding:11px;text-align:center;font-weight:700;font-size:13px;color:#d2dcf4;">Relationship</div>
+                  <div style="background:oklch(0.63 0.15 32 / .18);border:1px solid oklch(0.7 0.15 32 / .5);border-radius:11px;padding:11px;text-align:center;font-weight:700;font-size:13px;color:#f2dcd2;">Contamination</div>
+                </div>
+                <div style="text-align:center;font-weight:900;color:#79806c;font-size:22px;margin:10px 0;">↓</div>
+                <div style="background:linear-gradient(135deg,oklch(0.4 0.1 200),oklch(0.34 0.08 260));color:#fff;border:1px solid rgba(0,0,0,.16);border-radius:13px;padding:18px;text-align:center;box-shadow:0 0 36px -16px oklch(0.6 0.12 200);">
+                  <div style="font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9fd6cf;margin-bottom:6px;">One structure underneath</div>
+                  <div style="font-size:15px;font-weight:700;line-height:1.4;">trigger → feared self → wrestling → <span style="color:oklch(0.82 0.13 158);">presence is the way out</span></div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showCallout }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ calloutStyle }}">{{ callout }}</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isQuestion }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ cardStyle }}">
+            <div style="{{ eyebrowStyle }}">{{ questionEyebrow }}</div>
+            <sc-if value="{{ showStory }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(0,0,0,.04);border-radius:14px;padding:18px 20px;font-size:16px;line-height:1.6;color:#515848;margin-bottom:22px;border:1px solid rgba(255,255,255,.1);border-left:4px solid {{ accentLine }};">{{ storyText }}</div>
+            </sc-if>
+            <h2 style="font-size:16px;line-height:1.7;margin:0 0 22px;font-weight:400;color:#232a21;letter-spacing:0;font-family:'Press Start 2P',cursive;">{{ question }}</h2>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <sc-for list="{{ opts }}" as="opt" hint-placeholder-count="3">
+                <button style="{{ opt.style }}" style-hover="{{ optHover }}" data-i="{{ opt.i }}" sc-camel-on-click="{{ onOption }}" disabled="{{ opt.disabled }}">
+                  <span>{{ opt.text }}</span>
+                  <span style="font-weight:900;font-size:18px;flex:0 0 auto;">{{ opt.mark }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ showFeedback }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ feedbackStyle }}">
+                <div style="font-weight:900;margin-bottom:4px;">{{ feedbackHead }}</div>
+                <div>{{ feedbackText }}</div>
+                <div style="margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.14);font-size:14px;opacity:.95;line-height:1.6;">{{ explainText }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSort }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ cardStyle }}">
+            <div style="{{ eyebrowStyle }}">{{ sectionLabel }} / Sort it out</div>
+            <h2 style="font-size:16px;line-height:1.7;margin:0 0 6px;font-weight:400;color:#232a21;letter-spacing:0;font-family:'Press Start 2P',cursive;">{{ sortPrompt }}</h2>
+            <div style="font-size:13px;color:#8d9480;margin:0 0 20px;">Tap a card, then tap a bin — or drag it across.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div data-bin="A" sc-camel-on-drag-over="{{ onDragOver }}" sc-camel-on-drop="{{ onBinDrop }}" sc-camel-on-click="{{ onBinClick }}" style="min-height:148px;border:1px solid oklch(0.62 0.13 255 / .5);background:oklch(0.56 0.13 255 / .1);border-radius:16px;padding:14px;cursor:pointer;box-shadow:0 0 26px -14px oklch(0.62 0.13 255);">
+                <div style="font-weight:900;color:oklch(0.78 0.12 255);font-size:14px;margin-bottom:8px;letter-spacing:-.01em;">{{ binALabel }}</div>
+                <div style="display:flex;flex-wrap:wrap;">
+                  <sc-for list="{{ binAItems }}" as="chip" hint-placeholder-count="0">
+                    <div style="{{ chip.style }}" data-i="{{ chip.i }}" draggable="{{ chip.draggable }}" sc-camel-on-drag-start="{{ onDragStart }}" sc-camel-on-click="{{ onChipClick }}">{{ chip.text }}<span style="font-weight:900;">{{ chip.mark }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+              <div data-bin="B" sc-camel-on-drag-over="{{ onDragOver }}" sc-camel-on-drop="{{ onBinDrop }}" sc-camel-on-click="{{ onBinClick }}" style="min-height:148px;border:1px solid oklch(0.68 0.15 32 / .5);background:oklch(0.63 0.15 32 / .1);border-radius:16px;padding:14px;cursor:pointer;box-shadow:0 0 26px -14px oklch(0.68 0.15 32);">
+                <div style="font-weight:900;color:oklch(0.8 0.13 32);font-size:14px;margin-bottom:8px;letter-spacing:-.01em;">{{ binBLabel }}</div>
+                <div style="display:flex;flex-wrap:wrap;">
+                  <sc-for list="{{ binBItems }}" as="chip" hint-placeholder-count="0">
+                    <div style="{{ chip.style }}" data-i="{{ chip.i }}" draggable="{{ chip.draggable }}" sc-camel-on-drag-start="{{ onDragStart }}" sc-camel-on-click="{{ onChipClick }}">{{ chip.text }}<span style="font-weight:900;">{{ chip.mark }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:14px;padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(0,0,0,.035);" sc-camel-on-drag-over="{{ onDragOver }}" sc-camel-on-drop="{{ onTrayDrop }}">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8d9480;margin-bottom:9px;">Cards to sort</div>
+              <div style="display:flex;flex-wrap:wrap;min-height:42px;">
+                <sc-for list="{{ trayItems }}" as="chip" hint-placeholder-count="6">
+                  <div style="{{ chip.style }}" data-i="{{ chip.i }}" draggable="{{ chip.draggable }}" sc-camel-on-drag-start="{{ onDragStart }}" sc-camel-on-click="{{ onChipClick }}">{{ chip.text }}<span style="font-weight:900;">{{ chip.mark }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="margin-top:18px;display:flex;align-items:center;gap:15px;flex-wrap:wrap;">
+              <button style="{{ checkSortStyle }}" sc-camel-on-click="{{ onCheckSort }}" disabled="{{ checkSortDisabled }}">Check my sorting</button>
+              <sc-if value="{{ showSortResult }}" hint-placeholder-val="{{ false }}"><span style="{{ sortResultStyle }}">{{ sortResultText }}</span></sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isTrap }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ cardStyle }}">
+            <div style="{{ eyebrowStyle }}">{{ sectionLabel }} / Spot it</div>
+            <div style="font-size:17px;line-height:1.6;color:#4c5670;margin-bottom:20px;">{{ trapIntro }}</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ trapSentences }}" as="s" hint-placeholder-count="4">
+                <button style="{{ s.style }}" style-hover="{{ trapHover }}" data-i="{{ s.i }}" sc-camel-on-click="{{ onTrap }}" disabled="{{ s.disabled }}"><span>{{ s.text }}</span><span style="font-weight:900;flex:0 0 auto;">{{ s.mark }}</span></button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ showTrapExplain }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ trapExplainStyle }}"><b>{{ trapResult }}</b>{{ trapExplain }}</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isReflect }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ cardStyle }}">
+            <div style="{{ eyebrowStyle }}">{{ sectionLabel }} / Reflection</div>
+            <h2 style="font-size:16px;line-height:1.7;margin:0 0 20px;font-weight:400;color:#232a21;letter-spacing:0;font-family:'Press Start 2P',cursive;">{{ reflectPrompt }}</h2>
+            <textarea value="{{ reflectValue }}" sc-camel-on-change="{{ onReflect }}" placeholder="{{ reflectPlaceholder }}" style-focus="{{ taFocus }}" style="width:100%;min-height:152px;resize:vertical;padding:16px 18px;border:1px solid rgba(0,0,0,.16);border-radius:14px;font-family:'Source Code Pro',monospace;font-size:16px;line-height:1.6;color:#2b3228;background:rgba(0,0,0,.04);outline:none;"></textarea>
+            <div style="margin-top:10px;font-size:12px;color:#79806c;">Saved on this device only. There’s no right answer here — write freely.</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isComplete }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ cardStyle }}">
+            <div style="{{ eyebrowStyle }}">Module complete</div>
+            <h2 style="font-size:20px;line-height:1.6;margin:0 0 12px;font-weight:400;letter-spacing:0;color:#232a21;font-family:'Press Start 2P',cursive;">You made it through.</h2>
+            <p style="font-size:17px;line-height:1.6;color:#545b4a;margin:0 0 26px;max-width:58ch;">{{ scoreMsg }}</p>
+            <div style="display:flex;align-items:center;gap:20px;background:rgba(0,0,0,.035);border:1px solid oklch(0.66 0.12 158 / .4);border-radius:16px;padding:22px 24px;margin-bottom:26px;box-shadow:0 0 36px -16px oklch(0.66 0.12 158);">
+              <div style="{{ scoreNumStyle }}">{{ scoreNum }}<span style="font-size:20px;opacity:.5;">/{{ scoreTotal }}</span></div>
+              <div style="flex:1;">
+                <div style="font-weight:700;color:#464c3d;font-size:14px;margin-bottom:8px;">exercises nailed on the first try</div>
+                <div style="height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.1);"><div style="{{ scoreFillStyle }}"></div></div>
+              </div>
+            </div>
+            <div style="font-weight:900;font-size:15px;color:#2b3228;margin-bottom:14px;letter-spacing:-.01em;">The whole model, on one page</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <sc-for list="{{ recapItems }}" as="r" hint-placeholder-count="8">
+                <div style="{{ r.cardStyle }}">
+                  <div style="{{ r.badgeStyle }}">{{ r.num }}</div>
+                  <div style="font-weight:900;color:#2b3228;font-size:14px;margin:11px 0 4px;letter-spacing:-.01em;">{{ r.label }}</div>
+                  <div style="font-size:13px;color:#7d8470;line-height:1.55;">{{ r.text }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <button style="{{ restartStyle }}" style-hover="{{ continueHover }}" sc-camel-on-click="{{ onRestart }}">Start the module over</button>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <sc-if value="{{ showFooter }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 32px;border-top:3px solid #232a21;background:#f6f8fc;">
+        <button style="{{ backStyle }}" sc-camel-on-click="{{ onBack }}" disabled="{{ atStart }}">Back</button>
+        <div style="font-size:12px;color:#79806c;font-weight:700;">{{ footerNote }}</div>
+        <button style="{{ continueStyle }}" style-hover="{{ continueHover }}" sc-camel-on-click="{{ onNext }}" disabled="{{ continueDisabled }}">{{ nextLabel }}</button>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;reduceMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;textSize&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Comfortable&quot;,&quot;Large&quot;],&quot;default&quot;:&quot;Comfortable&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.stageRef = React.createRef();
+    this._key = 'icbt-doubt-module-v1';
+    this._prevIdx = 0;
+    this.state = { idx:0, answers:{}, sortState:{}, reflect:{}, picked:null, drag:null, score:0, scored:{}, maxIdx:0 };
+
+    this.sections = [
+      {id:'start', label:'Welcome',              num:'',   color:'oklch(0.6 0.1 50)',    glow:'oklch(0.6 0.1 50)'},
+      {id:'s2',    label:'Two Kinds of Doubt',   num:'01', color:'oklch(0.6 0.09 150)',  glow:'oklch(0.6 0.09 150)'},
+      {id:'s3',    label:'Inferential Confusion',num:'02', color:'oklch(0.58 0.08 195)', glow:'oklch(0.58 0.08 195)'},
+      {id:'s4',    label:'The OCD Bubble',       num:'03', color:'oklch(0.57 0.08 222)', glow:'oklch(0.57 0.08 222)'},
+      {id:'s5',    label:'Reasoning Traps',      num:'04', color:'oklch(0.62 0.09 165)', glow:'oklch(0.62 0.09 165)'},
+      {id:'s6',    label:'Trusting the Senses',  num:'05', color:'oklch(0.55 0.09 158)', glow:'oklch(0.55 0.09 158)'},
+      {id:'s7',    label:'The Feared Self',      num:'06', color:'oklch(0.56 0.08 245)', glow:'oklch(0.56 0.08 245)'},
+      {id:'s8',    label:'Back to the Point',    num:'07', color:'oklch(0.58 0.08 205)', glow:'oklch(0.58 0.08 205)'},
+      {id:'s9',    label:'Stop Wrestling',       num:'08', color:'oklch(0.58 0.11 45)',  glow:'oklch(0.58 0.11 45)'},
+      {id:'wrap',  label:'Mastery',              num:'',   color:'oklch(0.55 0.09 158)', glow:'oklch(0.55 0.09 158)'}
+    ];
+
+    this.screens = [
+      { section:'start', type:'intro',
+        title:`Where Doubt Comes From`,
+        sub:`A guided, interactive tour of inference-based CBT. The big idea in one line: OCD is a paranoid delusion about the self \u2014 and this module shows, step by step, how that delusion gets built, and how a clinician helps a client put it down.`,
+        meta:[`~30 minutes`,`8 sections`,`Quizzes, sorting and scenarios`] },
+
+      { section:'s2', type:'section', num:'01', title:`Two Kinds of Doubt`, sub:`Why some doubts deserve a real look \u2014 and others are con jobs.` },
+      { section:'s2', type:'teach', heading:`Doubt isn\u2019t the enemy.`,
+        body:[`Doubt is useful. It\u2019s the nudge that says \u201Ccheck this\u201D when something in the real world is genuinely unclear.`,
+              `But OCD produces a second kind of doubt \u2014 one that appears when reality has already given the answer. Same uneasy feeling, completely different source.`],
+        visual:'twoDoubts',
+        callout:`Key idea: the problem was never doubting. It\u2019s doubting things reality has already settled.` },
+      { section:'s2', type:'teach', heading:`Spot the difference.`,
+        body:[`Normal doubt: a client gets home, can\u2019t remember locking the door today, and the lock is finicky. There\u2019s a real gap in what they know.`,
+              `Obsessional doubt: they watched themselves lock it, heard the click, walked away \u2014 and a \u201Cwhat if I didn\u2019t?\u201D shows up anyway. There was no gap. The doubt invented one.`],
+        callout:`Normal doubt points at the world. Obsessional doubt points at the imagination.` },
+      { section:'s2', type:'mcq',
+        question:`A client washes their hands, watches the soap and water, dries them. Seconds later: \u201CWhat if they\u2019re still contaminated?\u201D What kind of doubt is this?`,
+        options:[
+          {text:`Normal doubt \u2014 contamination is a real risk.`, correct:false, feedback:`Contamination exists in general, but right here the senses just gave the answer. The doubt ignored it.`},
+          {text:`Obsessional doubt \u2014 it overrides what was just sensed.`, correct:true, feedback:`Exactly. Reality already reported in; the doubt arrived anyway.`},
+          {text:`Impossible to tell without more information.`, correct:false, feedback:`We actually have what we need \u2014 the washing was directly sensed. The doubt contradicts it.`}],
+        explain:`Obsessional doubt is recognizable not by its content but by its timing: it shows up after reality has already answered.` },
+      { section:'s2', type:'sort',
+        prompt:`Sort each thought into the doubt it really is.`,
+        binA:`Normal doubt`, binB:`Obsessional doubt`,
+        items:[
+          {text:`Did I reply to that email? I was slammed all day.`, bin:'A'},
+          {text:`I just checked the stove twice \u2014 what if it\u2019s still on?`, bin:'B'},
+          {text:`The stove might be on; I left in a rush and never looked.`, bin:'A'},
+          {text:`What if I\u2019m secretly a bad person, deep down?`, bin:'B'},
+          {text:`Did it autofill the right name? I clicked send fast.`, bin:'A'},
+          {text:`What if I once said something awful I can\u2019t even recall?`, bin:'B'}] },
+
+      { section:'s3', type:'section', num:'02', title:`Inferential Confusion`, sub:`How imagination sneaks in wearing reality\u2019s clothes.` },
+      { section:'s3', type:'teach', heading:`Trusting the story over the scene.`,
+        body:[`Inferential confusion is the engine of OCD: trusting an imagined possibility more than your own direct experience.`,
+              `Picture a detective in a room. The evidence in front of them is clear \u2014 but they fixate on an elaborate theory that fits none of it. That\u2019s inferential confusion.`],
+        visual:'scale',
+        callout:`It\u2019s not that the client can\u2019t tell reality from imagination. It\u2019s that imagination shows up dressed as information.` },
+      { section:'s3', type:'teach', heading:`Why it\u2019s so convincing.`,
+        body:[`Imagined possibilities feel like facts because they arrive with the same certainty, urgency, and vivid detail that real perceptions do.`,
+              `The \u201Cwhat if\u201D isn\u2019t labelled as fiction. The mind hands it over as if it were fresh news from the outside world.`],
+        visual:'film' },
+      { section:'s3', type:'scenario',
+        story:`Maya parks her car, hears the beep, sees the lights flash. Walking away, a vivid scene plays in her head: the door slightly open, someone reaching inside.`,
+        question:`What\u2019s the inference-based read on Maya\u2019s situation?`,
+        options:[
+          {text:`Her senses reported a locked car; the open-door scene is imagination presented as information.`, correct:true, feedback:`Yes \u2014 the flash and beep are reality; the vivid scene is a story competing with it.`},
+          {text:`The vivid image is basically a memory, so she should trust it.`, correct:false, feedback:`It isn\u2019t a memory of what happened \u2014 it\u2019s an imagined possibility, however vivid.`},
+          {text:`She should head back and check, just to be safe.`, correct:false, feedback:`Checking treats the imagined scene as evidence. I-CBT asks: what did her senses actually report?`}],
+        explain:`Vividness is not evidence. The detail of a \u201Cwhat if\u201D tells you nothing about whether it\u2019s real.` },
+
+      { section:'s4', type:'section', num:'03', title:`The OCD Bubble`, sub:`The exact moment you step out of the real world into an imagined one.` },
+      { section:'s4', type:'teach', heading:`Crossing over.`,
+        body:[`There\u2019s a precise moment when a client steps out of the situation in front of them and into a \u201Cwhat if\u201D world. I-CBT calls this crossing over.`,
+              `Inside that bubble they\u2019re no longer reasoning about the real room, the real hands, the real door \u2014 but about an imagined version of them.`],
+        visual:'bubble',
+        callout:`OCD doesn\u2019t live in the real situation. It lives one step to the side of it, inside the bubble.` },
+      { section:'s4', type:'teach', heading:`Why the bubble feels airtight.`,
+        body:[`Inside the bubble, everything is internally consistent. Each thought supports the next, so it feels like solid reasoning.`,
+              `But it\u2019s a closed loop built on a premise that was never real. Consistent is not the same as true.`] },
+      { section:'s4', type:'trap',
+        intro:`Here\u2019s a client reasoning their way into the bubble. Tap the sentence where they cross over from reality into imagination.`,
+        sentences:[
+          {text:`I washed the cutting board with soap and hot water.`, isTrap:false},
+          {text:`I watched the suds, rinsed it, and dried it.`, isTrap:false},
+          {text:`But what if a trace of raw chicken survived somewhere I couldn\u2019t see?`, isTrap:true},
+          {text:`If it did, it could spread, and someone could get sick.`, isTrap:false}],
+        hitMsg:`That\u2019s the crossover. `,
+        missMsg:`Not quite \u2014 the real crossover is highlighted. `,
+        explain:`The crossover is the \u201Cbut what if\u2026\u201D \u2014 the step out of the cleaned-board reality into an imagined invisible contaminant. Everything after it just furnishes the bubble.` },
+
+      { section:'s5', type:'section', num:'04', title:`Reasoning Traps`, sub:`OCD\u2019s favourite sleights of hand.` },
+      { section:'s5', type:'teach', heading:`True facts, wrong place.`,
+        body:[`OCD rarely lies outright. It quotes true facts \u2014 then applies them where they don\u2019t belong.`,
+              `\u201CGerms exist.\u201D True. \u201CPeople get sick.\u201D True. None of that is evidence that freshly-washed hands are dirty right now.`],
+        callout:`Selective, out-of-context reasoning: real facts, smuggled in to prop up an imagined case.` },
+      { section:'s5', type:'teach', heading:`Three moves to watch for.`,
+        body:[`Category facts: a general truth (\u201Cknives can hurt people\u201D) used as if it describes this person, here, now.`,
+              `Possibility as probability: \u201Cit could happen\u201D quietly becomes \u201Cit probably will.\u201D`,
+              `Irrelevant association: a stray image or memory treated as a meaningful sign.`] },
+      { section:'s5', type:'trap',
+        intro:`Tap the sentence doing the out-of-context reasoning.`,
+        sentences:[
+          {text:`I felt a flash of anger at my brother today.`, isTrap:false},
+          {text:`A lot of violent people felt anger before they acted.`, isTrap:true},
+          {text:`So maybe that anger means I\u2019m dangerous.`, isTrap:false},
+          {text:`I should avoid being alone with him.`, isTrap:false}],
+        hitMsg:`That\u2019s the trap. `,
+        missMsg:`Not quite \u2014 the out-of-context move is highlighted. `,
+        explain:`The trap is the category fact: \u201Cviolent people felt anger\u201D is true in general but says nothing about this person. It\u2019s smuggled in to make a normal feeling look like evidence.` },
+
+      { section:'s6', type:'section', num:'05', title:`Trusting the Senses`, sub:`Reality already filed its report. Read it.` },
+      { section:'s6', type:'teach', heading:`The doorbell already rang.`,
+        body:[`The senses aren\u2019t the problem \u2014 they\u2019re the solution OCD talks the client out of using.`,
+              `They saw the door close. They heard the lock. Reality rang the doorbell. OCD\u2019s whole job is to suggest that maybe it didn\u2019t.`],
+        callout:`Reality sensing: stay with what was actually seen, heard, and felt \u2014 not the story about it.` },
+      { section:'s6', type:'teach', heading:`Staying in the room.`,
+        body:[`I-CBT trains a simple discipline: when doubt hits, return to direct experience. What did I actually perceive?`,
+              `Not to argue with the \u201Cwhat if,\u201D but to notice you\u2019d wandered out of the real situation \u2014 and step back into it.`] },
+      { section:'s6', type:'scenario',
+        story:`Sam locks up the shop, tries the handle, feels it hold. At home, doubt arrives: \u201CDid the lock really catch?\u201D`,
+        question:`What\u2019s the inference-based move here?`,
+        options:[
+          {text:`Recall the felt resistance of the handle that wouldn\u2019t open \u2014 the senses already answered.`, correct:true, feedback:`Right. Sam tested it and felt it hold. That direct experience is the answer.`},
+          {text:`Drive back and check once, just to be certain.`, correct:false, feedback:`Checking sides with the doubt over the senses. The handle already reported in.`},
+          {text:`Reason through how unlikely a break-in really is.`, correct:false, feedback:`That argues inside the bubble. I-CBT returns to what was actually sensed, not to odds.`}],
+        explain:`Trusting the senses isn\u2019t reassurance-seeking. It\u2019s refusing to overwrite a real perception with an imagined one.` },
+      { section:'s6', type:'reflect',
+        prompt:`Think of a recent moment when your senses said one thing and a doubt insisted on another. What did you actually see, hear, or feel \u2014 before the \u201Cwhat if\u201D arrived?`,
+        placeholder:`When I locked the car I heard the beep and saw the lights flash, but then my mind started\u2026` },
+
+      { section:'s7', type:'section', num:'06', title:`The Feared Self`, sub:`The character OCD is terrified you might secretly be.` },
+      { section:'s7', type:'teach', heading:`The story underneath the themes.`,
+        body:[`Beneath specific obsessions sits a deeper fear: that the person might secretly be a certain kind of self \u2014 careless, dangerous, immoral, contaminated.`,
+              `I-CBT calls this the feared self. Think of OCD as a paranoid delusion about it: a false case, built and re-built, that this is who you really are.`],
+        visual:'casting',
+        callout:`Themes come and go. The feared self underneath them usually stays the same.` },
+      { section:'s7', type:'teach', heading:`Tailored to the fear.`,
+        body:[`Doubts aren\u2019t random \u2014 they\u2019re custom-built to threaten whoever the client is most afraid of being.`,
+              `Someone who dreads being irresponsible gets door-and-stove doubts. Someone who dreads being harmful gets harm doubts. The feared self picks the script.`] },
+      { section:'s7', type:'mcq',
+        question:`Two people both get intrusive \u201Cwhat if I hurt someone\u201D thoughts. I-CBT predicts the thought feels threatening mainly because\u2026`,
+        options:[
+          {text:`\u2026it targets each person\u2019s feared self \u2014 the kind of person they dread being.`, correct:true, feedback:`Yes. The same thought lands hard because it threatens a core fear about identity.`},
+          {text:`\u2026harm is objectively the most dangerous topic to think about.`, correct:false, feedback:`Content isn\u2019t what gives it power \u2014 its fit with the feared self is.`},
+          {text:`\u2026they simply haven\u2019t learned enough coping skills yet.`, correct:false, feedback:`It isn\u2019t a skills gap. The doubt grips because it targets who they fear being.`}],
+        explain:`The feared self explains why a thought one person shrugs off can feel unbearable to another.` },
+
+      { section:'s8', type:'section', num:'07', title:`Back to the Point Before the Doubt`, sub:`Find the exact step where imagination took the wheel.` },
+      { section:'s8', type:'teach', heading:`There\u2019s always a \u2018before\u2019.`,
+        body:[`Right before every obsessional doubt, there\u2019s a moment when the client was operating on reality \u2014 seeing, hearing, knowing.`,
+              `Recovery starts by locating that point and returning to it, instead of diving deeper into the bubble.`],
+        visual:'rewind',
+        callout:`Don\u2019t try to win the argument inside the bubble. Rewind to just before you entered it.` },
+      { section:'s8', type:'teach', heading:`Find the crossover.`,
+        body:[`Replay the sequence: what was actually happening, step by step, right up until the \u201Cbut what if\u2026\u201D?`,
+              `That \u201Cwhat if\u201D is the crossover point. Everything before it was reality. That\u2019s where the client belongs.`] },
+      { section:'s8', type:'scenario',
+        story:`Devin rereads a text he sent a friend and sees it\u2019s warm and clear. Then: \u201CWhat if they read it as passive-aggressive?\u201D Now he\u2019s scanning every word for hidden tone.`,
+        question:`Where\u2019s the point right before the doubt \u2014 the spot for Devin to return to?`,
+        options:[
+          {text:`The moment he read the message and saw it was warm and clear.`, correct:true, feedback:`Exactly. That was reality. \u201CWhat if they read it differently\u201D is the crossover.`},
+          {text:`After he\u2019s analysed every word for hidden tone.`, correct:false, feedback:`That\u2019s deep inside the bubble \u2014 the opposite direction from where he should head.`},
+          {text:`When he decides to ask the friend whether they were offended.`, correct:false, feedback:`That seeks reassurance from inside the doubt. The point before it was his own clear read.`}],
+        explain:`Going back to the point before the doubt means returning to your last contact with reality \u2014 not resolving the imagined scenario.` },
+
+      { section:'s9', type:'section', num:'08', title:`Stop Wrestling`, sub:`The whole model in four moves \u2014 and the paradox that ends the fight.` },
+      { section:'s9', type:'teach', heading:`The frame, in four lines.`,
+        body:[`Pull back far enough and the whole thing simplifies. OCD is a paranoid delusion about the self \u2014 a false case that you might secretly be dangerous, careless, immoral, unfaithful.`,
+              `A trigger is just a cue that activates that feared self. The wrestling \u2014 reassurance, checking, evidence-gathering, rumination \u2014 is the compulsion. And it\u2019s the wrestling, not the thought, that keeps the delusion alive.`],
+        visual:'frame',
+        callout:`Treatment isn\u2019t winning the argument. It\u2019s putting the argument down.` },
+      { section:'s9', type:'teach', heading:`The paradox of stopping.`,
+        body:[`Here\u2019s what catches everyone off guard. The moment a client stops trying to think their way out, they\u2019re out.`,
+              `Not because they finally proved they\u2019re safe \u2014 you can\u2019t prove a negative to OCD \u2014 but because they\u2019re present instead of paranoid. Attention returns to the real room, and the bubble has nothing left to run on.`],
+        visual:'anchors',
+        callout:`She doesn\u2019t escape the doubt by answering it. She escapes by stopping the wrestling and coming back to her senses.` },
+      { section:'s9', type:'teach', heading:`Same structure, every theme.`,
+        body:[`This is why one framework covers so much ground. Harm, scrupulosity, relationships, contamination \u2014 the feared self changes, but the machinery is identical.`,
+              `Different script, same play: a trigger lights up the feared self, the wrestling feeds it, and presence is the way out. Learn the structure once and you can see it anywhere.`],
+        visual:'themes' },
+      { section:'s9', type:'trap',
+        intro:`Same client, four responses to one intrusive thought while driving. Tap the response that is NOT wrestling.`,
+        sentences:[
+          {text:`Let me mentally replay the whole drive to be sure I didn\u2019t hit anyone.`, isTrap:false},
+          {text:`I\u2019ll search online whether thoughts like this mean something\u2019s wrong with me.`, isTrap:false},
+          {text:`I notice the thought, feel my hands on the wheel, and keep driving.`, isTrap:true},
+          {text:`I\u2019ll ask my partner one more time whether I\u2019m really a good person.`, isTrap:false}],
+        hitMsg:`That\u2019s the one. `,
+        missMsg:`That\u2019s still wrestling \u2014 the non-wrestling response is highlighted. `,
+        explain:`Replaying, searching, and asking are all compulsions \u2014 different costumes, same wrestling. Noticing the thought and returning to felt sense is the one response that doesn\u2019t feed the delusion.` },
+      { section:'s9', type:'scenario',
+        story:`A client with harm OCD white-knuckles every drive, mentally reviewing for accidents she might have caused. One day, stuck in traffic and exhausted, she just\u2026 stops checking. She notices the radio, her hands on the wheel, the car ahead.`,
+        question:`In I-CBT terms, why does the grip loosen?`,
+        options:[
+          {text:`She stopped wrestling and returned to felt sense \u2014 present instead of paranoid.`, correct:true, feedback:`Exactly. Nothing was proven. She simply stopped feeding the bubble and came back to the real moment.`},
+          {text:`She finally gathered enough evidence that she\u2019s safe.`, correct:false, feedback:`You can\u2019t prove a negative to OCD. Relief didn\u2019t come from evidence \u2014 it came from dropping the wrestling.`},
+          {text:`The intrusive thoughts happened to stop on their own.`, correct:false, feedback:`It wasn\u2019t the thought that changed \u2014 it was her response to it. She stopped wrestling.`}],
+        explain:`The paradox: she\u2019s out the moment she stops trying to get out. Presence, not proof, is what ends it.` },
+      { section:'s9', type:'reflect',
+        prompt:`Where in your own life do you wrestle \u2014 replaying, checking, seeking reassurance, arguing with a thought? What would \u201Cputting the argument down\u201D look like in that exact moment?`,
+        placeholder:`When I send an important email I keep rereading it for hidden mistakes. Putting it down would look like\u2026` },
+
+      { section:'wrap', type:'complete' }
+    ];
+  }
+
+  componentDidMount(){
+    try {
+      const raw = localStorage.getItem(this._key);
+      if (raw){
+        const s = JSON.parse(raw);
+        this._prevIdx = s.idx||0;
+        this.setState({ idx:s.idx||0, answers:s.answers||{}, sortState:s.sortState||{}, reflect:s.reflect||{}, score:s.score||0, scored:s.scored||{}, maxIdx:s.maxIdx||0 });
+      }
+    } catch(e){}
+  }
+
+  save(){
+    try {
+      const {idx,answers,sortState,reflect,score,scored,maxIdx} = this.state;
+      localStorage.setItem(this._key, JSON.stringify({idx,answers,sortState,reflect,score,scored,maxIdx}));
+    } catch(e){}
+  }
+
+  componentDidUpdate(){
+    this.save();
+    if (this._prevIdx !== this.state.idx){
+      this._prevIdx = this.state.idx;
+      const el = this.stageRef.current;
+      if (el){
+        el.scrollTop = 0;
+        if (!this.props.reduceMotion){
+          try {
+            const card = el.firstElementChild ? el.firstElementChild.firstElementChild : null;
+            if (card){
+              card.animate([{transform:'translateY(16px)'},{transform:'translateY(0)'}], {duration:420, easing:'cubic-bezier(.2,.7,.2,1)', fill:'none'});
+            }
+          } catch(e){}
+        }
+      }
+    }
+  }
+
+  go(i){
+    const n = Math.max(0, Math.min(this.screens.length-1, i));
+    this.setState(s => ({ idx:n, maxIdx:Math.max(s.maxIdx,n), picked:null, drag:null }));
+  }
+  next(){ this.go(this.state.idx+1); }
+  back(){ this.go(this.state.idx-1); }
+
+  answerQuestion(choice){
+    const idx = this.state.idx;
+    if (this.state.answers[idx]) return;
+    const sc = this.screens[idx];
+    const correct = !!sc.options[choice].correct;
+    this.setState(s => {
+      const answers = {...s.answers, [idx]:{choice, correct}};
+      let score = s.score, scored = {...s.scored};
+      if (correct && !scored[idx]){ score++; scored[idx] = true; }
+      return {answers, score, scored};
+    });
+  }
+
+  trapAnswer(i){
+    const idx = this.state.idx;
+    if (this.state.answers[idx]) return;
+    const sc = this.screens[idx];
+    const correct = !!sc.sentences[i].isTrap;
+    this.setState(s => {
+      const answers = {...s.answers, [idx]:{choice:i, correct}};
+      let score = s.score, scored = {...s.scored};
+      if (correct && !scored[idx]){ score++; scored[idx] = true; }
+      return {answers, score, scored};
+    });
+  }
+
+  sortFor(idx){ return this.state.sortState[idx] || {place:{}, checked:false}; }
+  placeItem(i, bin){
+    const idx = this.state.idx;
+    this.setState(s => {
+      const cur = s.sortState[idx] || {place:{}, checked:false};
+      if (cur.checked) return {};
+      const place = {...cur.place}; place[i] = bin;
+      return {sortState:{...s.sortState, [idx]:{...cur, place}}, picked:null};
+    });
+  }
+  removeItem(i){
+    const idx = this.state.idx;
+    this.setState(s => {
+      const cur = s.sortState[idx] || {place:{}, checked:false};
+      if (cur.checked) return {};
+      const place = {...cur.place}; delete place[i];
+      return {sortState:{...s.sortState, [idx]:{...cur, place}}, picked:null};
+    });
+  }
+
+  onJump = (e) => { const t = +e.currentTarget.dataset.target; if (!isNaN(t)) this.go(t); };
+  onOption = (e) => { this.answerQuestion(+e.currentTarget.dataset.i); };
+  onTrap = (e) => { this.trapAnswer(+e.currentTarget.dataset.i); };
+  onChipClick = (e) => {
+    const i = +e.currentTarget.dataset.i;
+    const cur = this.sortFor(this.state.idx);
+    if (cur.checked) return;
+    if (cur.place[i] !== undefined) this.removeItem(i);
+    else this.setState(s => ({picked: s.picked === i ? null : i}));
+  };
+  onDragStart = (e) => { const i = +e.currentTarget.dataset.i; this.setState({drag:i}); try { e.dataTransfer.setData('text/plain', String(i)); e.dataTransfer.effectAllowed='move'; } catch(_){} };
+  onDragOver = (e) => { e.preventDefault(); try { e.dataTransfer.dropEffect='move'; } catch(_){} };
+  onBinDrop = (e) => { e.preventDefault(); const bin = e.currentTarget.dataset.bin; let i = this.state.drag; if (i==null){ try { i = +e.dataTransfer.getData('text/plain'); } catch(_){} } if (i!=null && !isNaN(i)) this.placeItem(i, bin); this.setState({drag:null}); };
+  onTrayDrop = (e) => { e.preventDefault(); let i = this.state.drag; if (i==null){ try { i = +e.dataTransfer.getData('text/plain'); } catch(_){} } if (i!=null && !isNaN(i)) this.removeItem(i); this.setState({drag:null}); };
+  onBinClick = (e) => { const bin = e.currentTarget.dataset.bin; const cur = this.sortFor(this.state.idx); if (cur.checked) return; if (this.state.picked != null) this.placeItem(this.state.picked, bin); };
+  onCheckSort = () => {
+    const idx = this.state.idx; const sc = this.screens[idx]; const cur = this.sortFor(idx);
+    if (Object.keys(cur.place).length < sc.items.length) return;
+    let allRight = true; sc.items.forEach((it,i) => { if (cur.place[i] !== it.bin) allRight = false; });
+    this.setState(s => {
+      let score = s.score, scored = {...s.scored};
+      if (allRight && !scored[idx]){ score++; scored[idx] = true; }
+      return {sortState:{...s.sortState, [idx]:{...cur, checked:true}}, score, scored};
+    });
+  };
+  onReflect = (e) => { const idx = this.state.idx; const v = e.target.value; this.setState(s => ({reflect:{...s.reflect, [idx]:v}})); };
+  onRestart = () => { this._prevIdx = 0; this.setState({idx:0, answers:{}, sortState:{}, reflect:{}, picked:null, drag:null, score:0, scored:{}, maxIdx:0}); };
+  onNext = () => this.next();
+  onBack = () => this.back();
+
+  renderVals(){
+    const idx = this.state.idx;
+    const PXL = "polygon(0 10px,10px 10px,10px 0,calc(100% - 10px) 0,calc(100% - 10px) 10px,100% 10px,100% calc(100% - 10px),calc(100% - 10px) calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,10px calc(100% - 10px),0 calc(100% - 10px))";
+    const PXS = "polygon(0 5px,5px 5px,5px 0,calc(100% - 5px) 0,calc(100% - 5px) 5px,100% 5px,100% calc(100% - 5px),calc(100% - 5px) calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,5px calc(100% - 5px),0 calc(100% - 5px))";
+    const INK = '#232a21';
+    const screens = this.screens;
+    const sc = screens[idx];
+    const sec = this.sections.find(x => x.id === sc.section) || this.sections[0];
+    const accent = sec.color, glow = sec.glow;
+    const rm = !!this.props.reduceMotion;
+    const ps = rm ? 'paused' : 'running';
+    const textZoom = this.props.textSize === 'Large' ? 1.12 : 1;
+
+    const type = sc.type;
+    const isIntro = type==='intro', isSection = type==='section', isTeach = type==='teach',
+          isMcq = type==='mcq', isScenario = type==='scenario', isSort = type==='sort',
+          isTrap = type==='trap', isReflect = type==='reflect', isComplete = type==='complete';
+    const isQuestion = isMcq || isScenario;
+
+    const progressPct = Math.round(idx/(screens.length-1)*100);
+
+    const rootStyle = { display:'flex', height:'100vh', width:'100%', position:'relative', background:'#f2f1ea', fontFamily:"'Source Code Pro',ui-monospace,monospace", color:'#232a21', overflow:'hidden', '--mo': ps };
+
+    const blobAStyle = { position:'absolute', width:'40vw', height:'40vw', left:'4%', top:'-4%', borderRadius:'50%', background:accent, filter:'blur(82px)', opacity:0.16, animation:'drift 22s ease-in-out infinite', animationPlayState:ps };
+    const blobBStyle = { position:'absolute', width:'36vw', height:'36vw', right:'-2%', bottom:'-8%', borderRadius:'50%', background:'oklch(0.62 0.07 200)', filter:'blur(80px)', opacity:0.14, animation:'drift2 28s ease-in-out infinite', animationPlayState:ps };
+    const blobCStyle = { position:'absolute', width:'30vw', height:'30vw', left:'46%', top:'42%', borderRadius:'50%', background:'oklch(0.6 0.07 150)', filter:'blur(78px)', opacity:0.12, animation:'drift 34s ease-in-out infinite', animationPlayState:ps };
+
+    const sidebarItems = this.sections.map(s => {
+      let first = screens.findIndex(z => z.section === s.id);
+      let last = -1; screens.forEach((z,i) => { if (z.section === s.id) last = i; });
+      const active = idx >= first && idx <= last;
+      const done = idx > last;
+      return {
+        label: s.label, target: first,
+        mark: done ? '✓' : (s.num || '·'),
+        rowStyle: { display:'flex', alignItems:'center', gap:'12px', width:'100%', textAlign:'left', padding:'9px 11px', borderRadius:'12px', border:'1px solid '+(active ? 'rgba(255,255,255,.14)' : 'transparent'), cursor:'pointer', background: active ? 'rgba(0,0,0,.05)' : 'transparent', transition:'background .15s', fontFamily:'inherit' },
+        dotStyle: { flex:'0 0 auto', width:'27px', height:'27px', clipPath:'polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px))', border:'2px solid '+INK, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, background: (active||done) ? s.color : 'rgba(0,0,0,.06)', color: (active||done) ? '#0d0f17' : '#8d9480', boxShadow: active ? '2px 2px 0 '+INK : 'none' },
+        labelStyle: { fontSize:'13px', fontWeight: active ? 700 : 500, color: active ? '#2b3228' : (done ? '#7d8470' : '#79806c'), lineHeight:1.3 }
+      };
+    });
+
+    let canContinue = true;
+    if (isQuestion || isTrap) canContinue = !!this.state.answers[idx];
+    else if (isSort) canContinue = !!(this.state.sortState[idx] && this.state.sortState[idx].checked);
+
+    const atStart = idx === 0;
+    const showFooter = !isComplete;
+    let nextLabel = 'Continue';
+    if (isIntro) nextLabel = 'Start the module';
+    else if (isSection) nextLabel = 'Begin';
+    if (screens[idx+1] && screens[idx+1].type === 'complete') nextLabel = 'See your results';
+
+    const eyebrowStyle = { display:'inline-flex', alignItems:'center', background:accent, color:'#0d0f17', padding:'8px 13px', clipPath:PXS, borderRadius:'0', border:'2px solid '+INK, fontSize:'8px', fontWeight:400, fontFamily:"'Press Start 2P',cursive", lineHeight:1.6, letterSpacing:'.02em', textTransform:'uppercase', marginBottom:'16px', boxShadow:'3px 3px 0 '+INK };
+    const calloutStyle = { marginTop:'26px', padding:'16px 20px', borderRadius:'14px', background:'rgba(0,0,0,.04)', border:'1px solid rgba(0,0,0,.1)', borderLeft:'4px solid '+accent, fontSize:'16px', lineHeight:1.55, color:'#464c3d', fontWeight:600, boxShadow:'0 0 34px -18px '+glow };
+    const continueStyle = { display:'inline-flex', alignItems:'center', gap:'10px', padding:'13px 24px', clipPath:PXS, borderRadius:'0', border:'3px solid '+INK, background: canContinue ? accent : 'rgba(0,0,0,.08)', color: canContinue ? '#0d0f17' : '#9aa08c', fontSize:'15px', fontWeight:700, cursor: canContinue ? 'pointer' : 'not-allowed', fontFamily:'inherit', transition:'transform .1s, box-shadow .1s', boxShadow: canContinue ? '4px 4px 0 '+INK : 'none', pointerEvents: canContinue ? 'auto' : 'none' };
+    const backStyle = { display:'inline-flex', alignItems:'center', padding:'12px 18px', clipPath:PXS, borderRadius:'0', border:'3px solid '+INK, background:'#eef1e6', color:'#464c3d', fontSize:'14px', fontWeight:700, cursor: atStart ? 'default' : 'pointer', fontFamily:'inherit', opacity: atStart ? 0.3 : 1, boxShadow: atStart ? 'none' : '3px 3px 0 '+INK, pointerEvents: atStart ? 'none' : 'auto' };
+    const continueHover = { transform:'translate(-2px,-2px)', filter:'brightness(1.08)', boxShadow:'6px 6px 0 '+INK };
+    const optHover = { transform:'translate(-2px,-2px)', borderColor:accent, boxShadow:'3px 3px 0 '+INK };
+    const trapHover = { transform:'translate(-2px,-2px)', borderColor:INK, boxShadow:'3px 3px 0 '+INK };
+    const taFocus = { borderColor:accent, boxShadow:'3px 3px 0 '+INK };
+    const progressFillStyle = { height:'100%', width:progressPct+'%', background:accent, backgroundImage:'repeating-linear-gradient(90deg, transparent 0 8px, rgba(0,0,0,.18) 8px 11px)', borderRadius:'0', transition:'width .4s steps(6,end)' };
+    const stageScrollStyle = { flex:1, overflowY:'auto', display:'flex', justifyContent:'center', alignItems:'flex-start', padding:'42px 32px 64px', background:'transparent', backgroundImage:'radial-gradient(circle, rgba(0,0,0,.06) 1px, transparent 1.4px)', backgroundSize:'24px 24px' };
+    const stageInnerStyle = { width:'100%', maxWidth:'780px', zoom:textZoom, position:'relative' };
+    const footerNote = 'Step '+(idx+1)+' of '+screens.length;
+
+    const cardStyle = { background:'#eef1e6', clipPath:PXL, borderRadius:'0', padding:'40px 42px', border:'3px solid '+INK, borderTop:'8px solid '+accent, boxShadow:'8px 8px 0 '+INK };
+    const introCardStyle = { background:'#eef1e6', clipPath:PXL, borderRadius:'0', padding:'48px 46px', border:'3px solid '+INK, borderTop:'8px solid '+accent, boxShadow:'10px 10px 0 '+INK, position:'relative', overflow:'hidden' };
+
+    // teach
+    const heading = sc.heading || '';
+    const body = sc.body || [];
+    const callout = sc.callout || '';
+    const showCallout = !!sc.callout;
+    const visual = sc.visual || '';
+    const showTwoDoubts = visual==='twoDoubts', showScale = visual==='scale', showFilm = visual==='film',
+          showBubble = visual==='bubble', showCasting = visual==='casting', showRewind = visual==='rewind',
+          showFrame = visual==='frame', showAnchors = visual==='anchors', showThemes = visual==='themes';
+
+    // section
+    const secNum = sc.num || sec.num;
+    const secTitle = sc.title || sec.label;
+    const secSub = sc.sub || '';
+    const sectionCardStyle = { background:accent, backgroundImage:'radial-gradient(circle at 28% 26%, rgba(255,255,255,.32), transparent 46%), radial-gradient(circle at 82% 78%, rgba(0,0,0,.32), transparent 52%)', backgroundSize:'170% 170%', clipPath:PXL, borderRadius:'0', border:'4px solid '+INK, padding:'58px 48px', minHeight:'380px', display:'flex', flexDirection:'column', justifyContent:'center', position:'relative', overflow:'hidden', boxShadow:'10px 10px 0 '+INK, animation:'aurora 9s ease-in-out infinite', animationPlayState:ps };
+
+    // intro
+    const introTitle = sc.title || '';
+    const introSub = sc.sub || '';
+    const introMeta = sc.meta || [];
+
+    // question
+    const accentLine = accent;
+    const questionEyebrow = sec.label + (isScenario ? ' / Scenario' : ' / Quick check');
+    let opts = [], showFeedback = false, feedbackText = '', feedbackHead = '', feedbackStyle = {}, explainText = '', showStory = false, storyText = '', question = '';
+    if (isQuestion){
+      question = sc.question; showStory = !!sc.story; storyText = sc.story || '';
+      const ans = this.state.answers[idx]; showFeedback = !!ans; explainText = sc.explain || '';
+      if (ans){
+        feedbackHead = ans.correct ? 'Correct' : 'Not quite';
+        feedbackText = sc.options[ans.choice].feedback;
+        feedbackStyle = ans.correct
+          ? { marginTop:'20px', padding:'16px 18px', borderRadius:'12px', fontSize:'15px', lineHeight:1.6, background:'oklch(0.64 0.13 158 / .15)', color:'#15663f', border:'1px solid oklch(0.66 0.13 158 / .55)', boxShadow:'0 0 30px -14px oklch(0.66 0.13 158)' }
+          : { marginTop:'20px', padding:'16px 18px', borderRadius:'12px', fontSize:'15px', lineHeight:1.6, background:'oklch(0.62 0.16 25 / .15)', color:'#8a3320', border:'1px solid oklch(0.66 0.16 25 / .55)', boxShadow:'0 0 30px -14px oklch(0.66 0.16 25)' };
+      }
+      opts = sc.options.map((o,i) => {
+        let bg='rgba(0,0,0,.04)', bd=INK, col='#464c3d', mark='', fw=500, pe='auto', sh='none';
+        if (ans){ pe='none';
+          if (i===ans.choice){ if (o.correct){ bg='oklch(0.64 0.13 158 / .18)'; bd=INK; col='#15663f'; mark='✓'; fw=700; sh='4px 4px 0 '+INK; } else { bg='oklch(0.62 0.16 25 / .18)'; bd=INK; col='#8a3320'; mark='✗'; fw=700; sh='4px 4px 0 '+INK; } }
+          else if (o.correct){ bg='oklch(0.64 0.13 158 / .1)'; bd=INK; col='#2f5a47'; mark='✓'; }
+          else { bg='rgba(0,0,0,.02)'; col='#9aa08c'; bd='rgba(0,0,0,.15)'; }
+        }
+        const st = { display:'flex', justifyContent:'space-between', alignItems:'center', gap:'14px', width:'100%', textAlign:'left', padding:'15px 19px', clipPath:PXS, borderRadius:'0', border:'3px solid '+bd, background:bg, color:col, fontSize:'15px', lineHeight:1.45, fontWeight:fw, cursor: ans ? 'default' : 'pointer', transition:'transform .1s, box-shadow .1s', fontFamily:'inherit', pointerEvents:pe, boxShadow:sh };
+        if (!rm && ans && i===ans.choice && o.correct) st.animation = 'pop .4s ease';
+        return { i, text:o.text, mark, disabled: !!ans, style: st };
+      });
+    }
+
+    // sort
+    let sortPrompt = '', binALabel = '', binBLabel = '', trayItems = [], binAItems = [], binBItems = [], showSortResult = false, sortResultText = '', sortResultStyle = {}, checkSortStyle = {}, checkSortDisabled = true;
+    if (isSort){
+      sortPrompt = sc.prompt; binALabel = sc.binA; binBLabel = sc.binB;
+      const cur = this.sortFor(idx); const checked = cur.checked;
+      const mk = (it,i) => {
+        const placed = cur.place[i];
+        let bd=INK, bg='rgba(0,0,0,.05)', col='#464c3d', mark='', sh='none';
+        if (checked){ const right = it.bin === placed; if (right){ bg='oklch(0.64 0.13 158 / .2)'; bd=INK; col='#15663f'; mark='✓'; sh='3px 3px 0 '+INK; } else { bg='oklch(0.62 0.16 25 / .2)'; bd=INK; col='#8a3320'; mark='✗'; sh='3px 3px 0 '+INK; } }
+        else if (this.state.picked === i){ bg='rgba(0,0,0,.1)'; bd=INK; sh='3px 3px 0 '+INK; }
+        return { i, text:it.text, mark, draggable: !checked, style:{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'9px 12px', margin:'4px', clipPath:'polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px))', border:'2px solid '+bd, background:bg, color:col, fontSize:'13px', fontWeight:600, lineHeight:1.35, cursor: checked ? 'default' : 'grab', userSelect:'none', fontFamily:'inherit', maxWidth:'100%', boxShadow:sh, transition:'transform .1s' } };
+      };
+      sc.items.forEach((it,i) => { const b = cur.place[i]; if (b==='A') binAItems.push(mk(it,i)); else if (b==='B') binBItems.push(mk(it,i)); else trayItems.push(mk(it,i)); });
+      const allPlaced = Object.keys(cur.place).length >= sc.items.length;
+      const ready = allPlaced && !checked;
+      checkSortDisabled = !ready;
+      checkSortStyle = { display:'inline-flex', padding:'12px 22px', clipPath:PXS, borderRadius:'0', border:'3px solid '+INK, background: ready ? accent : 'rgba(0,0,0,.08)', color: ready ? '#0d0f17' : '#9aa08c', fontWeight:700, fontSize:'14px', cursor: ready ? 'pointer' : 'not-allowed', fontFamily:'inherit', pointerEvents: ready ? 'auto' : 'none', boxShadow: ready ? '4px 4px 0 '+INK : 'none' };
+      showSortResult = checked;
+      if (checked){
+        let right = 0; sc.items.forEach((it,i) => { if (cur.place[i] === it.bin) right++; });
+        const good = right === sc.items.length;
+        sortResultText = good ? 'All sorted correctly \u2014 nicely done.' : (right+' of '+sc.items.length+' correct. The mismatched cards are marked \u2014 see why.');
+        sortResultStyle = { fontSize:'13.5px', fontWeight:700, color: good ? 'oklch(0.78 0.13 158)' : 'oklch(0.8 0.13 70)' };
+      }
+    }
+
+    // trap
+    let trapIntro = '', trapSentences = [], showTrapExplain = false, trapExplain = '', trapResult = '', trapExplainStyle = {};
+    if (isTrap){
+      trapIntro = sc.intro; const ans = this.state.answers[idx]; showTrapExplain = !!ans; trapExplain = sc.explain || '';
+      if (ans){
+        const good = ans.correct;
+        trapResult = good ? (sc.hitMsg || 'That\u2019s it. ') : (sc.missMsg || 'Not quite \u2014 the right one is highlighted. ');
+        trapExplainStyle = { marginTop:'18px', padding:'16px 18px', borderRadius:'12px', background: good ? 'oklch(0.64 0.13 158 / .15)' : 'oklch(0.7 0.14 70 / .15)', border:'1px solid '+(good ? 'oklch(0.66 0.13 158 / .55)' : 'oklch(0.72 0.14 70 / .55)'), boxShadow:'0 0 30px -16px '+(good ? 'oklch(0.66 0.13 158)' : 'oklch(0.72 0.14 70)'), color: good ? '#15663f' : '#7a5614', fontSize:'15px', lineHeight:1.6 };
+      }
+      trapSentences = sc.sentences.map((s,i) => {
+        let bd=INK, bg='rgba(0,0,0,.035)', col='#464c3d', mark='', fw=500, pe='auto', sh='none';
+        if (ans){ pe='none';
+          if (s.isTrap){ bg='oklch(0.64 0.13 158 / .18)'; bd=INK; col='#15663f'; mark='✓'; fw=700; sh='4px 4px 0 '+INK; }
+          else if (i===ans.choice){ bg='oklch(0.62 0.16 25 / .18)'; bd=INK; col='#8a3320'; mark='✗'; fw=700; sh='4px 4px 0 '+INK; }
+          else { col='#9aa08c'; bd='rgba(0,0,0,.12)'; }
+        }
+        return { i, text:s.text, mark, disabled: !!ans, style:{ display:'flex', justifyContent:'space-between', gap:'12px', width:'100%', textAlign:'left', padding:'14px 16px', clipPath:PXS, borderRadius:'0', border:'3px solid '+bd, background:bg, color:col, fontSize:'15px', lineHeight:1.5, fontWeight:fw, cursor: ans ? 'default' : 'pointer', transition:'transform .1s, box-shadow .1s', fontFamily:'inherit', pointerEvents:pe, boxShadow:sh } };
+      });
+    }
+
+    // reflect
+    let reflectPrompt = '', reflectPlaceholder = '', reflectValue = '';
+    if (isReflect){ reflectPrompt = sc.prompt; reflectPlaceholder = sc.placeholder || ''; reflectValue = this.state.reflect[idx] || ''; }
+
+    // complete
+    const scoreTotal = screens.filter(z => ['mcq','scenario','trap','sort'].includes(z.type)).length;
+    const scoreNum = this.state.score;
+    const scorePct = scoreTotal ? Math.round(scoreNum/scoreTotal*100) : 0;
+    let scoreMsg = scorePct>=80 ? 'Strong work \u2014 you can already name the moves OCD makes to manufacture doubt, and the one move that ends the fight.' : scorePct>=50 ? 'A solid first pass. A quick review of the trickier sections will lock the model in.' : 'Good start. The ideas build on each other \u2014 revisit a section or two and run the exercises again.';
+    const scoreNumStyle = { fontWeight:400, fontFamily:"'Press Start 2P',cursive", fontSize:'28px', color: scorePct>=50 ? '#15663f' : '#7a5614', lineHeight:1.5, letterSpacing:'0' };
+    const scoreFillStyle = { height:'100%', width:scorePct+'%', background: scorePct>=50 ? 'oklch(0.64 0.13 158)' : 'oklch(0.72 0.13 70)', boxShadow:'0 0 14px '+(scorePct>=50 ? 'oklch(0.64 0.13 158)' : 'oklch(0.72 0.13 70)'), transition:'width .5s ease' };
+    const recapData = [
+      {num:'01', label:'Two kinds of doubt', text:'Obsessional doubt arrives after reality already gave its answer.', s:1},
+      {num:'02', label:'Inferential confusion', text:'Trusting an imagined story over your own direct senses.', s:2},
+      {num:'03', label:'The OCD bubble', text:'Crossing over from the real situation into a sealed \u201Cwhat if\u201D world.', s:3},
+      {num:'04', label:'Reasoning traps', text:'True facts smuggled in out of context to build a fake case.', s:4},
+      {num:'05', label:'Trusting the senses', text:'Reality already reported in \u2014 stay with what was actually sensed.', s:5},
+      {num:'06', label:'The feared self', text:'The identity fear that secretly tailors every theme.', s:6},
+      {num:'07', label:'Back to the point', text:'Rewind to the last real moment, just before the doubt.', s:7},
+      {num:'08', label:'Stop wrestling', text:'Drop the compulsion, return to felt sense \u2014 present, not paranoid.', s:8}
+    ];
+    const recapItems = recapData.map(r => {
+      const cs = this.sections[r.s];
+      return { num:r.num, label:r.label, text:r.text,
+        cardStyle:{ background:'rgba(0,0,0,.035)', border:'1px solid rgba(255,255,255,.1)', borderLeft:'3px solid '+cs.color, borderRadius:'14px', padding:'16px 18px' },
+        badgeStyle:{ width:'32px', height:'32px', clipPath:PXS, border:'2px solid '+INK, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:'12px', fontFamily:"'Press Start 2P',cursive", background:cs.color, color:'#0d0f17', boxShadow:'2px 2px 0 '+INK } };
+    });
+    const restartStyle = { marginTop:'28px', display:'inline-flex', padding:'14px 26px', clipPath:PXS, borderRadius:'0', border:'3px solid '+INK, background:accent, color:'#0d0f17', fontWeight:700, fontSize:'15px', cursor:'pointer', fontFamily:'inherit', transition:'transform .1s, box-shadow .1s', boxShadow:'4px 4px 0 '+INK };
+
+    return {
+      moduleTitle: 'Where Doubt Comes From',
+      sectionLabel: sec.label,
+      stageRef: this.stageRef,
+      rootStyle, blobAStyle, blobBStyle, blobCStyle,
+      sidebarItems, progressPct, progressFillStyle, stageInnerStyle, stageScrollStyle,
+      isIntro, isSection, isTeach, isQuestion, isSort, isTrap, isReflect, isComplete,
+      eyebrowStyle, calloutStyle, cardStyle, introCardStyle, accentLine,
+      // intro
+      introTitle, introSub, introMeta,
+      // section
+      secNum, secTitle, secSub, sectionCardStyle,
+      // teach
+      heading, body, callout, showCallout,
+      showTwoDoubts, showScale, showFilm, showBubble, showCasting, showRewind, showFrame, showAnchors, showThemes,
+      // question
+      questionEyebrow, question, showStory, storyText, opts, optHover,
+      showFeedback, feedbackHead, feedbackText, feedbackStyle, explainText,
+      // sort
+      sortPrompt, binALabel, binBLabel, trayItems, binAItems, binBItems,
+      checkSortStyle, checkSortDisabled, showSortResult, sortResultText, sortResultStyle,
+      // trap
+      trapIntro, trapSentences, trapHover, showTrapExplain, trapResult, trapExplain, trapExplainStyle,
+      // reflect
+      reflectPrompt, reflectPlaceholder, reflectValue, taFocus,
+      // complete
+      scoreNum, scoreTotal, scoreMsg, scoreNumStyle, scoreFillStyle, recapItems, restartStyle,
+      // nav
+      showFooter, atStart, footerNote, nextLabel, backStyle, continueStyle, continueHover, continueDisabled: !canContinue,
+      // handlers
+      onJump: this.onJump, onOption: this.onOption, onTrap: this.onTrap,
+      onChipClick: this.onChipClick, onDragStart: this.onDragStart, onDragOver: this.onDragOver,
+      onBinDrop: this.onBinDrop, onTrayDrop: this.onTrayDrop, onBinClick: this.onBinClick, onCheckSort: this.onCheckSort,
+      onReflect: this.onReflect, onRestart: this.onRestart, onNext: this.onNext, onBack: this.onBack
+    };
+  }
+}
+</script>
+<script src="react.production.min.js"></script>
+<script src="react-dom.production.min.js"></script>
+<script src="support.js"></script>
+</body>
+</html>
