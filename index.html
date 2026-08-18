@@ -22,22 +22,25 @@
   </header>
 
   <main id="top">
-    <section class="hero">
-      <p class="hero__eyebrow">therapy skills · gamified</p>
-      <h1 class="hero__title">
-        Practice the skills.<br />
-        <span class="hero__title-glow">Beat the moment.</span>
-      </h1>
-      <p class="hero__subtitle">
-        Short, playable exercises drawn from CBT, ACT, DBT, and I-CBT — built for
-        the moments therapy skills actually need to show up.
-      </p>
+    <section class="hero" id="hero-zone">
+      <div class="hero__content">
+        <p class="hero__eyebrow">Therapy skills &middot; gamified</p>
+        <h1 class="hero__title">CBT<span class="hero__title-accent">_</span>Games</h1>
+      </div>
+
+      <div class="hero__floor">
+        <div class="hero__grid"></div>
+        <div class="hero__horizon"></div>
+      </div>
+
+      <div class="hero__catches" id="hero-catches">CATCHES 0</div>
+      <div class="hero__ball" id="hero-ball"></div>
+      <div class="hero__paddle" id="hero-paddle"></div>
     </section>
 
     <section id="games" class="games">
       <div class="games__intro">
         <h2>All games</h2>
-        <p>New games ship regularly. Cards below are live or in active development.</p>
       </div>
 
       <div class="card-grid">
@@ -48,7 +51,7 @@
             <span class="card-number">01</span>
           </div>
           <div class="card-title">Thought, Emotion, or Sensation?</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
         <a class="game-card game-card--cyan" href="#">
@@ -57,43 +60,43 @@
             <span class="card-number">02</span>
           </div>
           <div class="card-title">Spark</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
-        <a class="game-card game-card--green" href="#">
+        <a class="game-card game-card--yellow" href="#">
           <div class="card-top">
             <span class="card-label">DBT &middot; COMPASSION</span>
             <span class="card-number">03</span>
           </div>
           <div class="card-title">Don't Make It Worse!</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
-        <a class="game-card game-card--yellow" href="#">
+        <a class="game-card game-card--pink" href="#">
           <div class="card-top">
             <span class="card-label">I-CBT &middot; REALITY TESTING</span>
             <span class="card-number">04</span>
           </div>
           <div class="card-title">Real News or Fake News?</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
-        <a class="game-card game-card--orange" href="#">
+        <a class="game-card game-card--cyan" href="#">
           <div class="card-top">
             <span class="card-label">I-CBT &middot; THOUGHT CATCHING</span>
             <span class="card-number">05</span>
           </div>
           <div class="card-title">Incoming</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
-        <a class="game-card game-card--purple" href="#">
+        <a class="game-card game-card--yellow" href="#">
           <div class="card-top">
             <span class="card-label">OCD &middot; NARRATIVE WORK</span>
             <span class="card-number">06</span>
           </div>
           <div class="card-title">Am I a Monster?</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
         <a class="game-card game-card--pink" href="#">
@@ -102,7 +105,7 @@
             <span class="card-number">07</span>
           </div>
           <div class="card-title">What Do I Do With This?</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
         <a class="game-card game-card--cyan" href="#">
@@ -111,16 +114,16 @@
             <span class="card-number">08</span>
           </div>
           <div class="card-title">Regulation Station</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
-        <a class="game-card game-card--red" href="games/where-doubt-comes-from/Where%20Doubt%20Comes%20From.dc.html">
+        <a class="game-card game-card--yellow" href="games/where-doubt-comes-from/Where%20Doubt%20Comes%20From.dc.html">
           <div class="card-top">
             <span class="card-label">I-CBT &middot; TRAINING</span>
             <span class="card-number">09</span>
           </div>
           <div class="card-title">Where Doubt Comes From</div>
-          <div class="card-cta">PLAY GAME <span aria-hidden="true">&rarr;</span></div>
+          <div class="card-cta">PLAY GAME <span aria-hidden="true">&#9656;</span></div>
         </a>
 
       </div>
@@ -139,5 +142,7 @@
   <footer class="site-footer">
     <p>CBT Games &middot; built for practicing skills, not just reading about them.</p>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
