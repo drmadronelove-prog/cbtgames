@@ -490,68 +490,127 @@
     /* ─── DUCK HUNT ─── */
     .duck-sky {
       position: relative;
-      height: 320px;
-      background:
-        radial-gradient(circle at 20% 15%, rgba(0,229,255,0.08), transparent 45%),
-        radial-gradient(circle at 80% 75%, rgba(255,46,136,0.07), transparent 45%);
+      height: 360px;
+      overflow: hidden;
       border: 2px solid var(--border);
       border-radius: var(--radius);
-      overflow: hidden;
       margin-bottom: 16px;
+      background: #5c94fc;
+      cursor: crosshair;
     }
-    .duck-sky::after {
-      content: '';
-      position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
+    .duck-scenery {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: block;
+      pointer-events: none;
     }
+
     .duck {
       position: absolute;
-      display: flex; flex-direction: column; align-items: center;
-      gap: 3px;
       transform: translate(-50%, -50%);
-      filter: drop-shadow(0 0 10px rgba(243,238,252,0.4));
+      /* Declared here (not just on .hit/.wrong) so the fall actually
+         animates -- a transition introduced in the same class toggle
+         that also changes the value never gets a "before" frame to
+         interpolate from. */
+      transition: top 0.55s cubic-bezier(.4,0,1,1), opacity 0.4s ease 0.3s;
     }
-    .duck-flip { transform: scaleX(1); transition: transform 0.15s; }
+    /* Bob and flip live on separate wrappers so the on-body sign bobs
+       together with the artwork instead of drifting apart from it. */
+    .duck-bob {
+      position: relative;
+      animation: duckBob 0.55s steps(2) infinite alternate;
+    }
+    .duck-flip {
+      transform: scaleX(1);
+      filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.25));
+    }
     .duck.facing-left .duck-flip { transform: scaleX(-1); }
-    .duck-emoji {
-      font-size: 32px; line-height: 1;
-      animation: duckBob 0.5s ease-in-out infinite alternate;
-    }
+    .duck-art { width: 108px; height: auto; display: block; }
     @keyframes duckBob {
       from { transform: translateY(0); }
-      to   { transform: translateY(-9px); }
+      to   { transform: translateY(-7px); }
     }
+
     .duck-sign {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 11px; font-weight: 700;
-      color: var(--text);
-      max-width: 190px;
+      position: absolute;
+      left: 42%; top: 48%;
+      transform: translate(-50%, -50%);
+      background: rgba(13,10,24,0.82);
+      border: 1.5px solid rgba(255,255,255,0.5);
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-size: 9.5px; font-weight: 700;
+      line-height: 1.25;
+      color: #fff;
+      width: 74px;
       text-align: center;
-      line-height: 1.35;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+      pointer-events: none;
     }
-    .duck.hit {
-      transition: top 0.5s cubic-bezier(.4,0,1,1), opacity 0.45s ease 0.2s;
+
+    /* Both a correct hit and a wrong-category hit knock the duck down --
+       every shot clearly connects. Only the flash color differs. */
+    .duck.hit, .duck.wrong {
       opacity: 0;
     }
-    .duck.hit .duck-flip { transform: rotate(35deg); }
-    .duck.hit .duck-emoji { animation: none; }
-    .duck.miss {
-      transition: opacity 0.4s ease, transform 0.4s ease;
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.85);
+    .duck.hit .duck-bob, .duck.wrong .duck-bob { animation: none; }
+    .duck.hit .duck-flip, .duck.wrong .duck-flip {
+      transform: rotate(30deg);
+    }
+    .duck.facing-left.hit .duck-flip, .duck.facing-left.wrong .duck-flip {
+      transform: scaleX(-1) rotate(-30deg);
+    }
+    .duck.hit .duck-sign, .duck.wrong .duck-sign { opacity: 0; transition: opacity 0.15s; }
+    .duck.hit::after, .duck.wrong::after {
+      content: '';
+      position: absolute; inset: -16px;
+      border-radius: 50%;
+      animation: hitFlash 0.4s ease-out forwards;
+    }
+    .duck.hit::after { background: radial-gradient(circle, rgba(60,255,154,0.55), transparent 70%); }
+    .duck.wrong::after { background: radial-gradient(circle, rgba(255,77,106,0.55), transparent 70%); }
+    @keyframes hitFlash {
+      0%   { opacity: 1; transform: scale(0.6); }
+      100% { opacity: 0; transform: scale(1.6); }
+    }
+
+    /* Reticle flash marking exactly where a shot landed */
+    .shot-crosshair {
+      position: absolute;
+      width: 44px; height: 44px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 6;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(255,255,255,0.7);
+      animation: crosshairPop 0.35s ease-out forwards;
+    }
+    .shot-crosshair::before, .shot-crosshair::after {
+      content: '';
+      position: absolute;
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255,255,255,0.8);
+    }
+    .shot-crosshair::before { left: 50%; top: -6px; bottom: -6px; width: 2px; transform: translateX(-50%); }
+    .shot-crosshair::after { top: 50%; left: -6px; right: -6px; height: 2px; transform: translateY(-50%); }
+    .shot-crosshair.wrong { border-color: var(--incorrect); box-shadow: 0 0 10px rgba(255,77,106,0.7); }
+    .shot-crosshair.wrong::before, .shot-crosshair.wrong::after {
+      background: var(--incorrect); box-shadow: 0 0 6px rgba(255,77,106,0.8);
+    }
+    @keyframes crosshairPop {
+      0%   { transform: translate(-50%, -50%) scale(1.9); opacity: 0; }
+      35%  { opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(0.75); opacity: 0; }
     }
 
     @media (max-width: 400px) {
-      .duck-sky { height: 260px; }
-      .duck-emoji { font-size: 27px; }
-      .duck-sign { font-size: 10px; max-width: 150px; }
+      .duck-sky { height: 300px; }
+      .duck-art { width: 84px; }
+      .duck-sign { font-size: 8.5px; max-width: 68px; }
     }
     @media (max-height: 620px) {
-      .duck-sky { height: 220px; margin-bottom: 12px; }
+      .duck-sky { height: 240px; margin-bottom: 12px; }
+      .duck-art { width: 78px; }
     }
   </style>
 </head>
@@ -694,7 +753,21 @@
         <span class="streak-chip" id="duck-streak-chip" style="display:none">🔥 ×2</span>
       </div>
     </div>
-    <div class="duck-sky" id="duck-sky"></div>
+    <div class="duck-sky" id="duck-sky">
+      <svg class="duck-scenery" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <rect x="0" y="0" width="400" height="300" fill="#5c94fc"/>
+        <rect x="55" y="140" width="14" height="90" fill="#7a3b1e"/>
+        <circle cx="62" cy="110" r="34" fill="#8bc24a"/>
+        <circle cx="34" cy="150" r="26" fill="#7cb63f"/>
+        <circle cx="92" cy="165" r="26" fill="#7cb63f"/>
+        <circle cx="62" cy="180" r="24" fill="#6ba934"/>
+        <circle cx="330" cy="235" r="22" fill="#7cb63f"/>
+        <circle cx="352" cy="240" r="16" fill="#6ba934"/>
+        <rect x="0" y="248" width="400" height="30" fill="#9ed14f"/>
+        <rect x="0" y="248" width="400" height="6" fill="#c8ea8a"/>
+        <rect x="0" y="278" width="400" height="22" fill="#8a5a2e"/>
+      </svg>
+    </div>
     <div class="ans-row">
       <button class="ans-btn T" id="duck-btn-T" onclick="handleDuckShot('T')">
         <span class="btn-letter">T</span>
@@ -1095,6 +1168,26 @@ function endRound1() {
 //  sky on a sign and has to be shot down before it escapes.
 // ──────────────────────────────────────
 const DUCK_COUNT = 10;
+// Pixel-art duck, wings swept back mid-flight -- drawn facing right by default.
+const DUCK_SVG = `<svg class="duck-art" viewBox="0 0 24 20" shape-rendering="crispEdges">
+  <rect x="0" y="12" width="3" height="3" fill="#161616"/>
+  <rect x="2" y="10" width="3" height="3" fill="#161616"/>
+  <rect x="3" y="11" width="4" height="4" fill="#fdfdfd"/>
+  <rect x="5" y="9" width="4" height="4" fill="#fdfdfd"/>
+  <rect x="6" y="6" width="6" height="5" fill="#161616"/>
+  <rect x="9" y="4" width="4" height="4" fill="#161616"/>
+  <rect x="9" y="8" width="4" height="4" fill="#fdfdfd"/>
+  <rect x="11" y="6" width="4" height="4" fill="#fdfdfd"/>
+  <rect x="13" y="4" width="3" height="4" fill="#fdfdfd"/>
+  <rect x="15" y="1" width="6" height="6" fill="#2e8b3d"/>
+  <rect x="16" y="0" width="4" height="2" fill="#2e8b3d"/>
+  <rect x="18" y="2" width="2" height="2" fill="#fdfdfd"/>
+  <rect x="19" y="2" width="1" height="1" fill="#161616"/>
+  <rect x="21" y="3" width="3" height="2" fill="#e8791a"/>
+  <rect x="7" y="14" width="2" height="2" fill="#e8791a"/>
+  <rect x="10" y="14" width="2" height="2" fill="#e8791a"/>
+</svg>`;
+
 let ducks = [];
 let duckIndex = 0;
 let duckActive = false;
@@ -1103,12 +1196,16 @@ let duckSpawnTime = 0;
 let duckEscapeTimer = null;
 let duckAdvanceTimer = null;
 
+function clearDucks() {
+  document.getElementById('duck-sky').querySelectorAll('.duck, .shot-crosshair').forEach(n => n.remove());
+}
+
 function startRound2() {
   AudioEngine.init();
   AudioEngine.sfxStart();
   ducks = shuffle(POOL).slice(0, DUCK_COUNT);
   duckIndex = 0;
-  document.getElementById('duck-sky').innerHTML = '';
+  clearDucks();
   showScreen('screen-duckhunt');
   spawnNextDuck();
 }
@@ -1124,6 +1221,7 @@ function updateDuckHUD() {
 function spawnNextDuck() {
   if (duckEscapeTimer) clearTimeout(duckEscapeTimer);
   if (duckAdvanceTimer) clearTimeout(duckAdvanceTimer);
+  clearDucks();
 
   if (duckIndex >= DUCK_COUNT) { endRound2(); return; }
   updateDuckHUD();
@@ -1131,12 +1229,12 @@ function spawnNextDuck() {
   const q = ducks[duckIndex];
   const sky = document.getElementById('duck-sky');
   const fromLeft = Math.random() < 0.5;
-  const topPct = 14 + Math.random() * 52;
-  const duration = Math.max(2500, 4200 - duckIndex * 150); // ramps up over the round
+  const topPct = 16 + Math.random() * 48;
+  const duration = Math.max(4500, 6500 - duckIndex * 120); // slow and steady, gentle ramp
 
   const el = document.createElement('div');
   el.className = 'duck' + (fromLeft ? '' : ' facing-left');
-  el.innerHTML = `<div class="duck-flip"><div class="duck-emoji">🦆</div></div><div class="duck-sign"></div>`;
+  el.innerHTML = `<div class="duck-bob"><div class="duck-flip">${DUCK_SVG}</div><div class="duck-sign"></div></div>`;
   el.querySelector('.duck-sign').textContent = q.text;
   el.style.top = topPct + '%';
   el.style.left = fromLeft ? '-15%' : '115%';
@@ -1168,6 +1266,17 @@ function freezeDuck(el) {
   el.style.transition = 'none';
   el.style.left = pct + '%';
   void el.offsetWidth;
+  el.style.transition = ''; // release the override -- the fall (top/opacity) still needs to animate
+  return pct;
+}
+
+function showCrosshair(sky, leftPct, topPct, wrong) {
+  const c = document.createElement('div');
+  c.className = 'shot-crosshair' + (wrong ? ' wrong' : '');
+  c.style.left = leftPct + '%';
+  c.style.top = topPct + '%';
+  sky.appendChild(c);
+  setTimeout(() => c.remove(), 400);
 }
 
 function duckEscape() {
@@ -1175,14 +1284,9 @@ function duckEscape() {
   duckActive = false;
   streak = 0;
   updateDuckHUD();
-
-  if (duckEl) {
-    freezeDuck(duckEl);
-    duckEl.classList.add('miss');
-  }
   AudioEngine.sfxWrong();
-
-  duckAdvanceTimer = setTimeout(() => { duckIndex++; spawnNextDuck(); }, 450);
+  // Let the duck's own flight finish carrying it off-screen -- it got away.
+  duckAdvanceTimer = setTimeout(() => { duckIndex++; spawnNextDuck(); }, 350);
 }
 
 function handleDuckShot(choice) {
@@ -1194,7 +1298,9 @@ function handleDuckShot(choice) {
   if (duckEscapeTimer) clearTimeout(duckEscapeTimer);
 
   const target = duckEl;
-  freezeDuck(target);
+  const shotLeftPct = freezeDuck(target);
+  const shotTopPct = parseFloat(target.style.top);
+  showCrosshair(document.getElementById('duck-sky'), shotLeftPct, shotTopPct, !correct);
 
   if (correct) {
     streak++;
@@ -1208,19 +1314,23 @@ function handleDuckShot(choice) {
     score += base + bonus;
 
     target.classList.add('hit');
-    target.style.top = 'calc(100% + 40px)';
-
+    void target.offsetWidth; // establish the pre-fall frame so the transition actually animates
     const r = target.getBoundingClientRect();
-    runExplosion(r.left + r.width / 2, r.top + r.height / 2);
+    target.style.top = 'calc(100% + 50px)';
+
+    runFeathers(r.left + r.width / 2, r.top + r.height / 2);
     AudioEngine.sfxCorrect(streak);
   } else {
+    // Still a hit -- you fired and connected -- just the wrong category.
     streak = 0;
-    target.classList.add('miss');
+    target.classList.add('wrong');
+    void target.offsetWidth; // same fix -- otherwise the fall jumps straight to its end state
+    target.style.top = 'calc(100% + 50px)';
     AudioEngine.sfxWrong();
   }
 
   updateDuckHUD();
-  duckAdvanceTimer = setTimeout(() => { duckIndex++; spawnNextDuck(); }, 650);
+  duckAdvanceTimer = setTimeout(() => { duckIndex++; spawnNextDuck(); }, 700);
 }
 
 function endRound2() {
@@ -1513,6 +1623,69 @@ function drawStar(cx, cy, spikes, outer, inner) {
 }
 
 // ──────────────────────────────────────
+//  FEATHER BURST -- Duck Hunt hit effect
+// ──────────────────────────────────────
+function runFeathers(cx, cy) {
+  canvas.style.display = 'block';
+  const parts = [];
+  const colors = ['#ffffff', '#e8e4f0', '#2c2148', '#8a7aad'];
+
+  for (let i = 0; i < 22; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const spd = 2 + Math.random() * 6;
+    parts.push({
+      x: cx, y: cy,
+      vx: Math.cos(a) * spd,
+      vy: Math.sin(a) * spd - Math.random() * 2.5,
+      rot: Math.random() * Math.PI * 2,
+      rotspd: (Math.random() - 0.5) * 0.3,
+      w: 4 + Math.random() * 6,
+      h: 7 + Math.random() * 8,
+      life: 1, decay: 0.014 + Math.random() * 0.01,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+
+  const DUR = 800;
+  const t0 = performance.now();
+
+  function tick(now) {
+    const elapsed = now - t0;
+    if (elapsed >= DUR) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'none';
+      return;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (const p of parts) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.22;
+      p.vx *= 0.98;
+      p.rot += p.rotspd;
+      p.life -= p.decay;
+      if (p.life <= 0) continue;
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.w / 2, p.h / 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+}
+
+// ──────────────────────────────────────
 //  AUDIO ENGINE  (Web Audio API, no deps)
 // ──────────────────────────────────────
 const AudioEngine = (() => {
@@ -1520,16 +1693,11 @@ const AudioEngine = (() => {
   let master = null;
   let reverb = null;      // shared convolver bus -- gives SFX and pad a sense of space
   let reverbSend = null;
-  let delayNode = null;   // shared feedback delay -- retro echo on the ambient melody
+  let delayNode = null;   // shared feedback delay -- retro echo on the lead line
   let delaySend = null;
   let muted = false;
   let musicOn = false;
   let melodyTO = null;
-  let padOscs = [];   // refs so we can stop them on restart
-
-  // A minor pentatonic: A3 C4 D4 E4 G4 A4 C5
-  const PENTA = [220, 261.63, 293.66, 329.63, 392, 440, 523.25];
-  let lastNoteIdx = -1;
 
   // ── internals ──
   function ramp(param, val, t, dur = 0.02) {
@@ -1634,121 +1802,68 @@ const AudioEngine = (() => {
     delaySend.connect(delayNode);
   }
 
+  // Bouncy 8-bit backing loop: C - G - Am - F, bass "oom-pah" under a bright
+  // arpeggiated lead. Two bars of eighth notes, rescheduled every loop.
+  const BPM = 128;
+  const STEP = 60 / BPM / 2;
+  const BASS_NOTES = [
+    130.81,261.63,130.81,261.63,  // C
+     98.00,196.00, 98.00,196.00,  // G
+    110.00,220.00,110.00,220.00,  // Am
+     87.31,174.61, 87.31,174.61,  // F
+  ];
+  const LEAD_NOTES = [
+    659.25,783.99,1046.50,783.99, // E G C G
+    587.33,783.99, 987.77,783.99, // D G B G
+    440.00,523.25, 659.25,523.25, // A C E C
+    349.23,440.00, 523.25,440.00, // F A C A
+  ];
+
   function startMusic() {
     if (!ctx || musicOn) return;
     musicOn = true;
-    buildPad();
-    setTimeout(playMelodyNote, 1400);
+    playLoop();
   }
 
-  function buildPad() {
-    // Sub drones for low-end weight: A1, A2
-    const subGain = ctx.createGain();
-    subGain.gain.value = 0;
-    subGain.connect(master);
-    [55, 110].forEach((f, i) => {
+  function playLoop() {
+    if (!ctx || !musicOn) return;
+    if (muted) { melodyTO = setTimeout(playLoop, 500); return; }
+
+    const t0 = ctx.currentTime;
+
+    const bassGain = ctx.createGain();
+    bassGain.gain.value = 0.075;
+    bassGain.connect(master);
+
+    const leadGain = ctx.createGain();
+    leadGain.gain.value = 0.05;
+    leadGain.connect(master);
+    const leadRev = ctx.createGain();
+    leadRev.gain.value = 0.14;
+    leadGain.connect(leadRev);
+    leadRev.connect(reverbSend);
+    leadGain.connect(delaySend); // light echo keeps the hook lively
+
+    BASS_NOTES.forEach((f, i) => {
+      const t = t0 + i * STEP;
       const g = ctx.createGain();
-      g.gain.value = [0.03, 0.036][i];
-      const o = ctx.createOscillator();
-      o.type = 'sine';
-      o.frequency.value = f;
-      o.connect(g);
-      g.connect(subGain);
-      o.start();
-      padOscs.push(o);
+      g.gain.value = 0;
+      env(g, t, 0.006, 1, 0, STEP * 0.55);
+      osc(f, 'triangle', g, t, t + STEP * 0.7);
+      g.connect(bassGain);
     });
 
-    // Detuned saw pad through a slowly swept resonant filter -- synthwave character
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 500;
-    filter.Q.value = 3.2;
-
-    const lfo = ctx.createOscillator();
-    const lfoG = ctx.createGain();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.05;
-    lfoG.gain.value = 240;
-    lfo.connect(lfoG);
-    lfoG.connect(filter.frequency);
-    lfo.start();
-    padOscs.push(lfo);
-
-    const padGain = ctx.createGain();
-    padGain.gain.value = 0;
-    filter.connect(padGain);
-    padGain.connect(master);
-
-    const padReverbSend = ctx.createGain();
-    padReverbSend.gain.value = 0.22;
-    filter.connect(padReverbSend);
-    padReverbSend.connect(reverbSend);
-
-    // A2 C3 E3 -- micro-detuned, outer voices spread across the stereo field
-    [110, 130.81, 164.81].forEach((f, i) => {
+    LEAD_NOTES.forEach((f, i) => {
+      const t = t0 + i * STEP;
       const g = ctx.createGain();
-      g.gain.value = 0.02;
-      const o = ctx.createOscillator();
-      o.type = 'sawtooth';
-      o.frequency.value = f + (i - 1) * 0.6;
-      o.connect(g);
-      const node = i === 1 ? g : pan(g, (i - 1) * 0.35);
-      node.connect(filter);
-      o.start();
-      padOscs.push(o);
+      g.gain.value = 0;
+      env(g, t, 0.004, 1, 0, STEP * 0.42);
+      osc(f, 'square', g, t, t + STEP * 0.55);
+      g.connect(leadGain);
     });
 
-    // Gentle fade-in over ~3s
-    padGain.gain.setValueAtTime(0, ctx.currentTime);
-    padGain.gain.linearRampToValueAtTime(1, ctx.currentTime + 3.2);
-    subGain.gain.setValueAtTime(0, ctx.currentTime);
-    subGain.gain.linearRampToValueAtTime(1, ctx.currentTime + 3.2);
-  }
-
-  function playMelodyNote() {
-    if (!ctx || !musicOn || muted) {
-      if (musicOn) melodyTO = setTimeout(playMelodyNote, 800);
-      return;
-    }
-
-    // Pick a note, avoid immediate repeat, slight gravity toward root (A)
-    const weights = [3, 1, 2, 2, 1, 3, 1];
-    let total = weights.reduce((a,b) => a+b, 0), r = Math.random() * total, idx = 0;
-    for (let i = 0; i < weights.length; i++) { r -= weights[i]; if (r <= 0) { idx = i; break; } }
-    if (idx === lastNoteIdx) idx = (idx + 1 + Math.floor(Math.random() * 3)) % PENTA.length;
-    lastNoteIdx = idx;
-
-    const freq = PENTA[idx];
-    const dur  = 0.75 + Math.random() * 0.9;
-    const vol  = 0.065 + Math.random() * 0.026;
-    const t    = ctx.currentTime;
-    const type = Math.random() < 0.78 ? 'triangle' : 'square'; // occasional retro square blip
-
-    const g = ctx.createGain();
-    g.gain.value = 0;
-    env(g, t, 0.1, vol, dur * 0.25, dur * 0.6);
-    osc(freq, type, g, t, t + dur + 1.2);
-
-    const panned = pan(g, (Math.random() - 0.5) * 0.7);
-    panned.connect(master);
-    panned.connect(delaySend); // retro echo trail
-
-    const gRev = ctx.createGain();
-    gRev.gain.value = 0.12;
-    g.connect(gRev);
-    gRev.connect(reverbSend);
-
-    // Occasional soft harmony a fifth up
-    if (Math.random() < 0.28) {
-      const hg = ctx.createGain();
-      hg.gain.value = 0;
-      env(hg, t + 0.06, 0.12, vol * 0.38, dur * 0.2, dur * 0.5);
-      osc(freq * 1.5, 'sine', hg, t + 0.06, t + dur + 1);
-      hg.connect(master);
-    }
-
-    const next = 1600 + Math.random() * 3000;
-    melodyTO = setTimeout(playMelodyNote, next);
+    const loopDur = STEP * BASS_NOTES.length;
+    melodyTO = setTimeout(playLoop, loopDur * 1000);
   }
 
   // ── sound effects ──
