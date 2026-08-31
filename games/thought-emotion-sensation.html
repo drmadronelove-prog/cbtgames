@@ -490,7 +490,7 @@
     /* ─── DUCK HUNT ─── */
     .duck-sky {
       position: relative;
-      height: 360px;
+      height: 400px;
       overflow: hidden;
       border: 2px solid var(--border);
       border-radius: var(--radius);
@@ -525,7 +525,7 @@
       filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.25));
     }
     .duck.facing-left .duck-flip { transform: scaleX(-1); }
-    .duck-art { width: 108px; height: auto; display: block; }
+    .duck-art { width: 150px; height: auto; display: block; }
     @keyframes duckBob {
       from { transform: translateY(0); }
       to   { transform: translateY(-7px); }
@@ -538,11 +538,11 @@
       background: rgba(13,10,24,0.82);
       border: 1.5px solid rgba(255,255,255,0.5);
       border-radius: 6px;
-      padding: 3px 6px;
-      font-size: 9.5px; font-weight: 700;
-      line-height: 1.25;
+      padding: 4px 7px;
+      font-size: 11.5px; font-weight: 700;
+      line-height: 1.3;
       color: #fff;
-      width: 74px;
+      width: 106px;
       text-align: center;
       pointer-events: none;
     }
@@ -604,13 +604,13 @@
     }
 
     @media (max-width: 400px) {
-      .duck-sky { height: 300px; }
-      .duck-art { width: 84px; }
-      .duck-sign { font-size: 8.5px; max-width: 68px; }
+      .duck-sky { height: 330px; }
+      .duck-art { width: 118px; }
+      .duck-sign { font-size: 10.5px; width: 92px; }
     }
     @media (max-height: 620px) {
-      .duck-sky { height: 240px; margin-bottom: 12px; }
-      .duck-art { width: 78px; }
+      .duck-sky { height: 270px; margin-bottom: 12px; }
+      .duck-art { width: 108px; }
     }
   </style>
 </head>
@@ -964,6 +964,7 @@ function shuffle(arr) {
 
 function startGame() {
   AudioEngine.init();
+  AudioEngine.setTrack('quiz');
   AudioEngine.startMusic();
   AudioEngine.sfxStart();
   round = shuffle(POOL).slice(0, 12);
@@ -1202,6 +1203,7 @@ function clearDucks() {
 
 function startRound2() {
   AudioEngine.init();
+  AudioEngine.setTrack('duckhunt');
   AudioEngine.sfxStart();
   ducks = shuffle(POOL).slice(0, DUCK_COUNT);
   duckIndex = 0;
@@ -1301,6 +1303,7 @@ function handleDuckShot(choice) {
   const shotLeftPct = freezeDuck(target);
   const shotTopPct = parseFloat(target.style.top);
   showCrosshair(document.getElementById('duck-sky'), shotLeftPct, shotTopPct, !correct);
+  AudioEngine.sfxQuack(); // it got hit either way -- right or wrong category
 
   if (correct) {
     streak++;
@@ -1802,22 +1805,44 @@ const AudioEngine = (() => {
     delaySend.connect(delayNode);
   }
 
-  // Bouncy 8-bit backing loop: C - G - Am - F, bass "oom-pah" under a bright
-  // arpeggiated lead. Two bars of eighth notes, rescheduled every loop.
-  const BPM = 128;
-  const STEP = 60 / BPM / 2;
-  const BASS_NOTES = [
-    130.81,261.63,130.81,261.63,  // C
-     98.00,196.00, 98.00,196.00,  // G
-    110.00,220.00,110.00,220.00,  // Am
-     87.31,174.61, 87.31,174.61,  // F
-  ];
-  const LEAD_NOTES = [
-    659.25,783.99,1046.50,783.99, // E G C G
-    587.33,783.99, 987.77,783.99, // D G B G
-    440.00,523.25, 659.25,523.25, // A C E C
-    349.23,440.00, 523.25,440.00, // F A C A
-  ];
+  // Two bouncy 8-bit backing loops, both "oom-pah" bass under a bright
+  // arpeggiated lead, two bars of eighth notes rescheduled every loop --
+  // one for the quiz, a distinct faster/brighter one for Duck Hunt.
+  const TRACKS = {
+    quiz: {
+      bpm: 128,
+      bassGain: 0.075, leadGain: 0.05,
+      bass: [ // C - G - Am - F, root/octave bounce
+        130.81,261.63,130.81,261.63,
+         98.00,196.00, 98.00,196.00,
+        110.00,220.00,110.00,220.00,
+         87.31,174.61, 87.31,174.61,
+      ],
+      lead: [ // E G C G / D G B G / A C E C / F A C A
+        659.25,783.99,1046.50,783.99,
+        587.33,783.99, 987.77,783.99,
+        440.00,523.25, 659.25,523.25,
+        349.23,440.00, 523.25,440.00,
+      ],
+    },
+    duckhunt: {
+      bpm: 144,
+      bassGain: 0.07, leadGain: 0.055,
+      bass: [ // G - D - Em - C, root/octave bounce, quicker tempo
+        196.00,392.00,196.00,392.00,
+        146.83,293.66,146.83,293.66,
+        164.81,329.63,164.81,329.63,
+        130.81,261.63,130.81,261.63,
+      ],
+      lead: [ // D G B G / A D F# D / G B E B / E G C G
+        587.33,783.99, 987.77,783.99,
+        440.00,587.33, 739.99,587.33,
+        392.00,493.88, 659.25,493.88,
+        329.63,392.00, 523.25,392.00,
+      ],
+    },
+  };
+  let currentTrack = 'quiz';
 
   function startMusic() {
     if (!ctx || musicOn) return;
@@ -1825,18 +1850,29 @@ const AudioEngine = (() => {
     playLoop();
   }
 
+  function setTrack(name) {
+    if (!TRACKS[name] || name === currentTrack) return;
+    currentTrack = name;
+    if (musicOn) {
+      if (melodyTO) clearTimeout(melodyTO);
+      playLoop(); // switch in immediately rather than waiting out the old loop
+    }
+  }
+
   function playLoop() {
     if (!ctx || !musicOn) return;
     if (muted) { melodyTO = setTimeout(playLoop, 500); return; }
 
+    const track = TRACKS[currentTrack];
+    const step = 60 / track.bpm / 2;
     const t0 = ctx.currentTime;
 
     const bassGain = ctx.createGain();
-    bassGain.gain.value = 0.075;
+    bassGain.gain.value = track.bassGain;
     bassGain.connect(master);
 
     const leadGain = ctx.createGain();
-    leadGain.gain.value = 0.05;
+    leadGain.gain.value = track.leadGain;
     leadGain.connect(master);
     const leadRev = ctx.createGain();
     leadRev.gain.value = 0.14;
@@ -1844,25 +1880,25 @@ const AudioEngine = (() => {
     leadRev.connect(reverbSend);
     leadGain.connect(delaySend); // light echo keeps the hook lively
 
-    BASS_NOTES.forEach((f, i) => {
-      const t = t0 + i * STEP;
+    track.bass.forEach((f, i) => {
+      const t = t0 + i * step;
       const g = ctx.createGain();
       g.gain.value = 0;
-      env(g, t, 0.006, 1, 0, STEP * 0.55);
-      osc(f, 'triangle', g, t, t + STEP * 0.7);
+      env(g, t, 0.006, 1, 0, step * 0.55);
+      osc(f, 'triangle', g, t, t + step * 0.7);
       g.connect(bassGain);
     });
 
-    LEAD_NOTES.forEach((f, i) => {
-      const t = t0 + i * STEP;
+    track.lead.forEach((f, i) => {
+      const t = t0 + i * step;
       const g = ctx.createGain();
       g.gain.value = 0;
-      env(g, t, 0.004, 1, 0, STEP * 0.42);
-      osc(f, 'square', g, t, t + STEP * 0.55);
+      env(g, t, 0.004, 1, 0, step * 0.42);
+      osc(f, 'square', g, t, t + step * 0.55);
       g.connect(leadGain);
     });
 
-    const loopDur = STEP * BASS_NOTES.length;
+    const loopDur = step * track.bass.length;
     melodyTO = setTimeout(playLoop, loopDur * 1000);
   }
 
@@ -1984,6 +2020,48 @@ const AudioEngine = (() => {
     gr.connect(reverbSend);
   }
 
+  function sfxQuack() {
+    if (!ctx) return;
+    // Two quick nasal honks -- a fast pitch-drop sawtooth through a falling
+    // lowpass, with a rapid amplitude wobble for the buzzy "quack" texture.
+    const t0 = ctx.currentTime;
+    [0, 0.1].forEach((offset, i) => {
+      const t = t0 + offset;
+      const dur = i === 0 ? 0.16 : 0.13;
+      const peak = i === 0 ? 0.24 : 0.18;
+
+      const g = ctx.createGain();
+      g.gain.value = 0;
+      env(g, t, 0.004, peak, 0.02, dur);
+
+      const trem = ctx.createOscillator();
+      const tremGain = ctx.createGain();
+      trem.type = 'square';
+      trem.frequency.value = 60;
+      tremGain.gain.value = peak * 0.32;
+      trem.connect(tremGain);
+      tremGain.connect(g.gain);
+      trem.start(t);
+      trem.stop(t + dur + 0.05);
+
+      const filt = ctx.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.Q.value = 2.2;
+      filt.frequency.setValueAtTime(2000, t);
+      filt.frequency.exponentialRampToValueAtTime(450, t + dur * 0.9);
+
+      const o = ctx.createOscillator();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(360 - i * 30, t);
+      o.frequency.exponentialRampToValueAtTime(150, t + dur * 0.85);
+      o.connect(filt);
+      filt.connect(g);
+      g.connect(master);
+      o.start(t);
+      o.stop(t + dur + 0.06);
+    });
+  }
+
   function sfxStart() {
     if (!ctx) return;
     const t = ctx.currentTime;
@@ -2067,7 +2145,7 @@ const AudioEngine = (() => {
     return muted;
   }
 
-  return { init, startMusic, sfxCorrect, sfxWrong, sfxTick, sfxStart, sfxEnd, sfxWhoosh, toggle };
+  return { init, startMusic, setTrack, sfxCorrect, sfxWrong, sfxTick, sfxStart, sfxEnd, sfxWhoosh, sfxQuack, toggle };
 })();
 
 // ──────────────────────────────────────
