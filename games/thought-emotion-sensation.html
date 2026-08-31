@@ -643,6 +643,8 @@
 <canvas id="fx-canvas"></canvas>
 <audio id="music-quiz" src="monume-retro-arcade-game-music-2-498031.mp3" loop preload="auto"></audio>
 <audio id="music-duckhunt" src="monume-american-western-country-576992.mp3" loop preload="auto"></audio>
+<audio id="sfx-explosion" src="freesound_community-explosion-80108.mp3" preload="auto"></audio>
+<audio id="sfx-quack" src="freesound_community-075176_duck-quack-40345.mp3" preload="auto"></audio>
 <button id="music-btn" onclick="AudioEngine.toggle()" title="Toggle music" aria-label="Toggle music">♪</button>
 
 <div id="app">
@@ -1145,6 +1147,7 @@ function handleAnswer(choice) {
 
     // Fire explosion using pre-cached coords
     runExplosion(cachedCoords.x, cachedCoords.y);
+    AudioEngine.sfxExplosion();
     AudioEngine.sfxCorrect(streak);
 
     advTimer = setTimeout(nextQuestion, 3500);
@@ -1194,25 +1197,34 @@ function endRound1() {
 //  Same three categories, but each phrase flies across the
 //  sky on a sign and has to be shot down before it escapes.
 // ──────────────────────────────────────
-const DUCK_COUNT = 10;
+const DUCK_COUNT = 12; // 20% longer than the original 10-duck round
 // Pixel-art duck, wings swept back mid-flight -- drawn facing right by default.
-const DUCK_SVG = `<svg class="duck-art" viewBox="0 0 24 20" shape-rendering="crispEdges">
-  <rect x="0" y="12" width="3" height="3" fill="#161616"/>
-  <rect x="2" y="10" width="3" height="3" fill="#161616"/>
-  <rect x="3" y="11" width="4" height="4" fill="#fdfdfd"/>
-  <rect x="5" y="9" width="4" height="4" fill="#fdfdfd"/>
-  <rect x="6" y="6" width="6" height="5" fill="#161616"/>
-  <rect x="9" y="4" width="4" height="4" fill="#161616"/>
-  <rect x="9" y="8" width="4" height="4" fill="#fdfdfd"/>
-  <rect x="11" y="6" width="4" height="4" fill="#fdfdfd"/>
-  <rect x="13" y="4" width="3" height="4" fill="#fdfdfd"/>
-  <rect x="15" y="1" width="6" height="6" fill="#2e8b3d"/>
-  <rect x="16" y="0" width="4" height="2" fill="#2e8b3d"/>
-  <rect x="18" y="2" width="2" height="2" fill="#fdfdfd"/>
-  <rect x="19" y="2" width="1" height="1" fill="#161616"/>
-  <rect x="21" y="3" width="3" height="2" fill="#e8791a"/>
-  <rect x="7" y="14" width="2" height="2" fill="#e8791a"/>
-  <rect x="10" y="14" width="2" height="2" fill="#e8791a"/>
+const DUCK_SVG = `<svg class="duck-art" viewBox="0 0 40 22" shape-rendering="crispEdges">
+  <rect x="1" y="12" width="4" height="3" fill="#161616"/>
+  <rect x="4" y="10" width="3" height="3" fill="#161616"/>
+
+  <rect x="10" y="10" width="15" height="8" fill="#fdfdfd"/>
+  <rect x="7" y="12" width="4" height="5" fill="#fdfdfd"/>
+  <rect x="23" y="8" width="4" height="6" fill="#fdfdfd"/>
+  <rect x="12" y="8" width="9" height="3" fill="#fdfdfd"/>
+  <rect x="10" y="17" width="11" height="2" fill="#fdfdfd"/>
+
+  <rect x="9" y="7" width="11" height="4" fill="#161616"/>
+  <rect x="7" y="10" width="6" height="3" fill="#161616"/>
+  <rect x="18" y="6" width="4" height="3" fill="#161616"/>
+  <rect x="6" y="12" width="2" height="2" fill="#161616"/>
+
+  <rect x="25" y="4" width="8" height="8" fill="#2e8b3d"/>
+  <rect x="27" y="2" width="4" height="3" fill="#2e8b3d"/>
+  <rect x="25" y="12" width="5" height="2" fill="#2e8b3d"/>
+
+  <rect x="29" y="6" width="2" height="2" fill="#fdfdfd"/>
+  <rect x="30" y="6" width="1" height="1" fill="#161616"/>
+
+  <rect x="33" y="6" width="4" height="3" fill="#e8791a"/>
+
+  <rect x="15" y="18" width="2" height="2" fill="#e8791a"/>
+  <rect x="18" y="18" width="2" height="2" fill="#e8791a"/>
 </svg>`;
 
 let ducks = [];
@@ -1258,7 +1270,9 @@ function spawnNextDuck() {
   const sky = document.getElementById('duck-sky');
   const fromLeft = Math.random() < 0.5;
   const topPct = 30 + Math.random() * 42; // leaves headroom for the thought bubble above
-  const duration = Math.max(4500, 6500 - duckIndex * 120); // slow and steady, gentle ramp
+  let duration = Math.max(4500, 6500 - duckIndex * 120); // slow and steady, gentle ramp
+  const extensionStart = DUCK_COUNT - Math.round(DUCK_COUNT * 0.2); // last 20% of the round
+  if (duckIndex >= extensionStart) duration *= 0.9; // 10% faster through the extension
 
   const el = document.createElement('div');
   el.className = 'duck' + (fromLeft ? '' : ' facing-left');
@@ -1850,6 +1864,28 @@ const AudioEngine = (() => {
     return musicEls;
   }
 
+  // One-shot recorded samples (explosion, quack). Each play clones the
+  // element so rapid re-triggers don't cut a previous instance off.
+  let sampleEls = null;
+  function getSampleEls() {
+    if (!sampleEls) {
+      sampleEls = {
+        explosion: document.getElementById('sfx-explosion'),
+        quack: document.getElementById('sfx-quack'),
+      };
+    }
+    return sampleEls;
+  }
+
+  function playSample(name, volume) {
+    const el = getSampleEls()[name];
+    if (!el) return;
+    const node = el.cloneNode(true);
+    node.volume = volume;
+    node.muted = muted;
+    node.play().catch(() => {});
+  }
+
   function startMusic() {
     if (musicOn) return;
     musicOn = true;
@@ -2000,45 +2036,11 @@ const AudioEngine = (() => {
   }
 
   function sfxQuack() {
-    if (!ctx) return;
-    // Two quick nasal honks -- a fast pitch-drop sawtooth through a falling
-    // lowpass, with a rapid amplitude wobble for the buzzy "quack" texture.
-    const t0 = ctx.currentTime;
-    [0, 0.1].forEach((offset, i) => {
-      const t = t0 + offset;
-      const dur = i === 0 ? 0.16 : 0.13;
-      const peak = i === 0 ? 0.24 : 0.18;
+    playSample('quack', 0.85);
+  }
 
-      const g = ctx.createGain();
-      g.gain.value = 0;
-      env(g, t, 0.004, peak, 0.02, dur);
-
-      const trem = ctx.createOscillator();
-      const tremGain = ctx.createGain();
-      trem.type = 'square';
-      trem.frequency.value = 60;
-      tremGain.gain.value = peak * 0.32;
-      trem.connect(tremGain);
-      tremGain.connect(g.gain);
-      trem.start(t);
-      trem.stop(t + dur + 0.05);
-
-      const filt = ctx.createBiquadFilter();
-      filt.type = 'lowpass';
-      filt.Q.value = 2.2;
-      filt.frequency.setValueAtTime(2000, t);
-      filt.frequency.exponentialRampToValueAtTime(450, t + dur * 0.9);
-
-      const o = ctx.createOscillator();
-      o.type = 'sawtooth';
-      o.frequency.setValueAtTime(360 - i * 30, t);
-      o.frequency.exponentialRampToValueAtTime(150, t + dur * 0.85);
-      o.connect(filt);
-      filt.connect(g);
-      g.connect(master);
-      o.start(t);
-      o.stop(t + dur + 0.06);
-    });
+  function sfxExplosion() {
+    playSample('explosion', 0.7);
   }
 
   function sfxStart() {
@@ -2125,7 +2127,7 @@ const AudioEngine = (() => {
     return muted;
   }
 
-  return { init, startMusic, setTrack, sfxCorrect, sfxWrong, sfxTick, sfxStart, sfxEnd, sfxWhoosh, sfxQuack, toggle };
+  return { init, startMusic, setTrack, sfxCorrect, sfxWrong, sfxTick, sfxStart, sfxEnd, sfxWhoosh, sfxQuack, sfxExplosion, toggle };
 })();
 
 // ──────────────────────────────────────
