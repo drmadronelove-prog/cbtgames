@@ -275,20 +275,44 @@ function tone(f,d,tp,v,del){
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||0.25,t+.015);g.gain.exponentialRampToValueAtTime(.001,t+d);
   o.start(t);o.stop(t+d+.05);
 }
-function sClick(){tone(780,.07,'sine',.1);}
-function sWrong(){tone(185,.28,'triangle',.18);tone(160,.22,'triangle',.14,.06);}
-function playBell(){
-  var el=document.getElementById('sfx-bell');
-  if(!el||G.muted)return;
-  var n=el.cloneNode(true);
-  n.volume=0.6;
-  n.play().catch(function(){});
+// Soft bell-like tone -- a fundamental plus two quiet, slightly detuned
+// overtones with a slow attack and long natural decay, instead of a bright
+// single-wave blip. Used everywhere a synth cue needs to feel like a chime
+// rather than a game-console beep.
+function chime(f,dur,vol,del){
+  if(!actx||G.muted)return;
+  var t=actx.currentTime+(del||0);
+  vol=vol==null?0.16:vol;dur=dur||1.2;
+  [[1,1],[2.01,.32],[3.005,.12]].forEach(function(p){
+    var o=actx.createOscillator(),g=actx.createGain();
+    o.type='sine';o.frequency.value=f*p[0];
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol*p[1],t+.06);
+    g.gain.exponentialRampToValueAtTime(.0008,t+dur);
+    o.connect(g);g.connect(mgain);
+    o.start(t);o.stop(t+dur+.05);
+  });
 }
-function sTrans(){tone(440,.13,'sine',.1);tone(554,.1,'sine',.07,.07);}
-function sPlay(){[261,329,392,523].forEach(function(f,i){tone(f,.4,'sine',.25,i*.1);});}
-function sFanfare(r){
-  var n=r>=.87?[523,659,784,1047,1319,1047,784,1319,1047]:r>=.6?[523,659,784,1047]:[392,523,659];
-  n.forEach(function(f,i){tone(f,.35,'sine',.28,i*.1);});
+function sClick(){chime(660,.5,.05);}
+function sWrong(){chime(207.65,1.0,.11);}
+function playBell(vol,rate,del){
+  var fire=function(){
+    if(G.muted)return;
+    var el=document.getElementById('sfx-bell');
+    if(!el)return;
+    var n=el.cloneNode(true);
+    n.volume=vol==null?0.6:vol;
+    try{n.playbackRate=rate||1;}catch(e){}
+    n.play().catch(function(){});
+  };
+  if(del)setTimeout(fire,del*1000);else fire();
+}
+function sTrans(){chime(523.25,.7,.07);}
+function sPlay(){chime(392,2.2,.16);}
+function sFinale(r){
+  var strikes=r>=.87?3:r>=.6?2:1;
+  var rates=[1,1.12,0.86];
+  for(var i=0;i<strikes;i++)playBell(0.55-i*0.1,rates[i],i*0.85);
 }
 function toggleMute(){
   G.muted=!G.muted;
@@ -407,7 +431,7 @@ function selR(r){
 function showEnd(){
   showScr('es');var tot=G.sc.length,r=G.score/tot;
   setTimeout(function(){
-    sFanfare(r);spawn(0,0,80,3,true);
+    sFinale(r);spawn(0,0,80,3,true);
     setTimeout(function(){spawn(window.innerWidth*.2,window.innerHeight*.3,20);},300);
     setTimeout(function(){spawn(window.innerWidth*.8,window.innerHeight*.3,20);},600);
     setTimeout(function(){spawn(window.innerWidth*.5,window.innerHeight*.5,24);},900);
