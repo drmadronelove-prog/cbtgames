@@ -339,6 +339,22 @@
       0%   { opacity: 1; }
       100% { opacity: 0; }
     }
+    /* Shard debris flying off the card on a correct answer */
+    .shatter-layer {
+      position: fixed;
+      pointer-events: none;
+      z-index: 30;
+    }
+    .shatter-piece {
+      position: absolute;
+      box-sizing: border-box;
+      will-change: transform, opacity;
+      animation: shardFly 0.75s cubic-bezier(.15,.6,.3,1) forwards;
+    }
+    @keyframes shardFly {
+      0%   { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+    }
     .phrase-text {
       font-size: 20px; font-weight: 700;
       line-height: 1.4; letter-spacing: -0.1px;
@@ -1176,6 +1192,7 @@ function handleAnswer(choice) {
     card.classList.remove('exploding');
     void card.offsetWidth; // restart the animation even on back-to-back correct answers
     card.classList.add('exploding');
+    shatterCard(card); // it doesn't just shake -- it breaks into bits that fly out and away
     setTimeout(() => card.classList.remove('exploding'), 500);
     AudioEngine.sfxExplosion();
     AudioEngine.sfxCorrect(streak);
@@ -1227,7 +1244,7 @@ function endRound1() {
 //  Same three categories, but each phrase flies across the
 //  sky on a sign and has to be shot down before it escapes.
 // ──────────────────────────────────────
-const DUCK_COUNT = 14; // another 20% longer than the 12-duck round
+const DUCK_COUNT = 16; // 2 more than the 14-duck round
 // Pixel-art duck, wings swept back mid-flight -- drawn facing right by default.
 const DUCK_SVG = `<svg class="duck-art" viewBox="0 0 40 22" shape-rendering="crispEdges">
   <rect x="1" y="12" width="4" height="3" fill="#161616"/>
@@ -1696,6 +1713,57 @@ function drawStar(cx, cy, spikes, outer, inner) {
 }
 
 // ──────────────────────────────────────
+//  CARD SHATTER -- the hero card breaks into bits that fly outward
+// ──────────────────────────────────────
+function shatterCard(el) {
+  const rect = el.getBoundingClientRect();
+  const style = getComputedStyle(el);
+  const cols = 6, rows = 4;
+  const shardW = rect.width / cols;
+  const shardH = rect.height / rows;
+
+  const layer = document.createElement('div');
+  layer.className = 'shatter-layer';
+  layer.style.left = rect.left + 'px';
+  layer.style.top = rect.top + 'px';
+  layer.style.width = rect.width + 'px';
+  layer.style.height = rect.height + 'px';
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const piece = document.createElement('div');
+      piece.className = 'shatter-piece';
+      piece.style.left = (c * shardW) + 'px';
+      piece.style.top = (r * shardH) + 'px';
+      piece.style.width = Math.ceil(shardW) + 'px';
+      piece.style.height = Math.ceil(shardH) + 'px';
+      piece.style.background = style.backgroundColor;
+      piece.style.borderRadius = '2px';
+      if (r === 0) piece.style.borderTop = `2px solid ${style.borderColor}`;
+      if (r === rows - 1) piece.style.borderBottom = `2px solid ${style.borderColor}`;
+      if (c === 0) piece.style.borderLeft = `2px solid ${style.borderColor}`;
+      if (c === cols - 1) piece.style.borderRight = `2px solid ${style.borderColor}`;
+
+      // Outward burst, scaled by how far this piece sits from the card's center
+      const nx = (c + 0.5) / cols - 0.5; // -0.5 .. 0.5
+      const ny = (r + 0.5) / rows - 0.5;
+      const dx = nx * (260 + Math.random() * 180);
+      const dy = ny * (220 + Math.random() * 160) - 40; // slight upward bias
+      const rot = (Math.random() - 0.5) * 640;
+      piece.style.setProperty('--dx', dx.toFixed(1) + 'px');
+      piece.style.setProperty('--dy', dy.toFixed(1) + 'px');
+      piece.style.setProperty('--rot', rot.toFixed(0) + 'deg');
+      piece.style.animationDelay = (Math.random() * 0.06).toFixed(2) + 's';
+
+      layer.appendChild(piece);
+    }
+  }
+
+  document.body.appendChild(layer);
+  setTimeout(() => layer.remove(), 900);
+}
+
+// ──────────────────────────────────────
 //  FEATHER BURST -- Duck Hunt hit effect
 // ──────────────────────────────────────
 function runFeathers(cx, cy) {
@@ -2070,7 +2138,7 @@ const AudioEngine = (() => {
   }
 
   function sfxExplosion() {
-    playSample('explosion', 0.595); // 15% quieter than the original 0.7
+    playSample('explosion', 0.506); // another 15% quieter than the previous 0.595
   }
 
   function sfxStart() {
