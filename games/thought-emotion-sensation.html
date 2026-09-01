@@ -12,9 +12,9 @@
 
     :root {
       --bg: #0d0a18;
-      --card: #1a1330;
-      --border: #2c2148;
-      --shadow: 0 10px 34px rgba(0,0,0,0.45);
+      --card: rgba(21,16,37,0.82);
+      --border: rgba(120,108,163,0.28);
+      --shadow: 0 12px 38px rgba(0,0,0,0.5);
       --text: #f3eefc;
       --text-soft: #c3b7e0;
       --text-muted: #8a7aad;
@@ -48,10 +48,28 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    body {
-      background-image:
-        radial-gradient(circle at 18% 12%, rgba(255,46,136,0.10), transparent 42%),
-        radial-gradient(circle at 84% 88%, rgba(0,229,255,0.10), transparent 42%);
+    /* Isolate so body's own solid background paints beneath its
+       negative-z-index pseudo-elements instead of stacking above them. */
+    body { isolation: isolate; }
+
+    /* Photographic backdrop -- fixed pseudo-layers instead of
+       background-attachment:fixed so it stays pinned reliably on iOS. */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: url('miltiadis-fragkidis-y1Y41NReECw-unsplash.jpg') center 34% / cover no-repeat;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255,46,136,0.10), transparent 46%),
+        radial-gradient(circle at 84% 88%, rgba(0,229,255,0.09), transparent 46%),
+        linear-gradient(180deg, rgba(8,6,15,0.72) 0%, rgba(8,6,15,0.85) 55%, rgba(6,5,12,0.94) 100%);
     }
 
     #fx-canvas {
@@ -91,7 +109,9 @@
     /* ─── INTRO ─── */
     .intro-card {
       background: var(--card);
-      border: 2px solid var(--border);
+      backdrop-filter: blur(20px) saturate(1.15);
+      -webkit-backdrop-filter: blur(20px) saturate(1.15);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 38px 34px 28px;
@@ -154,7 +174,7 @@
       background: var(--border);
       transition: all 0.22s ease;
     }
-    .dot.on { width: 18px; background: var(--thought); box-shadow: 0 0 8px rgba(255,46,136,0.7); }
+    .dot.on { width: 18px; background: var(--thought); box-shadow: 0 0 6px rgba(255,46,136,0.5); }
 
     .btn-row { display: flex; gap: 8px; }
     .btn-ghost {
@@ -175,10 +195,10 @@
       font-size: 12.5px; font-weight: 700;
       letter-spacing: 0.04em;
       cursor: pointer; font-family: var(--font);
-      box-shadow: 0 0 16px rgba(255,46,136,0.35);
+      box-shadow: 0 0 12px rgba(255,46,136,0.24);
       transition: background 0.12s, transform 0.1s, box-shadow 0.12s;
     }
-    .btn-solid:hover { transform: translateY(-1px); box-shadow: 0 0 22px rgba(255,46,136,0.55); }
+    .btn-solid:hover { transform: translateY(-1px); box-shadow: 0 0 18px rgba(255,46,136,0.4); }
 
     /* ─── START ─── */
     .start-wrap {
@@ -201,21 +221,23 @@
     .cat-tiles { display: flex; gap: 9px; width: 100%; }
     .cat-tile {
       flex: 1; padding: 18px 10px 14px;
-      border-radius: var(--radius); border: 2px solid;
+      border-radius: var(--radius); border: 1.5px solid;
       background: var(--card);
+      backdrop-filter: blur(20px) saturate(1.15);
+      -webkit-backdrop-filter: blur(20px) saturate(1.15);
       display: flex; flex-direction: column;
       align-items: center; gap: 6px;
     }
-    .cat-tile.T { border-color: var(--thought-border); box-shadow: 0 0 18px rgba(255,46,136,0.12); }
-    .cat-tile.E { border-color: var(--emotion-border); box-shadow: 0 0 18px rgba(0,229,255,0.12); }
-    .cat-tile.S { border-color: var(--sensation-border); box-shadow: 0 0 18px rgba(255,225,77,0.12); }
+    .cat-tile.T { border-color: var(--thought-border); box-shadow: 0 0 14px rgba(255,46,136,0.09); }
+    .cat-tile.E { border-color: var(--emotion-border); box-shadow: 0 0 14px rgba(0,229,255,0.09); }
+    .cat-tile.S { border-color: var(--sensation-border); box-shadow: 0 0 14px rgba(255,225,77,0.09); }
     .tile-key {
       font-family: var(--font-display);
       font-size: 24px; line-height: 1;
     }
-    .cat-tile.T .tile-key { color: var(--thought); text-shadow: 0 0 12px rgba(255,46,136,0.6); }
-    .cat-tile.E .tile-key { color: var(--emotion); text-shadow: 0 0 12px rgba(0,229,255,0.6); }
-    .cat-tile.S .tile-key { color: var(--sensation); text-shadow: 0 0 12px rgba(255,225,77,0.6); }
+    .cat-tile.T .tile-key { color: var(--thought); text-shadow: 0 0 8px rgba(255,46,136,0.4); }
+    .cat-tile.E .tile-key { color: var(--emotion); text-shadow: 0 0 8px rgba(0,229,255,0.4); }
+    .cat-tile.S .tile-key { color: var(--sensation); text-shadow: 0 0 8px rgba(255,225,77,0.4); }
     .tile-name {
       font-size: 10.5px; font-weight: 700; color: var(--text-soft);
       letter-spacing: 0.06em; text-transform: uppercase;
@@ -236,12 +258,12 @@
       font-size: 15px; font-weight: 400;
       cursor: pointer;
       letter-spacing: 0.02em;
-      box-shadow: 0 0 24px rgba(255,46,136,0.4);
+      box-shadow: 0 0 18px rgba(255,46,136,0.28);
       transition: background 0.12s, transform 0.1s, box-shadow 0.12s;
     }
     .btn-start:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 32px rgba(255,46,136,0.6);
+      box-shadow: 0 0 24px rgba(255,46,136,0.42);
     }
 
     /* ─── GAME ─── */
@@ -292,7 +314,9 @@
     .phrase-card {
       position: relative;
       background: var(--card);
-      border: 2px solid var(--border);
+      backdrop-filter: blur(20px) saturate(1.15);
+      -webkit-backdrop-filter: blur(20px) saturate(1.15);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 32px 24px;
@@ -354,8 +378,10 @@
     .ans-row { display: flex; gap: 9px; }
     .ans-btn {
       flex: 1; padding: 14px 8px 11px;
-      border-radius: var(--radius); border: 2px solid;
+      border-radius: var(--radius); border: 1.5px solid;
       background: var(--card); cursor: pointer;
+      backdrop-filter: blur(20px) saturate(1.15);
+      -webkit-backdrop-filter: blur(20px) saturate(1.15);
       font-family: var(--font);
       display: flex; flex-direction: column;
       align-items: center; gap: 4px;
@@ -378,13 +404,13 @@
       background: var(--correct-bg) !important;
       border-color: var(--correct) !important;
       color: var(--correct) !important;
-      box-shadow: 0 0 20px rgba(60,255,154,0.35) !important;
+      box-shadow: 0 0 16px rgba(60,255,154,0.26) !important;
     }
     .ans-btn.state-wrong {
       background: var(--incorrect-bg) !important;
       border-color: var(--incorrect) !important;
       color: var(--incorrect) !important;
-      box-shadow: 0 0 20px rgba(255,77,106,0.35) !important;
+      box-shadow: 0 0 16px rgba(255,77,106,0.26) !important;
     }
 
     .btn-letter { font-family: var(--font-display); font-size: 20px; line-height: 1; }
@@ -396,7 +422,9 @@
     /* ─── END ─── */
     .end-card {
       background: var(--card);
-      border: 2px solid var(--border);
+      backdrop-filter: blur(20px) saturate(1.15);
+      -webkit-backdrop-filter: blur(20px) saturate(1.15);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 44px 34px 36px;
@@ -414,7 +442,7 @@
       font-size: 56px; font-weight: 400;
       line-height: 1; letter-spacing: -1px;
       color: var(--text);
-      text-shadow: 0 0 28px rgba(255,46,136,0.5);
+      text-shadow: 0 0 20px rgba(255,46,136,0.35);
     }
     .end-chips { display: flex; gap: 14px; }
     .end-chip {
@@ -440,12 +468,12 @@
       font-size: 14.5px; font-weight: 400;
       cursor: pointer;
       margin-top: 6px;
-      box-shadow: 0 0 24px rgba(255,46,136,0.4);
+      box-shadow: 0 0 18px rgba(255,46,136,0.28);
       transition: background 0.12s, transform 0.1s, box-shadow 0.12s;
     }
     .btn-again:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 32px rgba(255,46,136,0.6);
+      box-shadow: 0 0 24px rgba(255,46,136,0.42);
     }
 
     @media (max-width: 400px) {
@@ -470,8 +498,9 @@
       width: 36px; height: 36px;
       border-radius: 50%;
       border: 1.5px solid var(--border);
-      background: rgba(26,19,48,0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(21,16,37,0.78);
+      backdrop-filter: blur(14px) saturate(1.15);
+      -webkit-backdrop-filter: blur(14px) saturate(1.15);
       cursor: pointer;
       font-size: 15px;
       display: flex; align-items: center; justify-content: center;
@@ -494,6 +523,8 @@
       border: 1.5px dashed var(--emotion-border);
       border-radius: 12px;
       background: var(--emotion-bg);
+      backdrop-filter: blur(20px) saturate(1.15);
+      -webkit-backdrop-filter: blur(20px) saturate(1.15);
       text-align: left;
     }
     .round2-tag {
@@ -517,10 +548,11 @@
       position: relative;
       height: 360px;
       overflow: hidden;
-      border: 2px solid var(--border);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
+      box-shadow: var(--shadow);
       margin-bottom: 16px;
-      background: #5c94fc;
+      background: #6ea3d6;
       cursor: crosshair;
     }
     .duck-scenery {
@@ -666,7 +698,7 @@
 <body>
 
 <canvas id="fx-canvas"></canvas>
-<audio id="music-quiz" src="monume-retro-arcade-game-music-2-498031.mp3" loop preload="auto"></audio>
+<audio id="music-quiz" src="morgan-ambient-calm-ambient-dreamscape-529861.mp3" loop preload="auto"></audio>
 <audio id="music-duckhunt" src="monume-american-western-country-576992.mp3" loop preload="auto"></audio>
 <audio id="sfx-explosion" src="freesound_community-explosion-80108.mp3" preload="auto"></audio>
 <audio id="sfx-quack" src="freesound_community-075176_duck-quack-40345.mp3" preload="auto"></audio>
@@ -808,17 +840,17 @@
     </div>
     <div class="duck-sky" id="duck-sky">
       <svg class="duck-scenery" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-        <rect x="0" y="0" width="400" height="300" fill="#5c94fc"/>
-        <rect x="55" y="140" width="14" height="90" fill="#7a3b1e"/>
-        <circle cx="62" cy="110" r="34" fill="#8bc24a"/>
-        <circle cx="34" cy="150" r="26" fill="#7cb63f"/>
-        <circle cx="92" cy="165" r="26" fill="#7cb63f"/>
-        <circle cx="62" cy="180" r="24" fill="#6ba934"/>
-        <circle cx="330" cy="235" r="22" fill="#7cb63f"/>
-        <circle cx="352" cy="240" r="16" fill="#6ba934"/>
-        <rect x="0" y="248" width="400" height="30" fill="#9ed14f"/>
-        <rect x="0" y="248" width="400" height="6" fill="#c8ea8a"/>
-        <rect x="0" y="278" width="400" height="22" fill="#8a5a2e"/>
+        <rect x="0" y="0" width="400" height="300" fill="#6ea3d6"/>
+        <rect x="55" y="140" width="14" height="90" fill="#6b4a30"/>
+        <circle cx="62" cy="110" r="34" fill="#7fae66"/>
+        <circle cx="34" cy="150" r="26" fill="#729c5c"/>
+        <circle cx="92" cy="165" r="26" fill="#729c5c"/>
+        <circle cx="62" cy="180" r="24" fill="#628650"/>
+        <circle cx="330" cy="235" r="22" fill="#729c5c"/>
+        <circle cx="352" cy="240" r="16" fill="#628650"/>
+        <rect x="0" y="248" width="400" height="30" fill="#8fab6c"/>
+        <rect x="0" y="248" width="400" height="6" fill="#b3c592"/>
+        <rect x="0" y="278" width="400" height="22" fill="#7a5c3c"/>
       </svg>
     </div>
     <div class="ans-row">
@@ -1000,7 +1032,11 @@ function slideBack() {
 function slideNext() {
   AudioEngine.init();
   if (slide < 2) { slide++; renderSlide(); }
-  else showScreen('screen-start');
+  else {
+    showScreen('screen-start');
+    AudioEngine.setTrack('quiz');
+    AudioEngine.startMusic();
+  }
 }
 
 // ──────────────────────────────────────
@@ -1925,11 +1961,9 @@ const AudioEngine = (() => {
     delaySend.connect(delayNode);
   }
 
-  // Two bouncy 8-bit backing loops, both "oom-pah" bass under a bright
-  // arpeggiated lead, two bars of eighth notes rescheduled every loop --
-  // one for the quiz, a distinct faster/brighter one for Duck Hunt.
-  // Background music is two real tracks (<audio> elements in the page),
-  // one per round -- everything else (SFX, reverb, delay) stays procedural.
+  // Background music is two real tracks (<audio> elements in the page) --
+  // a calm ambient bed under the card round, a livelier one for Duck Hunt.
+  // Everything else (SFX, reverb, delay) stays procedural.
   let musicEls = null;
   let activeTrack = 'quiz';
 
@@ -1939,7 +1973,8 @@ const AudioEngine = (() => {
         quiz: document.getElementById('music-quiz'),
         duckhunt: document.getElementById('music-duckhunt'),
       };
-      Object.values(musicEls).forEach(el => { if (el) el.volume = 0.55; });
+      if (musicEls.quiz) musicEls.quiz.volume = 0.48;
+      if (musicEls.duckhunt) musicEls.duckhunt.volume = 0.55;
     }
     return musicEls;
   }
