@@ -20,17 +20,33 @@
   --ffb:'Nunito','Segoe UI',sans-serif;
 }
 body{font-family:var(--ffb);background:var(--bg);color:var(--ink);margin:0;isolation:isolate;}
-/* Photographic backdrop -- fixed pseudo-layers (not background-attachment:fixed,
-   which is unreliable on iOS) with a warm cream scrim so the ink-on-cream
-   palette keeps its contrast while the photo reads through softly. */
-body::before{content:'';position:fixed;inset:0;z-index:-2;background:url('miltiadis-fragkidis-y1Y41NReECw-unsplash.jpg') center 34%/cover no-repeat;}
-body::after{content:'';position:fixed;inset:0;z-index:-1;background:
-  radial-gradient(circle at 20% 14%, rgba(255,107,107,0.14), transparent 46%),
-  radial-gradient(circle at 85% 86%, rgba(0,196,154,0.12), transparent 46%),
-  linear-gradient(180deg, rgba(255,248,240,0.76) 0%, rgba(250,240,225,0.87) 55%, rgba(245,230,210,0.94) 100%);
+/* Soft ambient wash -- fixed pseudo-layer (not background-attachment:fixed,
+   which is unreliable on iOS) instead of a full-bleed photo, since a photo
+   sitting directly behind the centered content column just gets covered. */
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(circle at 20% 14%, rgba(255,107,107,0.10), transparent 46%),
+  radial-gradient(circle at 85% 86%, rgba(0,196,154,0.08), transparent 46%);
 }
+/* The crossroads photo instead lives in its own strip along the right edge,
+   clear of the content column, fading softly into the page at its inner edge.
+   Only shown once there's genuine open space beside the centered content. */
+.photo-panel{
+  display:none;
+  position:fixed; top:0; right:0; bottom:0;
+  width:clamp(220px,24vw,380px);
+  z-index:-1;
+  background:url('miltiadis-fragkidis-y1Y41NReECw-unsplash.jpg') center/cover no-repeat;
+  -webkit-mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.5) 20%, #000 42%);
+  mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.5) 20%, #000 42%);
+}
+.photo-panel::after{
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(255,217,61,0.10) 0%, transparent 35%, rgba(255,107,107,0.08) 100%);
+}
+@media (min-width:1150px){ .photo-panel{display:block;} }
 canvas#cc{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;}
-#co{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);font-family:var(--ffd);font-size:clamp(3rem,8vw,5.5rem);color:white;text-shadow:4px 4px 0 var(--ink);pointer-events:none;z-index:60;display:none;text-align:center;}
+#co{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);font-family:var(--ffd);font-size:clamp(2.1rem,5vw,3.4rem);color:var(--ink);text-shadow:0 8px 22px rgba(30,22,18,0.2);pointer-events:none;z-index:60;display:none;text-align:center;}
 #mb{position:fixed;top:14px;right:14px;z-index:70;background:var(--card-white);backdrop-filter:blur(14px) saturate(1.1);-webkit-backdrop-filter:blur(14px) saturate(1.1);border:1.5px solid var(--border-soft);border-radius:50%;width:44px;height:44px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(30,22,18,0.16);transition:transform .1s,box-shadow .1s;}
 #mb:active{transform:translateY(1px);box-shadow:0 2px 8px rgba(30,22,18,0.14);}
 .sc{display:none;min-height:100vh;}.sc.on{display:block;}
@@ -40,14 +56,14 @@ body{overflow-x:hidden;}
   #is{padding:24px 14px 40px;}
   .gt{font-size:1.7rem!important;margin-bottom:4px;}
   .gsub{font-size:.85rem;margin-bottom:20px;}
-  .tc{padding:18px 14px;border-width:2px;box-shadow:3px 3px 0 var(--ink);border-radius:16px;}
+  .tc{padding:18px 14px;border-radius:16px;}
   .cl{font-size:1.25rem;}
   .cv{font-size:1.55rem;}
   .pb{font-size:1.3rem;padding:11px 32px;}
   #mb{width:36px;height:36px;font-size:15px;top:10px;right:10px;}
   #gsc{padding:10px 12px 36px;}
   .gi{padding-top:36px;}
-  .scard{padding:22px 18px;border-radius:16px;box-shadow:3px 3px 0 var(--ink);}
+  .scard{padding:22px 18px;border-radius:16px;}
   .cb{font-size:.85rem;padding:9px 13px;min-width:0;}
 }
 .iw{max-width:1080px;margin:0 auto;}
@@ -102,7 +118,7 @@ body{overflow-x:hidden;}
 #es{display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:48px 20px;min-height:100vh;}
 #es.on{display:flex;}
 .ee{font-size:4.5rem;margin-bottom:14px;}
-@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-13px)}}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-7px)}}
 .etit{font-family:var(--ffd);font-size:clamp(2rem,5vw,3.2rem);margin-bottom:9px;}
 .esc{font-family:var(--ffd);font-size:clamp(2.8rem,8vw,5rem);color:var(--coral);margin-bottom:5px;}
 .esr{display:flex;gap:7px;justify-content:center;margin-bottom:16px;}
@@ -112,14 +128,16 @@ body{overflow-x:hidden;}
 .ab{background:var(--coral);color:white;font-family:var(--ffd);font-size:1.5rem;padding:14px 44px;border:2px solid rgba(30,22,18,0.22);border-radius:60px;box-shadow:0 12px 28px rgba(255,107,107,0.45);cursor:pointer;transition:transform .15s,box-shadow .15s;}
 .ab:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(255,107,107,0.55);}
 .ab:active{transform:translateY(0);box-shadow:0 8px 20px rgba(255,107,107,0.4);}
-@keyframes cPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.35)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes cPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.94)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes cFade{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
 </style>
 </head>
 <body>
+<div class="photo-panel"></div>
 <canvas id="cc"></canvas>
 <div id="co"></div>
 <audio id="bg-music" src="morgan-ambient-calm-ambient-dreamscape-529861.mp3" loop preload="auto"></audio>
+<audio id="sfx-bell" src="universfield-clear-bell-chime-487898.mp3" preload="auto"></audio>
 <button id="mb">🔊</button>
 
 <!-- INTRO -->
@@ -258,8 +276,14 @@ function tone(f,d,tp,v,del){
   o.start(t);o.stop(t+d+.05);
 }
 function sClick(){tone(780,.07,'sine',.1);}
-function sCorrect(){[523,659,784,1047].forEach(function(f,i){tone(f,.35,'sine',.22,i*.085);});}
 function sWrong(){tone(185,.28,'triangle',.18);tone(160,.22,'triangle',.14,.06);}
+function playBell(){
+  var el=document.getElementById('sfx-bell');
+  if(!el||G.muted)return;
+  var n=el.cloneNode(true);
+  n.volume=0.6;
+  n.play().catch(function(){});
+}
 function sTrans(){tone(440,.13,'sine',.1);tone(554,.1,'sine',.07,.07);}
 function sPlay(){[261,329,392,523].forEach(function(f,i){tone(f,.4,'sine',.25,i*.1);});}
 function sFanfare(r){
@@ -282,30 +306,32 @@ function startMusic(){
 
 var cvs=document.getElementById('cc');
 var parts=[];var rafId=null;
-var COLS=['#FF6B6B','#00C49A','#8B5CF6','#FFD93D','#FF9A3C','#FF85A1','#4ECDC4'];
+var COLS=['#F5B199','#8FCFC0','#B8A9E0','#F2D06B','#F0A8B4','#9BD8CE'];
 function rCvs(){cvs.width=window.innerWidth;cvs.height=window.innerHeight;}
 window.addEventListener('resize',rCvs);rCvs();
 
+// Soft drifting petals rather than an energetic confetti burst -- fewer
+// particles, gentler gravity, and a slower fade so they float rather than fly.
 function spawn(x,y,n,vb,fall){
-  vb=vb||6;fall=!!fall;
+  vb=vb||3.5;fall=!!fall;
   for(var i=0;i<n;i++){
-    var a=Math.random()*Math.PI*2,sp=Math.random()*vb+2;
-    parts.push({x:fall?Math.random()*cvs.width:x,y:fall?-10-Math.random()*50:y,vx:fall?(Math.random()-.5)*4:Math.cos(a)*sp,vy:fall?Math.random()*3+1.5:Math.sin(a)*sp-3,c:COLS[Math.floor(Math.random()*COLS.length)],w:Math.random()*10+5,h:Math.random()*6+3,rot:Math.random()*Math.PI*2,rv:(Math.random()-.5)*.18,life:1,dec:fall?.005+Math.random()*.004:.013+Math.random()*.009,grav:fall?.1:.17});
+    var a=Math.random()*Math.PI*2,sp=Math.random()*vb+1;
+    parts.push({x:fall?Math.random()*cvs.width:x,y:fall?-10-Math.random()*50:y,vx:fall?(Math.random()-.5)*2:Math.cos(a)*sp,vy:fall?Math.random()*1.6+.8:Math.sin(a)*sp-1.6,c:COLS[Math.floor(Math.random()*COLS.length)],w:Math.random()*8+5,h:Math.random()*6+4,rot:Math.random()*Math.PI*2,rv:(Math.random()-.5)*.09,life:1,dec:fall?.0028+Math.random()*.002:.006+Math.random()*.004,grav:fall?.045:.07});
   }
   if(!rafId)animP();
 }
 function animP(){
   var ctx=cvs.getContext('2d');ctx.clearRect(0,0,cvs.width,cvs.height);
   parts=parts.filter(function(p){return p.life>0&&p.y<cvs.height+40;});
-  parts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=p.grav;p.rot+=p.rv;p.life-=p.dec;ctx.save();ctx.globalAlpha=Math.max(0,p.life);ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
+  parts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=p.grav;p.rot+=p.rv;p.life-=p.dec;ctx.save();ctx.globalAlpha=Math.max(0,p.life)*.85;ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.beginPath();ctx.ellipse(0,0,p.w/2,p.h/2,0,0,Math.PI*2);ctx.fill();ctx.restore();});
   if(parts.length>0)rafId=requestAnimationFrame(animP);
   else{rafId=null;ctx.clearRect(0,0,cvs.width,cvs.height);}
 }
 function celebrate(txt){
   var el=document.getElementById('co');
   el.textContent=txt;el.style.display='block';el.style.animation='none';el.offsetHeight;
-  el.style.animation='cPop .5s cubic-bezier(.34,1.56,.64,1) forwards';
-  setTimeout(function(){el.style.animation='cFade .8s ease forwards';setTimeout(function(){el.style.display='none';},800);},1700);
+  el.style.animation='cPop .6s ease-out forwards';
+  setTimeout(function(){el.style.animation='cFade .9s ease forwards';setTimeout(function(){el.style.display='none';},900);},1700);
 }
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=b[i];b[i]=b[j];b[j]=tmp;}return b;}
 function showScr(id){document.querySelectorAll('.sc').forEach(function(s){s.classList.remove('on');});document.getElementById(id).classList.add('on');}
@@ -337,10 +363,10 @@ function tryAns(){
   var rl={notice:'Notice it',identify:'Identify it',feel:'Feel it'}[s.r];
   var fb=document.getElementById('fbb');
   if(ok){
-    G.score++;sCorrect();
-    var msgs=['YES!','NAILED IT!','EXACTLY!','PERFECT!','SPOT ON!','BRILLIANT!'];
+    G.score++;playBell();
+    var msgs=['Yes.','Exactly.','Well noticed.','Nicely done.','Right there.','Beautifully seen.'];
     celebrate(msgs[Math.floor(Math.random()*msgs.length)]);
-    spawn(window.innerWidth/2,window.innerHeight/2-60,70);
+    spawn(window.innerWidth/2,window.innerHeight/2-60,26);
     fb.className='fb ok';document.getElementById('fbh').textContent='You got it!';document.getElementById('fbt').textContent=s.fb;
   } else {
     sWrong();
@@ -381,10 +407,10 @@ function selR(r){
 function showEnd(){
   showScr('es');var tot=G.sc.length,r=G.score/tot;
   setTimeout(function(){
-    sFanfare(r);spawn(0,0,200,5,true);
-    setTimeout(function(){spawn(window.innerWidth*.2,window.innerHeight*.3,55);},300);
-    setTimeout(function(){spawn(window.innerWidth*.8,window.innerHeight*.3,55);},600);
-    setTimeout(function(){spawn(window.innerWidth*.5,window.innerHeight*.5,60);},900);
+    sFanfare(r);spawn(0,0,80,3,true);
+    setTimeout(function(){spawn(window.innerWidth*.2,window.innerHeight*.3,20);},300);
+    setTimeout(function(){spawn(window.innerWidth*.8,window.innerHeight*.3,20);},600);
+    setTimeout(function(){spawn(window.innerWidth*.5,window.innerHeight*.5,24);},900);
   },250);
   document.getElementById('esc').textContent=G.score+' / '+tot;
   var emoji,title,msg;
@@ -392,7 +418,7 @@ function showEnd(){
   else if(r>=.8){emoji='🌟';title='Beautifully Done!';msg="You're building real skill at distinguishing what's happening inside. This is the foundation of everything in mindfulness practice.";}
   else if(r>=.6){emoji='🌱';title='Growing!';msg="You're getting it! The edge cases take practice -- keep at it and these distinctions will become second nature.";}
   else{emoji='💪';title='Showing Up is Everything!';msg="The fact that you played is what matters. These distinctions are genuinely subtle. Your awareness is already expanding.";}
-  document.getElementById('ee').textContent=emoji;document.getElementById('ee').style.animation='bounce .8s ease infinite alternate';
+  document.getElementById('ee').textContent=emoji;document.getElementById('ee').style.animation='bounce 2.2s ease-in-out infinite alternate';
   document.getElementById('etit').textContent=title;document.getElementById('emsg').textContent=msg;
   var stars=Math.max(1,Math.ceil(r*3));var sc=document.getElementById('esr');sc.innerHTML='';
   for(var i=0;i<3;i++){var st=document.createElement('span');st.className='star';st.textContent=i<stars?'⭐':'☆';st.style.animation='sp .3s cubic-bezier(.34,1.56,.64,1) '+(i*.18)+'s both';sc.appendChild(st);}
