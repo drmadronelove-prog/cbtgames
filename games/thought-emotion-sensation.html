@@ -290,6 +290,7 @@
     }
 
     .phrase-card {
+      position: relative;
       background: var(--card);
       border: 2px solid var(--border);
       border-radius: var(--radius);
@@ -312,6 +313,31 @@
     }
     .phrase-card.border-wrong {
       border-color: var(--incorrect);
+    }
+    /* The "hero card" blows up in sync with the canvas explosion VFX */
+    .phrase-card.exploding {
+      animation: cardExplode 0.45s ease-out;
+    }
+    .phrase-card.exploding::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: inherit;
+      background: radial-gradient(circle, rgba(255,225,150,0.6), transparent 70%);
+      animation: cardFlash 0.45s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes cardExplode {
+      0%   { transform: scale(1) rotate(0deg); }
+      15%  { transform: scale(1.07) rotate(-1.2deg); }
+      30%  { transform: scale(0.96) rotate(1deg); }
+      45%  { transform: scale(1.04) rotate(-0.6deg); }
+      65%  { transform: scale(0.99) rotate(0.4deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    @keyframes cardFlash {
+      0%   { opacity: 1; }
+      100% { opacity: 0; }
     }
     .phrase-text {
       font-size: 20px; font-weight: 700;
@@ -1145,8 +1171,12 @@ function handleAnswer(choice) {
 
     syncStreakChip();
 
-    // Fire explosion using pre-cached coords
+    // Fire explosion using pre-cached coords -- the hero card blows up in sync
     runExplosion(cachedCoords.x, cachedCoords.y);
+    card.classList.remove('exploding');
+    void card.offsetWidth; // restart the animation even on back-to-back correct answers
+    card.classList.add('exploding');
+    setTimeout(() => card.classList.remove('exploding'), 500);
     AudioEngine.sfxExplosion();
     AudioEngine.sfxCorrect(streak);
 
@@ -1197,7 +1227,7 @@ function endRound1() {
 //  Same three categories, but each phrase flies across the
 //  sky on a sign and has to be shot down before it escapes.
 // ──────────────────────────────────────
-const DUCK_COUNT = 12; // 20% longer than the original 10-duck round
+const DUCK_COUNT = 14; // another 20% longer than the 12-duck round
 // Pixel-art duck, wings swept back mid-flight -- drawn facing right by default.
 const DUCK_SVG = `<svg class="duck-art" viewBox="0 0 40 22" shape-rendering="crispEdges">
   <rect x="1" y="12" width="4" height="3" fill="#161616"/>
@@ -1272,7 +1302,7 @@ function spawnNextDuck() {
   const topPct = 30 + Math.random() * 42; // leaves headroom for the thought bubble above
   let duration = Math.max(4500, 6500 - duckIndex * 120); // slow and steady, gentle ramp
   const extensionStart = DUCK_COUNT - Math.round(DUCK_COUNT * 0.2); // last 20% of the round
-  if (duckIndex >= extensionStart) duration *= 0.9; // 10% faster through the extension
+  if (duckIndex >= extensionStart) duration *= 0.8; // 20% faster through the extension
 
   const el = document.createElement('div');
   el.className = 'duck' + (fromLeft ? '' : ' facing-left');
@@ -2040,7 +2070,7 @@ const AudioEngine = (() => {
   }
 
   function sfxExplosion() {
-    playSample('explosion', 0.7);
+    playSample('explosion', 0.595); // 15% quieter than the original 0.7
   }
 
   function sfxStart() {
