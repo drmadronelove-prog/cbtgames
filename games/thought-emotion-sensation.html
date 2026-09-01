@@ -1173,8 +1173,9 @@ function handleAnswer(choice) {
     // Fire explosion using pre-cached coords -- the hero card blows apart in sync
     runExplosion(cachedCoords.x, cachedCoords.y);
     shatterCard(card); // spawn the flying debris first, while the card is still visible to copy
-    card.classList.add('card-hidden'); // the card itself vanishes -- only the shards remain
-    setTimeout(() => card.classList.remove('card-hidden'), 780); // reappears once the debris has flown off
+    card.classList.add('card-hidden'); // the card vanishes and stays gone -- loadQuestion() resets
+                                        // this class when the next phrase is ready, so the old
+                                        // (already-answered) card never reappears in the meantime
     AudioEngine.sfxExplosion();
     AudioEngine.sfxCorrect(streak);
 
@@ -2119,7 +2120,7 @@ const AudioEngine = (() => {
   }
 
   function sfxExplosion() {
-    playSample('explosion', 0.506); // another 15% quieter than the previous 0.595
+    playSample('explosion', 0.405); // another 20% quieter than the previous 0.506
   }
 
   function sfxStart() {
