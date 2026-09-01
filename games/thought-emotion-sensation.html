@@ -301,7 +301,7 @@
       min-height: 130px;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      transition: border-color 0.18s, box-shadow 0.18s;
+      transition: border-color 0.18s, box-shadow 0.18s, opacity 0.3s ease;
     }
     .phrase-card.border-crit {
       border-color: var(--incorrect);
@@ -314,30 +314,13 @@
     .phrase-card.border-wrong {
       border-color: var(--incorrect);
     }
-    /* The "hero card" blows up in sync with the canvas explosion VFX */
-    .phrase-card.exploding {
-      animation: cardExplode 0.45s ease-out;
-    }
-    .phrase-card.exploding::after {
-      content: '';
-      position: absolute;
-      inset: -6px;
-      border-radius: inherit;
-      background: radial-gradient(circle, rgba(255,225,150,0.6), transparent 70%);
-      animation: cardFlash 0.45s ease-out forwards;
+    /* The "hero card" actually vanishes the instant it shatters -- the
+       flying shard pieces are all that's left on screen -- then fades
+       back in once the debris has finished flying. */
+    .phrase-card.card-hidden {
+      opacity: 0;
+      transition: opacity 0.08s ease-out;
       pointer-events: none;
-    }
-    @keyframes cardExplode {
-      0%   { transform: scale(1) rotate(0deg); }
-      15%  { transform: scale(1.07) rotate(-1.2deg); }
-      30%  { transform: scale(0.96) rotate(1deg); }
-      45%  { transform: scale(1.04) rotate(-0.6deg); }
-      65%  { transform: scale(0.99) rotate(0.4deg); }
-      100% { transform: scale(1) rotate(0deg); }
-    }
-    @keyframes cardFlash {
-      0%   { opacity: 1; }
-      100% { opacity: 0; }
     }
     /* Shard debris flying off the card on a correct answer */
     .shatter-layer {
@@ -1187,13 +1170,11 @@ function handleAnswer(choice) {
 
     syncStreakChip();
 
-    // Fire explosion using pre-cached coords -- the hero card blows up in sync
+    // Fire explosion using pre-cached coords -- the hero card blows apart in sync
     runExplosion(cachedCoords.x, cachedCoords.y);
-    card.classList.remove('exploding');
-    void card.offsetWidth; // restart the animation even on back-to-back correct answers
-    card.classList.add('exploding');
-    shatterCard(card); // it doesn't just shake -- it breaks into bits that fly out and away
-    setTimeout(() => card.classList.remove('exploding'), 500);
+    shatterCard(card); // spawn the flying debris first, while the card is still visible to copy
+    card.classList.add('card-hidden'); // the card itself vanishes -- only the shards remain
+    setTimeout(() => card.classList.remove('card-hidden'), 780); // reappears once the debris has flown off
     AudioEngine.sfxExplosion();
     AudioEngine.sfxCorrect(streak);
 
