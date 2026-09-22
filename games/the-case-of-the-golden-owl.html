@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Case of the Golden Owl — I-CBT Game</title>
-<meta name="description" content="A detective game for practicing the I-CBT distinction between evidence and imagination.">
+<title>The Case of the Golden Owl — A Detective Game About Evidence</title>
+<meta name="description" content="A detective game about evidence: telling what your senses actually show from what your mind fills in.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
@@ -105,10 +105,25 @@ p b{color:var(--paper)}
 .legend .ev b{color:var(--ev)} .legend .im b{color:var(--im)}
 .legend p{font-size:14px;line-height:1.6;margin:0;color:var(--muted)}
 
+/* ---------- story artwork ---------- */
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+.art{display:block}
+.art--hero{width:100%;height:auto;border-radius:var(--r-md);background:linear-gradient(180deg,#0a0c16,#131629);
+  border:1px solid var(--line);margin:0 0 26px}
+.art--spot{width:104px;height:104px;flex:0 0 auto;
+  --a1:#2b2636; --a2:#8a6612; --a3:rgba(43,38,54,.13); --a4:#f4ece0}
+@media (max-width:600px){.art--spot{width:68px;height:68px}}
+.art--reveal{width:100%;max-width:420px;height:auto;border-radius:var(--r-md);
+  background:linear-gradient(180deg,#0a0c16,#131629);border:1px solid var(--line);margin:0 0 22px}
+.art--owl{width:74px;height:92px;flex:0 0 auto;--a1:#3a2a05;--a2:var(--brass);--a3:#fbf3dd}
+.figure{display:flex;align-items:center;gap:18px;margin:0 0 18px}
+
 /* ---------- doubt banner ---------- */
-.doubt{position:relative;background:linear-gradient(180deg,var(--paper),var(--paper-2));color:var(--paper-ink);
+.doubt{position:relative;display:flex;align-items:center;gap:22px;
+  background:linear-gradient(180deg,var(--paper),var(--paper-2));color:var(--paper-ink);
   border-radius:var(--r-md);padding:22px 26px 24px;margin-top:24px;box-shadow:var(--sh-3);
   border-left:6px solid var(--brass);animation:slide .35s var(--ease)}
+.doubt__text{flex:1 1 auto;min-width:0}
 .doubt .lbl{font-family:var(--type);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
   color:var(--paper-muted);margin-bottom:8px}
 .doubt .q{font-family:var(--disp);font-size:clamp(19px,3.2vw,29px);line-height:1.22;letter-spacing:-.005em;max-width:30ch}
@@ -200,6 +215,264 @@ p b{color:var(--paper)}
 </style>
 </head>
 <body>
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+
+<!-- ===== The Golden Owl: the stolen statue ===== -->
+<symbol id="a-owl" viewBox="0 0 160 200">
+  <rect x="30" y="184" width="100" height="12" rx="2.5" fill="var(--a2)"/>
+  <rect x="40" y="170" width="80" height="14" rx="2" fill="var(--a2)" opacity=".82"/>
+  <rect x="46" y="166" width="68" height="5" rx="2" fill="var(--a1)" opacity=".22"/>
+  <path d="M53 46 43 24l23 13z" fill="var(--a2)"/>
+  <path d="M107 46 117 24 94 37z" fill="var(--a2)"/>
+  <path d="M80 32c-26 0-43 28-43 63 0 41 19 68 43 68s43-27 43-68c0-35-17-63-43-63z" fill="var(--a2)"/>
+  <path d="M80 32c-26 0-43 28-43 63 0 41 19 68 43 68V32z" fill="var(--a1)" opacity=".08"/>
+  <circle cx="62" cy="74" r="16.5" fill="var(--a3)"/>
+  <circle cx="98" cy="74" r="16.5" fill="var(--a3)"/>
+  <circle cx="62" cy="74" r="7.5" fill="var(--a1)"/>
+  <circle cx="98" cy="74" r="7.5" fill="var(--a1)"/>
+  <circle cx="59.5" cy="71" r="2.4" fill="var(--a3)"/>
+  <circle cx="95.5" cy="71" r="2.4" fill="var(--a3)"/>
+  <path d="M80 88 72.5 102h15z" fill="var(--a1)"/>
+  <g stroke="var(--a1)" stroke-width="3" fill="none" stroke-linecap="round" opacity=".38">
+    <path d="M49 116q31 16 62 0"/><path d="M52 132q28 15 56 0"/><path d="M57 147q23 12 46 0"/>
+  </g>
+  <g stroke="var(--a1)" stroke-width="3.6" stroke-linecap="round" opacity=".5">
+    <path d="M67 161v8"/><path d="M80 162v8"/><path d="M93 161v8"/>
+  </g>
+</symbol>
+
+<!-- ===== The detective ===== -->
+<symbol id="a-detective" viewBox="0 0 140 200">
+  <path d="M22 134c0-27 20-42 48-42s48 15 48 42l4 64H18z" fill="var(--a2)"/>
+  <path d="M52 97 43 128l11 2z" fill="var(--a1)" opacity=".3"/>
+  <path d="M88 97l9 31-11 2z" fill="var(--a1)" opacity=".3"/>
+  <path d="M70 92 51 122l19 14 19-14z" fill="var(--a1)" opacity=".45"/>
+  <rect x="20" y="156" width="100" height="9" rx="1" fill="var(--a1)" opacity=".4"/>
+  <rect x="62" y="156" width="15" height="9" fill="var(--a3)" opacity=".5"/>
+  <circle cx="70" cy="64" r="16" fill="#8f96b8"/>
+  <path d="M70 48a16 16 0 0 0 0 32z" fill="#0c0e17" opacity=".2"/>
+  <path d="M54 50c0-19 32-19 32 0z" fill="var(--a1)"/>
+  <rect x="53" y="44" width="34" height="7" rx="1" fill="#8f96b8" opacity=".28"/>
+  <ellipse cx="70" cy="50" rx="33" ry="7.5" fill="var(--a1)"/>
+  <circle cx="114" cy="150" r="13" fill="none" stroke="var(--a3)" stroke-width="4.5"/>
+  <circle cx="114" cy="150" r="13" fill="var(--a3)" opacity=".1"/>
+  <path d="M123 159l10 11" stroke="var(--a3)" stroke-width="5" stroke-linecap="round"/>
+</symbol>
+
+<!-- ===== The groundskeeper ===== -->
+<symbol id="a-keeper" viewBox="0 0 140 200">
+  <path d="M44 110c0-21 12-33 26-33s26 12 26 33v46H44z" fill="var(--a2)"/>
+  <g stroke="var(--a1)" stroke-width="3.4" opacity=".35" fill="none" stroke-linecap="round">
+    <path d="M56 80v28"/><path d="M84 80v28"/>
+  </g>
+  <rect x="53" y="108" width="34" height="22" rx="3" fill="var(--a1)" opacity=".18"/>
+  <circle cx="70" cy="60" r="17" fill="var(--a2)"/>
+  <path d="M52 47c1-15 36-15 37 0z" fill="var(--a1)"/>
+  <path d="M88 44h19a4.5 4.5 0 0 1 0 9H88z" fill="var(--a1)"/>
+  <rect x="49" y="156" width="17" height="22" fill="var(--a2)"/>
+  <rect x="74" y="156" width="17" height="22" fill="var(--a2)"/>
+  <rect x="45" y="176" width="24" height="12" rx="2.5" fill="var(--a1)"/>
+  <rect x="71" y="176" width="24" height="12" rx="2.5" fill="var(--a1)"/>
+  <path d="M46 190l4-5 4 5 4-5 4 5 4-5 4 5M72 190l4-5 4 5 4-5 4 5 4-5 4 5"
+        stroke="var(--a3)" stroke-width="2" fill="none" stroke-linejoin="round"/>
+  <path d="M90 108l16 24-9 6-16-24z" fill="var(--a2)"/>
+  <g fill="var(--a3)" opacity=".9">
+    <path d="M103 142 86 128l-7 9 17 13z"/>
+    <path d="M81 123l11 6-6 9-10-6z"/>
+    <rect x="99" y="136" width="28" height="27" rx="4"/>
+  </g>
+  <path d="M105 136c0-10 17-10 17 0" fill="none" stroke="var(--a3)" stroke-width="3.6" opacity=".9"/>
+</symbol>
+
+<!-- ===== Scene 1: the window ===== -->
+<symbol id="a-window" viewBox="0 0 100 100">
+  <rect x="18" y="14" width="64" height="66" rx="3" fill="none" stroke="var(--a1)" stroke-width="4"/>
+  <path d="M50 14v66M18 47h64" stroke="var(--a1)" stroke-width="3.5"/>
+  <rect x="24" y="20" width="20" height="21" fill="var(--a3)"/>
+  <rect x="56" y="53" width="20" height="21" fill="var(--a3)"/>
+  <circle cx="50" cy="47" r="7" fill="none" stroke="var(--a2)" stroke-width="4"/>
+  <path d="M50 40v-6" stroke="var(--a2)" stroke-width="4" stroke-linecap="round"/>
+  <rect x="14" y="80" width="72" height="7" rx="2.5" fill="var(--a1)"/>
+  <g fill="var(--a2)" opacity=".8">
+    <circle cx="26" cy="92" r="2"/><circle cx="40" cy="94" r="1.6"/>
+    <circle cx="56" cy="92" r="2.2"/><circle cx="71" cy="94" r="1.6"/>
+  </g>
+</symbol>
+
+<!-- ===== Scene 2: the skylight ===== -->
+<symbol id="a-skylight" viewBox="0 0 100 100">
+  <g stroke="var(--a2)" stroke-width="4" stroke-linecap="round" opacity=".85">
+    <path d="M22 10l-5 12"/><path d="M42 6l-5 12"/><path d="M62 10l-5 12"/><path d="M82 6l-5 12"/>
+  </g>
+  <path d="M16 62 32 30h44l14 32z" fill="var(--a3)" stroke="var(--a1)" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M48 30 40 62M64 30l10 32" stroke="var(--a1)" stroke-width="3"/>
+  <rect x="10" y="62" width="82" height="7" rx="2.5" fill="var(--a1)"/>
+  <path d="M20 84h60" stroke="var(--a2)" stroke-width="4" stroke-linecap="round" opacity=".5"/>
+  <path d="M28 92h44" stroke="var(--a2)" stroke-width="3" stroke-linecap="round" opacity=".3"/>
+</symbol>
+
+<!-- ===== Scene 3: the alarm panel ===== -->
+<symbol id="a-alarm" viewBox="0 0 100 100">
+  <rect x="24" y="10" width="52" height="80" rx="6" fill="none" stroke="var(--a1)" stroke-width="4"/>
+  <rect x="32" y="20" width="36" height="16" rx="2" fill="var(--a3)"/>
+  <path d="M37 28h26" stroke="var(--a1)" stroke-width="3" stroke-linecap="round"/>
+  <g fill="var(--a1)">
+    <circle cx="37" cy="50" r="4"/><circle cx="50" cy="50" r="4"/><circle cx="63" cy="50" r="4"/>
+    <circle cx="37" cy="64" r="4"/><circle cx="50" cy="64" r="4"/><circle cx="63" cy="64" r="4"/>
+  </g>
+  <circle cx="50" cy="78" r="5" fill="var(--a2)"/>
+  <g stroke="var(--a1)" stroke-width="3" opacity=".55">
+    <path d="M27 14l-0 0"/><circle cx="28" cy="14" r="1.6" fill="var(--a1)"/>
+    <circle cx="72" cy="14" r="1.6" fill="var(--a1)"/>
+    <circle cx="28" cy="86" r="1.6" fill="var(--a1)"/>
+    <circle cx="72" cy="86" r="1.6" fill="var(--a1)"/>
+  </g>
+</symbol>
+
+<!-- ===== Scene 4: the display case ===== -->
+<symbol id="a-case" viewBox="0 0 100 100">
+  <rect x="30" y="76" width="40" height="8" rx="2" fill="var(--a1)"/>
+  <rect x="36" y="58" width="28" height="18" fill="var(--a1)" opacity=".25"/>
+  <rect x="22" y="14" width="46" height="46" rx="3" fill="var(--a3)" stroke="var(--a1)" stroke-width="4"/>
+  <path d="M68 14l16 10v46l-16-10z" fill="none" stroke="var(--a2)" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="65" cy="38" r="3" fill="var(--a2)"/>
+  <path d="M34 34h10M34 42h16" stroke="var(--a1)" stroke-width="3" stroke-linecap="round" opacity=".3"/>
+  <rect x="24" y="86" width="52" height="7" rx="2.5" fill="var(--a1)"/>
+</symbol>
+
+<!-- ===== Scene 5: the floor / no tunnel ===== -->
+<symbol id="a-floor" viewBox="0 0 100 100">
+  <rect x="8" y="16" width="84" height="16" rx="2" fill="var(--a1)"/>
+  <g stroke="var(--a1)" stroke-width="2.6" opacity=".4" stroke-linecap="round">
+    <path d="M14 40l7-6M30 40l7-6M46 40l7-6M62 40l7-6M78 40l7-6"/>
+  </g>
+  <path d="M22 94V74a28 28 0 0 1 56 0v20" fill="none" stroke="var(--a1)" stroke-width="4"
+        stroke-dasharray="7 7" stroke-linecap="round" opacity=".55"/>
+  <path d="M34 60l32 32M66 60L34 92" stroke="var(--a2)" stroke-width="6" stroke-linecap="round"/>
+</symbol>
+
+<!-- ===== Scene 6: the footprints ===== -->
+<symbol id="a-prints" viewBox="0 0 100 100">
+  <path d="M86 12v78" stroke="var(--a2)" stroke-width="3" stroke-dasharray="5 7" stroke-linecap="round" opacity=".55"/>
+  <g fill="var(--a1)">
+    <ellipse cx="28" cy="20" rx="11" ry="13"/><ellipse cx="28" cy="38" rx="8.5" ry="6.5"/>
+    <ellipse cx="62" cy="46" rx="11" ry="13"/><ellipse cx="62" cy="64" rx="8.5" ry="6.5"/>
+    <ellipse cx="28" cy="72" rx="11" ry="13"/><ellipse cx="28" cy="90" rx="8.5" ry="6.5"/>
+  </g>
+  <g stroke="var(--a4,#f4ece0)" stroke-width="2.2" fill="none" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M21 14l7-4 7 4M21 21l7-4 7 4M21 28l7-4 7 4"/>
+    <path d="M55 40l7-4 7 4M55 47l7-4 7 4M55 54l7-4 7 4"/>
+    <path d="M21 66l7-4 7 4M21 73l7-4 7 4M21 80l7-4 7 4"/>
+  </g>
+</symbol>
+
+<!-- ===== Scene 7: one person, not a gang ===== -->
+<symbol id="a-crowd" viewBox="0 0 100 100">
+  <g opacity=".22" fill="var(--a1)">
+    <circle cx="26" cy="34" r="11"/><path d="M26 48c-11 0-19 11-19 24v14h38V72c0-13-8-24-19-24z"/>
+    <circle cx="76" cy="34" r="11"/><path d="M76 48c-11 0-19 11-19 24v14h38V72c0-13-8-24-19-24z"/>
+  </g>
+  <g fill="var(--a1)">
+    <circle cx="50" cy="28" r="14"/><path d="M50 46c-14 0-24 14-24 30v10h48V76c0-16-10-30-24-30z"/>
+  </g>
+  <circle cx="50" cy="28" r="14" fill="var(--a2)" opacity=".25"/>
+  <path d="M14 20l14 14M28 20L14 34M62 20l14 14M76 20L62 34" stroke="var(--a2)" stroke-width="3.4" stroke-linecap="round" opacity=".7"/>
+</symbol>
+
+<!-- ===== Scene 8: the key cabinet ===== -->
+<symbol id="a-keys" viewBox="0 0 100 100">
+  <rect x="14" y="14" width="72" height="72" rx="4" fill="none" stroke="var(--a1)" stroke-width="4"/>
+  <path d="M14 34h72" stroke="var(--a1)" stroke-width="3.5"/>
+  <g stroke="var(--a1)" stroke-width="3" fill="none">
+    <path d="M30 40v6M50 40v6M70 40v6"/>
+    <path d="M30 64v6M70 64v6"/>
+  </g>
+  <g fill="var(--a1)">
+    <circle cx="30" cy="52" r="5"/><path d="M28 56h4v10h-4z"/><path d="M32 60h4M32 64h4"/>
+    <circle cx="70" cy="52" r="5"/><path d="M68 56h4v10h-4z"/><path d="M72 60h4M72 64h4"/>
+    <circle cx="30" cy="76" r="5"/><path d="M28 80h4v8h-4z"/>
+  </g>
+  <circle cx="50" cy="56" r="10" fill="none" stroke="var(--a2)" stroke-width="3.5" stroke-dasharray="4 5"/>
+  <path d="M22 22h20" stroke="var(--a2)" stroke-width="4" stroke-linecap="round"/>
+</symbol>
+
+<!-- ===== Hero: the museum, the night of the theft ===== -->
+<symbol id="a-heist" viewBox="0 0 640 250">
+  <defs>
+    <linearGradient id="g-beam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd977" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ffd977" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="g-moon">
+      <stop offset="0" stop-color="#fff6dc"/><stop offset="1" stop-color="#e9d9a6"/>
+    </radialGradient>
+  </defs>
+  <g fill="#f4ece0" opacity=".5">
+    <circle cx="96" cy="34" r="1.6"/><circle cx="168" cy="18" r="1.2"/><circle cx="238" cy="42" r="1.5"/>
+    <circle cx="404" cy="22" r="1.3"/><circle cx="470" cy="46" r="1.6"/><circle cx="330" cy="14" r="1.2"/>
+  </g>
+  <circle cx="566" cy="46" r="34" fill="#ffd977" opacity=".12"/>
+  <circle cx="566" cy="46" r="23" fill="url(#g-moon)"/>
+  <circle cx="574" cy="39" r="4" fill="#d9c894" opacity=".55"/>
+  <circle cx="559" cy="52" r="2.6" fill="#d9c894" opacity=".45"/>
+  <!-- museum facade -->
+  <g fill="#1a1e33">
+    <path d="M32 92 168 44l136 48z"/>
+    <rect x="44" y="92" width="248" height="10"/>
+    <rect x="58" y="102" width="20" height="104"/><rect x="104" y="102" width="20" height="104"/>
+    <rect x="150" y="102" width="20" height="104"/><rect x="196" y="102" width="20" height="104"/>
+    <rect x="242" y="102" width="20" height="104"/>
+    <rect x="36" y="206" width="264" height="12"/>
+  </g>
+  <g fill="#2b3050">
+    <rect x="84" y="126" width="16" height="48" rx="2"/><rect x="130" y="126" width="16" height="48" rx="2"/>
+    <rect x="176" y="126" width="16" height="48" rx="2"/><rect x="222" y="126" width="16" height="48" rx="2"/>
+  </g>
+  <rect x="176" y="126" width="16" height="48" rx="2" fill="#e6b53f" opacity=".5"/>
+  <!-- spotlight and plinth -->
+  <path d="M402 0h84l60 222H344z" fill="url(#g-beam)"/>
+  <rect x="396" y="206" width="104" height="12" rx="2" fill="#2b3050"/>
+  <rect x="410" y="176" width="76" height="30" rx="2" fill="#212640"/>
+  <g style="--a1:#3a2a05;--a2:#e6b53f;--a3:#fbf3dd">
+    <use href="#a-owl" x="0" y="0" width="160" height="200" transform="translate(405 87) scale(.53)"/>
+  </g>
+  <!-- the detective arrives -->
+  <g style="--a1:#0c0e17;--a2:#3b4066;--a3:#e6b53f" opacity=".95">
+    <use href="#a-detective" x="0" y="0" width="140" height="200" transform="translate(524 96) scale(.62)"/>
+  </g>
+  <rect x="0" y="218" width="640" height="32" fill="#0c0e17"/>
+  <path d="M0 218h640" stroke="#2b3050" stroke-width="2"/>
+</symbol>
+
+<!-- ===== Reveal: the potting shed ===== -->
+<symbol id="a-reveal" viewBox="0 0 420 230">
+  <rect x="0" y="196" width="420" height="34" fill="#141728"/>
+  <path d="M0 196h420" stroke="#2b3050" stroke-width="2"/>
+  <g fill="#1a1e33">
+    <path d="M28 62 130 20l102 42z"/>
+    <rect x="36" y="62" width="188" height="134"/>
+  </g>
+  <g fill="#2b3050">
+    <rect x="54" y="86" width="42" height="38" rx="2"/><rect x="164" y="86" width="42" height="38" rx="2"/>
+  </g>
+  <path d="M54 105h42M75 86v38" stroke="#141728" stroke-width="3"/>
+  <rect x="112" y="122" width="38" height="74" rx="2" fill="#212640"/>
+  <circle cx="142" cy="160" r="3" fill="#e6b53f"/>
+  <g fill="#2b3050">
+    <rect x="236" y="158" width="56" height="38" rx="7"/>
+    <rect x="226" y="174" width="56" height="22" rx="7"/>
+  </g>
+  <path d="M244 168h40M234 184h36" stroke="#1a1e33" stroke-width="3" stroke-linecap="round"/>
+  <g style="--a1:#3a2a05;--a2:#e6b53f;--a3:#fbf3dd">
+    <use href="#a-owl" x="0" y="0" width="160" height="200" transform="translate(262 106) scale(.46)"/>
+  </g>
+  <g style="--a1:#0c0e17;--a2:#7d895d;--a3:#e3e7f2">
+    <use href="#a-keeper" x="0" y="0" width="140" height="200" transform="translate(336 82) scale(.6)"/>
+  </g>
+</symbol>
+
+</svg>
+
 <canvas id="confetti" aria-hidden="true"></canvas>
 <audio id="bgm" src="openmindaudio-mystery-clueprints-and-crooked-footsteps-529280.mp3" loop preload="auto"></audio>
 
@@ -216,7 +489,7 @@ p b{color:var(--paper)}
       </div>
       <div class="wordmark">
         <div class="name">THE CASE OF THE GOLDEN OWL</div>
-        <div class="sub">An I-CBT investigation</div>
+        <div class="sub">A case about evidence</div>
       </div>
       <div class="top__right">
         <div class="counter" id="counter"></div>
@@ -251,7 +524,8 @@ const DOUBTS = [
     {t:"Windows are the classic escape route in every heist movie.", s:"I", why:"Movies aren't this museum."},
     {t:"Maybe someone inside locked it behind them.", s:"I", why:"“Maybe” invents a second person nobody has seen."}
   ],
-  fact:"The thief used the back door, not the window."
+  fact:"The thief used the back door, not the window.",
+  art:"window"
 },
 {
   doubt:"They might have come in through the skylight.",
@@ -263,7 +537,8 @@ const DOUBTS = [
     {t:"Someone could have been lowered in by a drone.", s:"I", why:"Exciting. Also completely unsupported."},
     {t:"I've seen this exact move in a spy movie.", s:"I", why:"A memory of a movie is not a clue in this room."}
   ],
-  fact:"Nobody came through the roof."
+  fact:"Nobody came through the roof.",
+  art:"skylight"
 },
 {
   doubt:"The alarm might have been hacked.",
@@ -275,7 +550,8 @@ const DOUBTS = [
     {t:"This could be the work of an international cyber gang.", s:"I", why:"No part of the scene mentions a gang."},
     {t:"If they hacked this, they could hack anything.", s:"I", why:"That's the doubt growing, not a new clue."}
   ],
-  fact:"The alarm was turned off with a real staff code."
+  fact:"The alarm was turned off with a real staff code.",
+  art:"alarm"
 },
 {
   doubt:"Maybe they smashed the glass case and swept up the pieces.",
@@ -287,7 +563,8 @@ const DOUBTS = [
     {t:"A real pro always takes the broken glass with them.", s:"I", why:"A rule about pros in general, not a fact about this case."},
     {t:"Maybe they ground the glass into powder.", s:"I", why:"Imagination working overtime."}
   ],
-  fact:"The case was opened with its own key, and that key is missing."
+  fact:"The case was opened with its own key, and that key is missing.",
+  art:"case"
 },
 {
   doubt:"There could be a secret tunnel under the museum.",
@@ -299,7 +576,8 @@ const DOUBTS = [
     {t:"Building plans can be faked.", s:"I", why:"Possible in theory, but nothing here shows it."},
     {t:"The really smart thieves use tunnels.", s:"I", why:"A guess about smart thieves, not a clue."}
   ],
-  fact:"The thief walked in the back door and straight to the case."
+  fact:"The thief walked in the back door and straight to the case.",
+  art:"floor"
 },
 {
   doubt:"The footprints could be a fake trail to fool us.",
@@ -311,7 +589,8 @@ const DOUBTS = [
     {t:"They might have walked backwards to trick us.", s:"I", why:"Nothing about the prints suggests it."},
     {t:"A fake trail is exactly what a mastermind would leave.", s:"I", why:"This turns every clue into a trick. That's how doubt keeps itself going."}
   ],
-  fact:"One person in size 9 zigzag work boots, with mud from the garden bed."
+  fact:"One person in size 9 zigzag work boots, with mud from the garden bed.",
+  art:"prints"
 },
 {
   doubt:"Maybe it was a whole gang, not one person.",
@@ -323,7 +602,8 @@ const DOUBTS = [
     {t:"Gangs split up so they leave fewer clues.", s:"I", why:"A general rule, brought in from outside the scene."},
     {t:"Whoever did this is probably part of something bigger.", s:"I", why:"“Probably” is doing all the work here."}
   ],
-  fact:"One person, carrying a 6-pound owl, one car."
+  fact:"One person, carrying a 6-pound owl, one car.",
+  art:"crowd"
 },
 {
   doubt:"It could have been anyone in the whole city.",
@@ -335,7 +615,8 @@ const DOUBTS = [
     {t:"Anyone could have seen a code over someone's shoulder.", s:"I", why:"Possible. Not shown by anything at the scene."},
     {t:"Until I rule out every single person, I can't know.", s:"I", why:"That's the doubt asking for certainty. The evidence already points one way."}
   ],
-  fact:"Every clue points to the groundskeeper."
+  fact:"Every clue points to the groundskeeper.",
+  art:"keys"
 }
 ];
 
@@ -441,11 +722,12 @@ function intro(){
       '<span>Halloway Municipal Museum</span>'+
       '<span>Status: <span class="open">Unsolved</span></span>'+
     '</div>'+
+    '<svg class="art art--hero" viewBox="0 0 640 250" role="img" aria-label="The museum at night: the Golden Owl on its plinth under a spotlight, a detective arriving."><use href="#a-heist"/></svg>'+
     '<h1>Last night, the <em>Golden Owl</em> was stolen.</h1>'+
     '<p>The Halloway Museum’s most famous treasure is gone. You’re the detective. Your job is to find out what really happened.</p>'+
     '<p>Your mind is going to keep handing you doubts: <i>the robber could have…</i>, <i>maybe they…</i>. Anything is possible. But a good detective only believes what the evidence shows.</p>'+
     '<div class="legend">'+
-      '<div class="ev"><b>'+ICON.lens+' Evidence</b><p>What you can see, hear, touch, or smell at the scene, and the facts of the situation.</p></div>'+
+      '<div class="ev"><b>'+ICON.lens+' Evidence</b><p>What your senses actually pick up \u2014 what you can see, hear, touch, or smell at the scene \u2014 plus the facts of the situation.</p></div>'+
       '<div class="im"><b>'+ICON.cloud+' Imagination</b><p>What could have, might have, or usually happens. Movies, rules, guesses, and “what if.”</p></div>'+
     '</div>'+
     '<p>For each doubt, sort every clue into <b>Evidence</b> or <b>Imagination</b>. Drag it, or tap it and then tap a bin.</p>'+
@@ -459,7 +741,11 @@ function round(){
   counter.textContent='Doubt '+(st.i+1)+' of '+DOUBTS.length;
   setProgress(st.i);
   stage.innerHTML=
-  '<div class="doubt"><div class="lbl">Doubt No. '+(st.i+1)+'</div><div class="q">“'+esc(d.doubt)+'”</div></div>'+
+  '<div class="doubt">'+
+    '<div class="doubt__text"><div class="lbl">Doubt No. '+(st.i+1)+'</div>'+
+      '<div class="q">“'+esc(d.doubt)+'”</div></div>'+
+    '<svg class="art art--spot" viewBox="0 0 100 100" aria-hidden="true"><use href="#a-'+d.art+'"/></svg>'+
+  '</div>'+
   '<div class="board">'+
     '<div class="bin ev" data-s="E" id="binE"><h3>'+ICON.lens+' EVIDENCE</h3>'+
       '<p class="def">Seen, heard, touched, or a fact at the scene.</p><div class="stack" id="stackE"></div></div>'+
@@ -654,6 +940,7 @@ function final(){
       '<span>Status: <b>Closed</b></span>'+
     '</div>'+
     '<div class="stamp">CASE SOLVED</div>'+
+    '<svg class="art art--reveal" viewBox="0 0 420 230" role="img" aria-label="The potting shed: the groundskeeper beside the recovered Golden Owl and a bag of mulch."><use href="#a-reveal"/></svg>'+
     '<h1>The groundskeeper took the <em>Golden Owl</em>.</h1>'+
     '<p>He signed out the key, turned off the alarm with his code, walked in the back door in his muddy size 9 boots, and carried the owl out to his car. It was found this morning in the potting shed, under a bag of mulch.</p>'+
     '<p><b>Your case notes:</b></p>'+
@@ -666,8 +953,11 @@ function final(){
     '</div>'+
     '<div class="meter"><i id="bar"></i></div>'+
     '<p>'+msg+'</p>'+
-    '<h2 style="margin-top:28px">Why this matters</h2>'+
-    '<p>OCD doubts work like the ones in this case. They sound reasonable, they’re always possible, and they come from imagination, not from what’s in front of you. You don’t solve them by investigating every “what if.” You solve them by trusting what your senses and the situation actually show.</p>'+
+    '<h2 style="margin-top:28px">What counts as evidence</h2>'+
+    '<p><b>Evidence is what your senses pick up.</b> What you saw, heard, touched, smelled, or tasted — plus the plain facts of the situation. The locked latch. The dry floor. The name on the sign-out sheet. You can point at it.</p>'+
+    '<p><b>Imagination is everything your mind adds.</b> What could have happened, what usually happens, what it would mean if. Every doubt in this case was imagination, and every one of them was <i>possible</i>. Possible is not the same as real.</p>'+
+    '<p>Your mind does this all day, and it hands you the invented parts in the same confident voice it uses for the facts. A feeling can arrive so strongly that it seems like proof on its own. It isn’t. Feeling certain and having evidence are two different things.</p>'+
+    '<p>So when a thought insists something is true, ask the detective’s question: <b>what did I actually observe?</b> If the honest answer is “nothing — I pictured it,” then you are holding a story, not a clue. That is how you tell what is real from what is imagined.</p>'+
     '<p style="margin-top:26px;margin-bottom:0"><button class="btn" id="again">Play again</button></p>'+
   '</section>';
   window.scrollTo({top:0,behavior:'smooth'});
