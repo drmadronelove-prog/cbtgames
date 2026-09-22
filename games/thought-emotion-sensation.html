@@ -668,7 +668,7 @@
 <canvas id="fx-canvas"></canvas>
 <audio id="music-quiz" src="monume-retro-arcade-game-music-2-498031.mp3" loop preload="auto"></audio>
 <audio id="music-duckhunt" src="monume-american-western-country-576992.mp3" loop preload="auto"></audio>
-<audio id="sfx-explosion" src="freesound_community-explosion-80108.mp3" preload="auto"></audio>
+<audio id="sfx-explosion" src="freesound_community-my-first-recorded-explosion-103816.mp3" preload="auto"></audio>
 <audio id="sfx-quack" src="freesound_community-075176_duck-quack-40345.mp3" preload="auto"></audio>
 <button id="music-btn" onclick="AudioEngine.toggle()" title="Toggle music" aria-label="Toggle music">♪</button>
 
@@ -2120,7 +2120,10 @@ const AudioEngine = (() => {
   }
 
   function sfxExplosion() {
-    playSample('explosion', 0.405); // another 20% quieter than the previous 0.506
+    // This sample peaks lower and is less compressed than the old one, so it
+    // needs more gain to land at the same level. 0.8 keeps the decoded peak
+    // (1.19) just under clipping.
+    playSample('explosion', 0.8);
   }
 
   function sfxStart() {

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Case of the Golden Owl — I-CBT Game</title>
+<meta name="description" content="A detective game for practicing the I-CBT distinction between evidence and imagination.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink-900:#0c0e17; --ink-800:#141728; --ink-700:#1a1e33; --ink-600:#212640;
+  --line:#2b3050; --line-soft:#232842;
+  --paper:#f4ece0; --paper-2:#e9dfcd; --paper-edge:#cdbfa5; --paper-ink:#1c1a26; --paper-muted:#5d5670;
+  --text:#e9e3d7; --muted:#8e93b4; --muted-2:#6d7295;
+  --brass:#e6b53f; --brass-2:#f3cf78; --brass-dk:#8f6a14;
+  --ev:#3ed6a5; --ev-dk:#15855f; --ev-glow:rgba(62,214,165,.14);
+  --im:#ac88ff; --im-dk:#6c3fd0; --im-glow:rgba(172,136,255,.14);
+  --err:#ff6f91; --err-dk:#b32b52;
+  --disp:'Archivo Black','Arial Black',sans-serif;
+  --ui:'Archivo',system-ui,-apple-system,sans-serif;
+  --type:'Courier Prime','Courier New',monospace;
+  --r-sm:8px; --r-md:12px; --r-lg:16px;
+  --sh-1:0 1px 2px rgba(0,0,0,.4);
+  --sh-2:0 4px 14px rgba(0,0,0,.35);
+  --sh-3:0 14px 40px rgba(0,0,0,.45);
+  --ease:cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{
+  background:var(--ink-900);
+  color:var(--text);
+  font-family:var(--ui);
+  font-size:16px;
+  line-height:1.5;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 500px at 15% -10%, rgba(230,181,63,.07), transparent 60%),
+    radial-gradient(700px 500px at 100% 0%, rgba(172,136,255,.06), transparent 55%);
+  background-attachment:fixed;
+}
+.app{max-width:1120px;margin:0 auto;padding:0 20px 72px}
+@media (max-width:600px){.app{padding:0 14px 56px}}
+
+/* ---------- header ---------- */
+.top{position:sticky;top:0;z-index:40;background:rgba(12,14,23,.92);backdrop-filter:blur(10px);
+  margin:0 -20px;padding:14px 20px 0;border-bottom:1px solid var(--line-soft)}
+@media (max-width:600px){.top{margin:0 -14px;padding:12px 14px 0}}
+.top__row{display:flex;align-items:center;gap:14px;max-width:1080px;margin:0 auto}
+.crest{width:40px;height:40px;border-radius:50%;border:2px solid var(--brass);color:var(--brass);
+  display:grid;place-items:center;flex:0 0 auto;background:radial-gradient(circle at 35% 25%,rgba(230,181,63,.22),transparent 70%)}
+@media (max-width:600px){.crest{display:none}}
+.wordmark{min-width:0}
+.wordmark .name{font-family:var(--disp);font-size:clamp(13px,2.4vw,15px);letter-spacing:.06em;color:var(--brass);
+  line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wordmark .sub{font-family:var(--type);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);margin-top:2px}
+.top__right{margin-left:auto;display:flex;align-items:center;gap:14px;flex:0 0 auto}
+.counter{font-family:var(--type);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+@media (max-width:520px){.counter{font-size:11px;letter-spacing:.04em}}
+.iconbtn{background:var(--ink-700);border:1px solid var(--line);color:var(--text);width:40px;height:40px;
+  border-radius:10px;display:grid;place-items:center;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.iconbtn:hover{border-color:var(--brass);color:var(--brass)}
+.iconbtn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.iconbtn svg{display:block}
+.track{height:3px;background:var(--line-soft);margin-top:12px;overflow:hidden}
+.track i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brass-dk),var(--brass));
+  transition:width .5s var(--ease)}
+
+/* ---------- surfaces ---------- */
+.panel{background:linear-gradient(180deg,var(--ink-800),var(--ink-700));border:1px solid var(--line);
+  border-radius:var(--r-lg);padding:clamp(22px,4vw,40px);margin-top:26px;box-shadow:var(--sh-2)}
+.filestrip{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-family:var(--type);font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);padding-bottom:16px;margin-bottom:22px;
+  border-bottom:1px solid var(--line-soft)}
+.filestrip b{color:var(--brass);font-weight:400}
+.filestrip .open{color:var(--err)}
+
+h1{font-family:var(--disp);font-size:clamp(28px,5.2vw,48px);line-height:1.05;letter-spacing:-.01em;margin:0 0 16px;max-width:19ch}
+h1 em{font-style:normal;color:var(--brass)}
+h2{font-family:var(--disp);font-size:clamp(18px,2.6vw,24px);line-height:1.2;margin:0 0 12px;letter-spacing:.01em}
+p{font-family:var(--type);font-size:15.5px;line-height:1.7;color:#ded6c6;margin:0 0 14px;max-width:68ch}
+p b{color:var(--paper)}
+.small{font-size:12.5px;color:var(--muted);letter-spacing:.02em}
+
+.btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,var(--brass-2),var(--brass));
+  color:#241a04;border:none;font-family:var(--disp);font-size:15px;letter-spacing:.02em;padding:15px 26px;
+  border-radius:var(--r-md);cursor:pointer;box-shadow:0 2px 0 var(--brass-dk),var(--sh-2);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease),filter .12s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.04);box-shadow:0 3px 0 var(--brass-dk),var(--sh-3)}
+.btn:active{transform:translateY(1px);box-shadow:0 1px 0 var(--brass-dk)}
+.btn:focus-visible{outline:2px solid var(--paper);outline-offset:3px}
+.btn svg{opacity:.8}
+
+/* ---------- legend ---------- */
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
+@media (max-width:720px){.legend{grid-template-columns:1fr}}
+.legend > div{border:1px solid;border-radius:var(--r-md);padding:18px;background:var(--ink-900)}
+.legend .ev{border-color:rgba(62,214,165,.45);box-shadow:inset 0 0 0 1px rgba(62,214,165,.08),0 0 28px -18px var(--ev)}
+.legend .im{border-color:rgba(172,136,255,.45);box-shadow:inset 0 0 0 1px rgba(172,136,255,.08),0 0 28px -18px var(--im)}
+.legend b{font-family:var(--disp);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.legend .ev b{color:var(--ev)} .legend .im b{color:var(--im)}
+.legend p{font-size:14px;line-height:1.6;margin:0;color:var(--muted)}
+
+/* ---------- doubt banner ---------- */
+.doubt{position:relative;background:linear-gradient(180deg,var(--paper),var(--paper-2));color:var(--paper-ink);
+  border-radius:var(--r-md);padding:22px 26px 24px;margin-top:24px;box-shadow:var(--sh-3);
+  border-left:6px solid var(--brass);animation:slide .35s var(--ease)}
+.doubt .lbl{font-family:var(--type);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--paper-muted);margin-bottom:8px}
+.doubt .q{font-family:var(--disp);font-size:clamp(19px,3.2vw,29px);line-height:1.22;letter-spacing:-.005em;max-width:30ch}
+@keyframes slide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* ---------- board ---------- */
+.board{display:grid;gap:16px;margin-top:18px;align-items:start;
+  grid-template-columns:1fr 1.1fr 1fr;grid-template-areas:"ev pile im"}
+@media (max-width:860px){
+  .board{grid-template-columns:1fr 1fr;grid-template-areas:"pile pile" "ev im";gap:12px}
+}
+.col-pile{grid-area:pile}
+.bin{border:1.5px solid;border-radius:var(--r-md);padding:16px;min-height:170px;background:var(--ink-800);
+  cursor:pointer;transition:background .18s,box-shadow .18s,border-color .18s,transform .18s}
+.bin.ev{border-color:rgba(62,214,165,.4);grid-area:ev}
+.bin.im{border-color:rgba(172,136,255,.4);grid-area:im}
+@media (max-width:860px){.bin{min-height:auto;padding:13px}}
+.bin.armed.ev{border-color:var(--ev);box-shadow:0 0 0 3px var(--ev-glow)}
+.bin.armed.im{border-color:var(--im);box-shadow:0 0 0 3px var(--im-glow)}
+.bin.over{background:var(--ink-600);transform:translateY(-2px)}
+.bin.over.ev{box-shadow:0 0 0 4px var(--ev-glow),0 0 32px -12px var(--ev)}
+.bin.over.im{box-shadow:0 0 0 4px var(--im-glow),0 0 32px -12px var(--im)}
+.bin h3{font-family:var(--disp);font-size:13px;letter-spacing:.12em;margin:0 0 6px;display:flex;gap:8px;align-items:center}
+.bin.ev h3{color:var(--ev)} .bin.im h3{color:var(--im)}
+.bin .def{font-family:var(--type);font-size:12px;line-height:1.5;color:var(--muted-2);margin:0 0 12px}
+@media (max-width:860px){.bin .def{display:none}}
+.stack{display:flex;flex-direction:column;gap:10px}
+.pilelabel{font-family:var(--type);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass);
+  text-align:center;margin:0 0 10px}
+.hint{font-family:var(--type);font-size:12px;line-height:1.6;color:var(--muted-2);text-align:center;margin:14px 0 0}
+
+/* ---------- clue cards ---------- */
+.card{position:relative;background:linear-gradient(180deg,var(--paper),var(--paper-2));color:var(--paper-ink);
+  border-radius:var(--r-sm);border-top:3px solid var(--paper-edge);padding:14px 16px;font-family:var(--type);
+  font-size:14.5px;line-height:1.55;cursor:grab;box-shadow:var(--sh-2);touch-action:none;user-select:none;
+  transition:transform .14s var(--ease),box-shadow .14s var(--ease)}
+.card:hover{transform:translateY(-2px);box-shadow:var(--sh-3)}
+.card:focus-visible,.card.sel{outline:3px solid var(--brass);outline-offset:3px}
+.card.sel{transform:translateY(-2px) rotate(-.6deg)}
+.card.dragging{position:fixed;z-index:999;pointer-events:none;cursor:grabbing;
+  transform:rotate(-2.5deg) scale(1.03);box-shadow:0 24px 44px rgba(0,0,0,.55);width:min(300px,76vw)}
+.card.filed{cursor:default;font-size:13.5px;padding-top:40px;animation:land .3s var(--ease)}
+.card.filed:hover{transform:none;box-shadow:var(--sh-2)}
+@keyframes land{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.card .mark{position:absolute;top:10px;left:16px;font-family:var(--disp);font-size:10px;letter-spacing:.14em;
+  border:2px solid;border-radius:4px;padding:3px 8px;transform:rotate(-2deg);animation:stampin .3s var(--ease)}
+.card.ok{border-top-color:var(--ev-dk)}
+.card.bad{border-top-color:var(--err-dk)}
+.card.ok .mark{color:var(--ev-dk);border-color:var(--ev-dk);background:rgba(21,133,95,.08)}
+.card.bad .mark{color:var(--err-dk);border-color:var(--err-dk);background:rgba(179,43,82,.07)}
+.card .why{display:block;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(0,0,0,.22);
+  font-size:12.5px;line-height:1.55;color:var(--paper-muted)}
+@keyframes stampin{0%{transform:rotate(-2deg) scale(1.7);opacity:0}60%{opacity:1}100%{transform:rotate(-2deg) scale(1);opacity:1}}
+
+/* ---------- ruled out ---------- */
+.ruled{margin-top:20px;border:1px solid rgba(62,214,165,.45);border-radius:var(--r-lg);padding:24px;
+  background:linear-gradient(180deg,#132a24,#101f1c);animation:slide .4s var(--ease);box-shadow:var(--sh-2)}
+.ruled .tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);color:var(--ev);font-size:12px;
+  letter-spacing:.18em;margin-bottom:12px}
+.ruled ul{margin:12px 0 20px;padding-left:20px}
+.ruled li{font-family:var(--type);font-size:14.5px;line-height:1.65;margin-bottom:6px;color:#dbe8e2}
+.ruled li::marker{color:var(--ev)}
+
+/* ---------- closing ---------- */
+.stamp{display:inline-block;font-family:var(--disp);font-size:clamp(20px,4vw,34px);letter-spacing:.06em;
+  color:var(--ev);border:4px double var(--ev);border-radius:6px;padding:8px 20px;transform:rotate(-3deg);
+  animation:stampin .45s var(--ease);margin:0 0 22px}
+.notebook{background-color:var(--paper);color:var(--paper-ink);border-radius:var(--r-md);
+  padding:20px 26px 20px 40px;margin:14px 0 20px;box-shadow:var(--sh-2);
+  background-image:repeating-linear-gradient(transparent 0 27px,rgba(120,105,80,.22) 27px 28px)}
+.notebook li{font-family:var(--type);font-size:13.5px;line-height:28px}
+.notebook li::marker{color:var(--paper-muted);font-size:12px}
+.scorecard{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:baseline;margin:20px 0 6px}
+.scorecard .n{font-family:var(--disp);font-size:34px;color:var(--brass);line-height:1}
+.meter{height:8px;background:var(--ink-900);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:10px 0 18px;max-width:520px}
+.meter i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--brass),var(--ev));transition:width 1s var(--ease)}
+.rule{height:1px;background:var(--line-soft);margin:28px 0 24px;border:0}
+
+.footer{margin-top:34px;text-align:center}
+.footer a{display:inline-flex;align-items:center;gap:8px;color:var(--muted-2);font-family:var(--type);font-size:13px;
+  letter-spacing:.06em;text-decoration:none;padding:8px 14px;border-radius:8px;transition:color .15s,background .15s}
+.footer a:hover{color:var(--brass);background:var(--ink-800)}
+.footer a:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:1000}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<audio id="bgm" src="openmindaudio-mystery-clueprints-and-crooked-footsteps-529280.mp3" loop preload="auto"></audio>
+
+<div class="app">
+  <header class="top">
+    <div class="top__row">
+      <div class="crest" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M4 9.5c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5c0 5.4-3.6 11.5-8 11.5S4 14.9 4 9.5Z" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="9" cy="9.5" r="2.2" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="15" cy="9.5" r="2.2" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M12 12.2 10.9 14h2.2L12 12.2Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="wordmark">
+        <div class="name">THE CASE OF THE GOLDEN OWL</div>
+        <div class="sub">An I-CBT investigation</div>
+      </div>
+      <div class="top__right">
+        <div class="counter" id="counter"></div>
+        <button class="iconbtn" id="mute" aria-label="Mute sound" aria-pressed="false"></button>
+      </div>
+    </div>
+    <div class="track"><i id="track"></i></div>
+  </header>
+
+  <main id="stage"></main>
+  <p class="sr" id="live" role="status" aria-live="polite"></p>
+
+  <div class="footer">
+    <a href="../index.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to CBT Games
+    </a>
+  </div>
+</div>
+
+<script>
+/* E = evidence: what the senses and the facts at the scene show.
+   I = imagination: what could have, might have, usually does happen. */
+const DOUBTS = [
+{
+  doubt:"The robber could have escaped through the window.",
+  cards:[
+    {t:"I can see the window latch is locked from the inside.", s:"E", why:"You're looking right at it."},
+    {t:"There's a layer of dust on the windowsill with no marks in it.", s:"E", why:"Undisturbed dust is something you can see."},
+    {t:"The back door was standing open when we arrived.", s:"E", why:"You walked in and saw it."},
+    {t:"A skilled thief could relock a window from the outside.", s:"I", why:"“Could” is imagination. Nothing here shows it happened."},
+    {t:"Windows are the classic escape route in every heist movie.", s:"I", why:"Movies aren't this museum."},
+    {t:"Maybe someone inside locked it behind them.", s:"I", why:"“Maybe” invents a second person nobody has seen."}
+  ],
+  fact:"The thief used the back door, not the window."
+},
+{
+  doubt:"They might have come in through the skylight.",
+  cards:[
+    {t:"The skylight glass is whole. No cracks, no cuts.", s:"E", why:"You can see the glass."},
+    {t:"It rained last night, and the floor under the skylight is bone dry.", s:"E", why:"Rain and a dry floor are both facts at the scene."},
+    {t:"The only ladder is still chained up in the supply closet.", s:"E", why:"You checked the closet and saw the chain."},
+    {t:"A pro could cut the glass and put it back perfectly.", s:"I", why:"A story about what a pro might do. The glass says nothing of the kind."},
+    {t:"Someone could have been lowered in by a drone.", s:"I", why:"Exciting. Also completely unsupported."},
+    {t:"I've seen this exact move in a spy movie.", s:"I", why:"A memory of a movie is not a clue in this room."}
+  ],
+  fact:"Nobody came through the roof."
+},
+{
+  doubt:"The alarm might have been hacked.",
+  cards:[
+    {t:"The alarm log shows it was turned off at 11:52 pm with a staff code.", s:"E", why:"It's printed right on the log."},
+    {t:"The alarm panel cover is closed and the screws are untouched.", s:"E", why:"You can see the screws."},
+    {t:"The staff list shows only four people have alarm codes.", s:"E", why:"A fact about this museum, on paper."},
+    {t:"Good hackers can fake a log so it looks normal.", s:"I", why:"“Can” is about what's possible, not what happened here."},
+    {t:"This could be the work of an international cyber gang.", s:"I", why:"No part of the scene mentions a gang."},
+    {t:"If they hacked this, they could hack anything.", s:"I", why:"That's the doubt growing, not a new clue."}
+  ],
+  fact:"The alarm was turned off with a real staff code."
+},
+{
+  doubt:"Maybe they smashed the glass case and swept up the pieces.",
+  cards:[
+    {t:"The display case door swings open on its hinges. The lock isn't damaged.", s:"E", why:"You can see and touch the lock."},
+    {t:"There's no glass in the trash or the vacuum bag.", s:"E", why:"You looked. None there."},
+    {t:"The key cabinet has one empty hook, labeled “Owl Case.”", s:"E", why:"An empty hook is something you can see."},
+    {t:"They could have brought a new pane of glass to replace it.", s:"I", why:"“Could have” again. The case shows no replacement."},
+    {t:"A real pro always takes the broken glass with them.", s:"I", why:"A rule about pros in general, not a fact about this case."},
+    {t:"Maybe they ground the glass into powder.", s:"I", why:"Imagination working overtime."}
+  ],
+  fact:"The case was opened with its own key, and that key is missing."
+},
+{
+  doubt:"There could be a secret tunnel under the museum.",
+  cards:[
+    {t:"The building plans show a solid concrete floor.", s:"E", why:"The plans are a fact about this building."},
+    {t:"The basement door is painted shut, and the paint isn't cracked.", s:"E", why:"You can see the paint seal."},
+    {t:"There's one trail of muddy footprints, from the back door to the owl case.", s:"E", why:"The footprints are right there on the floor."},
+    {t:"Old buildings always have secret tunnels.", s:"I", why:"“Always” is a story about buildings in general."},
+    {t:"Building plans can be faked.", s:"I", why:"Possible in theory, but nothing here shows it."},
+    {t:"The really smart thieves use tunnels.", s:"I", why:"A guess about smart thieves, not a clue."}
+  ],
+  fact:"The thief walked in the back door and straight to the case."
+},
+{
+  doubt:"The footprints could be a fake trail to fool us.",
+  cards:[
+    {t:"The prints are size 9 work boots with a zigzag sole.", s:"E", why:"You measured them."},
+    {t:"The mud matches the garden bed by the back door, which was freshly watered.", s:"E", why:"You can see and touch the mud."},
+    {t:"The trail goes in and back out once. No second set of prints.", s:"E", why:"You followed the trail yourself."},
+    {t:"A clever thief would wear someone else's boots.", s:"I", why:"“Would” is a story about a clever thief. Not a clue."},
+    {t:"They might have walked backwards to trick us.", s:"I", why:"Nothing about the prints suggests it."},
+    {t:"A fake trail is exactly what a mastermind would leave.", s:"I", why:"This turns every clue into a trick. That's how doubt keeps itself going."}
+  ],
+  fact:"One person in size 9 zigzag work boots, with mud from the garden bed."
+},
+{
+  doubt:"Maybe it was a whole gang, not one person.",
+  cards:[
+    {t:"There's only one set of footprints.", s:"E", why:"You counted."},
+    {t:"The night guard heard one car door close around midnight.", s:"E", why:"A witness heard it at the scene."},
+    {t:"The sign by the case says the owl weighs 6 pounds.", s:"E", why:"Easy for one person to carry. It's written right there."},
+    {t:"A heist this good needs a whole team.", s:"I", why:"A theory about heists, not a fact about this one."},
+    {t:"Gangs split up so they leave fewer clues.", s:"I", why:"A general rule, brought in from outside the scene."},
+    {t:"Whoever did this is probably part of something bigger.", s:"I", why:"“Probably” is doing all the work here."}
+  ],
+  fact:"One person, carrying a 6-pound owl, one car."
+},
+{
+  doubt:"It could have been anyone in the whole city.",
+  cards:[
+    {t:"The alarm was turned off with a staff code.", s:"E", why:"From the alarm log."},
+    {t:"The key cabinet sign-out sheet shows the groundskeeper took the owl case key yesterday.", s:"E", why:"His name is on the sheet."},
+    {t:"The groundskeeper wears size 9 zigzag work boots and watered the garden at 11 pm.", s:"E", why:"You can see his boots. The watering schedule is posted."},
+    {t:"Someone could have copied a key years ago.", s:"I", why:"Anything could have happened years ago. Nothing here shows it."},
+    {t:"Anyone could have seen a code over someone's shoulder.", s:"I", why:"Possible. Not shown by anything at the scene."},
+    {t:"Until I rule out every single person, I can't know.", s:"I", why:"That's the doubt asking for certainty. The evidence already points one way."}
+  ],
+  fact:"Every clue points to the groundskeeper."
+}
+];
+
+/* ---------- icons ---------- */
+const ICON = {
+  lens:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.2" stroke="currentColor" stroke-width="2"/><path d="M15.2 15.2 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  cloud:'<svg width="19" height="17" viewBox="0 0 26 22" fill="none" aria-hidden="true"><path d="M7.5 14.5a4.6 4.6 0 0 1 .3-9.2 5.7 5.7 0 0 1 10.6.9 4.2 4.2 0 0 1 .6 8.3H7.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6" cy="18.4" r="1.7" fill="currentColor"/><circle cx="2.6" cy="20.8" r="1" fill="currentColor"/></svg>',
+  check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  arrow:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13m-5.5-6 6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  on:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9.5h3.2L12 5.2v13.6L7.2 14.5H4V9.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.6 9.2a4 4 0 0 1 0 5.6M18.2 6.6a7.6 7.6 0 0 1 0 10.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  off:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9.5h3.2L12 5.2v13.6L7.2 14.5H4V9.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m16.2 9.8 5 4.4m0-4.4-5 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+};
+
+/* ---------- audio ---------- */
+let AC=null, muted=false;
+const bgm=document.getElementById('bgm');
+bgm.volume=0;
+function ac(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function tone(f,d,type,v,delay){
+  if(muted)return; const c=ac(); if(!c)return; const t=c.currentTime+(delay||0);
+  const o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.setValueAtTime(f,t);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v||.08,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+d+.05);
+}
+const S={
+  click:()=>tone(560,.05,'triangle',.035),
+  lift:()=>tone(420,.06,'sine',.03),
+  good:()=>[659,880,1175].forEach((f,i)=>tone(f,.22,'triangle',.055,i*.05)),
+  bad:()=>{tone(180,.18,'sine',.06);tone(120,.24,'sine',.045,.05);},
+  whoosh:()=>[320,440,580,720].forEach((f,i)=>tone(f,.12,'sine',.028,i*.028)),
+  solved:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.28,'triangle',.055,i*.075)),
+  fanfare:()=>{[392,523,659,784,1047,1319].forEach((f,i)=>tone(f,.42,'triangle',.06,i*.1));tone(196,.9,'sine',.04,.08);}
+};
+/* Fade the soundtrack in so it never jumps on the first note. */
+function startMusic(){
+  if(muted)return;
+  const target=.28;
+  bgm.play().then(()=>{
+    const step=()=>{ if(muted||bgm.volume>=target-.005){bgm.volume=muted?0:target;return;}
+      bgm.volume=Math.min(target,bgm.volume+.012); setTimeout(step,45); };
+    step();
+  }).catch(()=>{});
+}
+const muteBtn=document.getElementById('mute');
+muteBtn.innerHTML=ICON.on;
+muteBtn.addEventListener('click',()=>{
+  muted=!muted;
+  muteBtn.innerHTML=muted?ICON.off:ICON.on;
+  muteBtn.setAttribute('aria-pressed',String(muted));
+  muteBtn.setAttribute('aria-label',muted?'Unmute sound':'Mute sound');
+  bgm.muted=muted;
+  if(!muted){ ac(); S.click(); if(bgm.paused) startMusic(); else if(bgm.volume<.05) startMusic(); }
+});
+
+/* ---------- confetti ---------- */
+const cv=document.getElementById('confetti'), cx=cv.getContext('2d');
+let bits=[], raf=null;
+function confetti(n){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  cv.width=innerWidth; cv.height=innerHeight;
+  const cols=['#e6b53f','#f3cf78','#3ed6a5','#ac88ff','#f4ece0'];
+  for(let i=0;i<n;i++) bits.push({
+    x:innerWidth/2+(Math.random()-.5)*240, y:innerHeight*.36,
+    vx:(Math.random()-.5)*13, vy:-Math.random()*13-4,
+    r:Math.random()*5+3, c:cols[i%cols.length],
+    a:Math.random()*6, va:(Math.random()-.5)*.35, life:110+Math.random()*60
+  });
+  if(!raf) loop();
+}
+function loop(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  bits=bits.filter(b=>b.life-->0);
+  bits.forEach(b=>{
+    b.vy+=.32; b.x+=b.vx; b.y+=b.vy; b.a+=b.va;
+    cx.save(); cx.translate(b.x,b.y); cx.rotate(b.a);
+    cx.globalAlpha=Math.min(1,b.life/40); cx.fillStyle=b.c;
+    cx.fillRect(-b.r/2,-b.r/4,b.r,b.r/2); cx.restore();
+  });
+  raf = bits.length ? requestAnimationFrame(loop) : (cx.clearRect(0,0,cv.width,cv.height), null);
+}
+
+/* ---------- state ---------- */
+const stage=document.getElementById('stage');
+const counter=document.getElementById('counter');
+const track=document.getElementById('track');
+const live=document.getElementById('live');
+const st={i:0,right:0,total:0};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function setProgress(done){ track.style.width=Math.round(100*done/DOUBTS.length)+'%'; }
+function say(msg){ live.textContent=msg; }
+
+function intro(){
+  st.i=0; st.right=0; st.total=0;
+  counter.textContent='Case open';
+  setProgress(0);
+  stage.innerHTML=
+  '<section class="panel">'+
+    '<div class="filestrip">'+
+      '<span>Case file <b>No. 47-B</b></span>'+
+      '<span>Halloway Municipal Museum</span>'+
+      '<span>Status: <span class="open">Unsolved</span></span>'+
+    '</div>'+
+    '<h1>Last night, the <em>Golden Owl</em> was stolen.</h1>'+
+    '<p>The Halloway Museum’s most famous treasure is gone. You’re the detective. Your job is to find out what really happened.</p>'+
+    '<p>Your mind is going to keep handing you doubts: <i>the robber could have…</i>, <i>maybe they…</i>. Anything is possible. But a good detective only believes what the evidence shows.</p>'+
+    '<div class="legend">'+
+      '<div class="ev"><b>'+ICON.lens+' Evidence</b><p>What you can see, hear, touch, or smell at the scene, and the facts of the situation.</p></div>'+
+      '<div class="im"><b>'+ICON.cloud+' Imagination</b><p>What could have, might have, or usually happens. Movies, rules, guesses, and “what if.”</p></div>'+
+    '</div>'+
+    '<p>For each doubt, sort every clue into <b>Evidence</b> or <b>Imagination</b>. Drag it, or tap it and then tap a bin.</p>'+
+    '<p style="margin-top:24px;margin-bottom:0"><button class="btn" id="go">Start the investigation '+ICON.arrow+'</button></p>'+
+  '</section>';
+  document.getElementById('go').onclick=()=>{ ac(); startMusic(); S.whoosh(); round(); };
+}
+
+function round(){
+  const d=DOUBTS[st.i];
+  counter.textContent='Doubt '+(st.i+1)+' of '+DOUBTS.length;
+  setProgress(st.i);
+  stage.innerHTML=
+  '<div class="doubt"><div class="lbl">Doubt No. '+(st.i+1)+'</div><div class="q">“'+esc(d.doubt)+'”</div></div>'+
+  '<div class="board">'+
+    '<div class="bin ev" data-s="E" id="binE"><h3>'+ICON.lens+' EVIDENCE</h3>'+
+      '<p class="def">Seen, heard, touched, or a fact at the scene.</p><div class="stack" id="stackE"></div></div>'+
+    '<div class="col-pile"><p class="pilelabel">Clues to sort</p><div class="stack" id="pile"></div>'+
+      '<p class="hint" id="hint">Drag a clue into a bin, or tap the clue and then tap a bin.<br>Keyboard: ← evidence, → imagination.</p></div>'+
+    '<div class="bin im" data-s="I" id="binI"><h3>'+ICON.cloud+' IMAGINATION</h3>'+
+      '<p class="def">Could, might, maybe, usually, what if.</p><div class="stack" id="stackI"></div></div>'+
+  '</div>'+
+  '<div id="after"></div>';
+  const pile=document.getElementById('pile');
+  shuffle(d.cards.map((c,i)=>i)).forEach(idx=>{
+    const el=document.createElement('div');
+    el.className='card'; el.tabIndex=0; el.setAttribute('role','button'); el.dataset.idx=idx;
+    el.textContent=d.cards[idx].t;
+    el.setAttribute('aria-label',d.cards[idx].t+'. Left arrow for evidence, right arrow for imagination.');
+    wire(el); pile.appendChild(el);
+  });
+  ['binE','binI'].forEach(id=>document.getElementById(id).addEventListener('click',()=>{
+    const sel=document.querySelector('.card.sel'); if(sel) file(sel,document.getElementById(id).dataset.s);
+  }));
+  const first=pile.querySelector('.card'); if(first) first.focus({preventScroll:true});
+}
+
+function clearArm(){document.querySelectorAll('.bin').forEach(b=>b.classList.remove('armed','over'));}
+function binAt(x,y){const n=document.elementFromPoint(x,y);return n?n.closest('.bin'):null;}
+
+function wire(el){
+  let sx=0,sy=0,active=false,drag=false,hover=null,ox=0,oy=0;
+  el.addEventListener('pointerdown',e=>{
+    if(el.classList.contains('filed'))return;
+    active=true; sx=e.clientX; sy=e.clientY; el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!active)return;
+    if(!drag && Math.hypot(e.clientX-sx,e.clientY-sy)>7){
+      drag=true; const r=el.getBoundingClientRect(); ox=e.clientX-r.left; oy=e.clientY-r.top;
+      el.style.width=r.width+'px';
+      el.classList.add('dragging'); document.querySelectorAll('.bin').forEach(b=>b.classList.add('armed')); S.lift();
+    }
+    if(drag){
+      el.style.left=(e.clientX-ox)+'px'; el.style.top=(e.clientY-oy)+'px';
+      const b=binAt(e.clientX,e.clientY);
+      if(b!==hover){ if(hover)hover.classList.remove('over'); hover=b; if(hover)hover.classList.add('over'); }
+    }
+  });
+  el.addEventListener('pointerup',e=>{
+    if(!active)return; active=false; clearArm();
+    if(drag){
+      drag=false; hover=null; const b=binAt(e.clientX,e.clientY);
+      el.classList.remove('dragging'); el.style.left=''; el.style.top=''; el.style.width='';
+      if(b) file(el,b.dataset.s);
+    } else {
+      const was=el.classList.contains('sel');
+      document.querySelectorAll('.card.sel').forEach(c=>c.classList.remove('sel'));
+      if(!was){
+        el.classList.add('sel');
+        document.querySelectorAll('.bin').forEach(b=>b.classList.add('armed'));
+        S.click();
+        /* On narrow screens the bins sit below the clue list, so bring them
+           into view -- otherwise selecting a clue looks like nothing happened. */
+        if(matchMedia('(max-width:860px)').matches){
+          const bin=document.getElementById('binE');
+          if(bin) bin.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }
+    }
+  });
+  el.addEventListener('pointercancel',()=>{
+    active=false; drag=false;
+    el.classList.remove('dragging'); el.style.left=''; el.style.top=''; el.style.width=''; clearArm();
+  });
+  el.addEventListener('keydown',e=>{
+    if(el.classList.contains('filed'))return;
+    if(e.key==='ArrowLeft'||e.key==='1'){e.preventDefault();file(el,'E');}
+    else if(e.key==='ArrowRight'||e.key==='2'){e.preventDefault();file(el,'I');}
+  });
+}
+
+function file(el,side){
+  if(el.classList.contains('filed'))return;
+  const d=DOUBTS[st.i], c=d.cards[+el.dataset.idx], ok=c.s===side;
+  st.total++; if(ok) st.right++;
+  el.classList.remove('sel'); clearArm();
+  el.classList.add('filed', ok?'ok':'bad');
+  const label = c.s==='E' ? 'EVIDENCE' : 'IMAGINATION';
+  el.removeAttribute('role'); el.removeAttribute('aria-label'); el.tabIndex=-1;
+  el.innerHTML='<span class="mark">'+(ok?'CORRECT':'ACTUALLY '+label)+'</span>'+esc(c.t)+
+               '<span class="why">'+esc(c.why)+'</span>';
+  document.getElementById(c.s==='E'?'stackE':'stackI').appendChild(el);
+  ok?S.good():S.bad();
+  say((ok?'Correct. ':'Not quite. That one is '+label.toLowerCase()+'. ')+c.why);
+  const next=document.querySelector('#pile .card');
+  if(next) next.focus({preventScroll:true});
+  else ruledOut();
+}
+
+function ruledOut(){
+  const d=DOUBTS[st.i];
+  document.getElementById('hint').textContent='';
+  const ev=d.cards.filter(c=>c.s==='E').map(c=>'<li>'+esc(c.t)+'</li>').join('');
+  const last = st.i===DOUBTS.length-1;
+  setProgress(st.i+1);
+  document.getElementById('after').innerHTML=
+    '<div class="ruled">'+
+      '<div class="tag">'+ICON.check+' DOUBT RULED OUT</div>'+
+      '<p style="margin-bottom:0"><b>What the evidence shows:</b> '+esc(d.fact)+'</p>'+
+      '<ul>'+ev+'</ul>'+
+      '<button class="btn" id="next">'+(last?'Solve the case':'Next doubt')+' '+ICON.arrow+'</button>'+
+    '</div>';
+  S.solved(); confetti(40);
+  say('Doubt ruled out. '+d.fact);
+  const btn=document.getElementById('next');
+  btn.focus({preventScroll:true});
+  document.getElementById('after').scrollIntoView({behavior:'smooth',block:'nearest'});
+  btn.onclick=()=>{ S.whoosh(); if(last) final(); else { st.i++; round(); window.scrollTo({top:0,behavior:'smooth'}); } };
+}
+
+function final(){
+  counter.textContent='Case closed';
+  setProgress(DOUBTS.length);
+  const pct=Math.round(100*st.right/st.total);
+  const msg = pct>=90 ? 'Sharp work. You didn’t let a single “what if” run the investigation.'
+           : pct>=70 ? 'Solid detective work. A few “what ifs” sounded convincing. That’s how they work.'
+           : 'Case solved. Imagination is persuasive on purpose. Play again and watch for “could,” “might,” and “usually.”';
+  stage.innerHTML=
+  '<section class="panel">'+
+    '<div class="filestrip">'+
+      '<span>Case file <b>No. 47-B</b></span>'+
+      '<span>Halloway Municipal Museum</span>'+
+      '<span>Status: <b>Closed</b></span>'+
+    '</div>'+
+    '<div class="stamp">CASE SOLVED</div>'+
+    '<h1>The groundskeeper took the <em>Golden Owl</em>.</h1>'+
+    '<p>He signed out the key, turned off the alarm with his code, walked in the back door in his muddy size 9 boots, and carried the owl out to his car. It was found this morning in the potting shed, under a bag of mulch.</p>'+
+    '<p><b>Your case notes:</b></p>'+
+    '<ol class="notebook">'+DOUBTS.map(d=>'<li>'+esc(d.fact)+'</li>').join('')+'</ol>'+
+    '<p>No secret tunnel. No drone. No hacker. No gang. Every one of those doubts was <i>possible</i>. None of them was in the evidence.</p>'+
+    '<hr class="rule">'+
+    '<div class="scorecard">'+
+      '<div><div class="n">'+pct+'%</div><div class="small">Sorting accuracy</div></div>'+
+      '<div><div class="n">'+st.right+'/'+st.total+'</div><div class="small">Clues filed correctly</div></div>'+
+    '</div>'+
+    '<div class="meter"><i id="bar"></i></div>'+
+    '<p>'+msg+'</p>'+
+    '<h2 style="margin-top:28px">Why this matters</h2>'+
+    '<p>OCD doubts work like the ones in this case. They sound reasonable, they’re always possible, and they come from imagination, not from what’s in front of you. You don’t solve them by investigating every “what if.” You solve them by trusting what your senses and the situation actually show.</p>'+
+    '<p style="margin-top:26px;margin-bottom:0"><button class="btn" id="again">Play again</button></p>'+
+  '</section>';
+  window.scrollTo({top:0,behavior:'smooth'});
+  requestAnimationFrame(()=>{ const b=document.getElementById('bar'); if(b) b.style.width=pct+'%'; });
+  S.fanfare(); confetti(130);
+  say('Case solved. Sorting accuracy '+pct+' percent.');
+  document.getElementById('again').onclick=()=>{ S.whoosh(); intro(); };
+}
+
+intro();
+</script>
+</body>
+</html>
