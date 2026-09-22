@@ -117,26 +117,25 @@ p b{color:var(--paper)}
 .figure{display:flex;align-items:center;gap:18px;margin:0 0 18px}
 
 /* ---------- atmosphere ---------- */
+@keyframes drift{0%,100%{transform:translateX(-26px)}50%{transform:translateX(26px)}}
+@keyframes twinkle{0%,100%{opacity:.18}50%{opacity:.8}}
+@keyframes flicker{0%,100%{opacity:1}42%{opacity:.86}46%{opacity:1}72%{opacity:.92}}
+@keyframes rise{0%{transform:translateY(6px);opacity:0}30%{opacity:.6}100%{transform:translateY(-22px);opacity:0}}
+@keyframes halo{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.85;transform:scale(1.07)}}
 .vignette{position:fixed;inset:0;pointer-events:none;z-index:2;
   background:radial-gradient(130% 100% at 50% 12%,transparent 46%,rgba(0,0,0,.42) 100%)}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:3;opacity:.045;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* ---------- thought banner ---------- */
-.thought__meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.kind{font-family:var(--disp);font-size:9.5px;letter-spacing:.14em;padding:4px 10px;border-radius:999px;
-  border:1.5px solid;white-space:nowrap}
-.kind--doubt{color:#8a5a12;border-color:#c9922a;background:rgba(201,146,42,.13)}
-.kind--anxiety{color:#9e3354;border-color:#d4708c;background:rgba(212,112,140,.13)}
-.kind--hypothesis{color:#2c6494;border-color:#6aa6d4;background:rgba(106,166,212,.13)}
 .thought::after{content:"";position:absolute;left:30px;bottom:-13px;width:17px;height:17px;border-radius:50%;
   background:var(--paper-2);box-shadow:-19px 17px 0 -4.5px var(--paper-2)}
 
 /* ---------- scene vignettes ---------- */
-.art--spot{width:118px;height:118px;flex:0 0 auto;
-  --a1:#2b2636; --a2:#8a6612; --a3:rgba(43,38,54,.13); --a4:#f4ece0}
-@media (max-width:760px){.art--spot{width:88px;height:88px}}
-@media (max-width:480px){.art--spot{width:70px;height:70px}}
+.art--spot{width:116px;height:134px;flex:0 0 auto;transform:rotate(1.6deg);
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,.35))}
+@media (max-width:760px){.art--spot{width:92px;height:106px}}
+@media (max-width:480px){.art--spot{width:74px;height:85px}}
 
 /* ---------- bins ---------- */
 .bin__head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -200,7 +199,10 @@ p b{color:var(--paper)}
 .hint{font-family:var(--type);font-size:12px;line-height:1.6;color:var(--muted-2);text-align:center;margin:14px 0 0}
 
 /* ---------- clue cards ---------- */
-.card{position:relative;background:linear-gradient(180deg,var(--paper),var(--paper-2));color:var(--paper-ink);
+.card{position:relative;color:var(--paper-ink);
+  background:
+    repeating-linear-gradient(94deg,rgba(120,105,80,.035) 0 2px,transparent 2px 7px),
+    linear-gradient(180deg,var(--paper),var(--paper-2));
   border-radius:var(--r-sm);border-top:3px solid var(--paper-edge);padding:14px 16px;font-family:var(--type);
   font-size:14.5px;line-height:1.55;cursor:grab;box-shadow:var(--sh-2);touch-action:none;user-select:none;
   transition:transform .14s var(--ease),box-shadow .14s var(--ease)}
@@ -246,6 +248,12 @@ p b{color:var(--paper)}
 .meter i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--brass),var(--ev));transition:width 1s var(--ease)}
 .rule{height:1px;background:var(--line-soft);margin:28px 0 24px;border:0}
 
+.footnote{margin-top:30px;padding-top:18px;border-top:1px solid var(--line-soft)}
+.footnote h3{font-family:var(--disp);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted-2);margin:0 0 10px}
+.footnote p{font-size:13px;line-height:1.65;color:var(--muted);max-width:74ch;margin:0 0 9px}
+.footnote b{color:var(--text)}
+
 .footer{margin-top:34px;text-align:center}
 .footer a{display:inline-flex;align-items:center;gap:8px;color:var(--muted-2);font-family:var(--type);font-size:13px;
   letter-spacing:.06em;text-decoration:none;padding:8px 14px;border-radius:8px;transition:color .15s,background .15s}
@@ -268,7 +276,8 @@ p b{color:var(--paper)}
   <path d="M53 46 43 24l23 13z" fill="var(--a2)"/>
   <path d="M107 46 117 24 94 37z" fill="var(--a2)"/>
   <path d="M80 32c-26 0-43 28-43 63 0 41 19 68 43 68s43-27 43-68c0-35-17-63-43-63z" fill="var(--a2)"/>
-  <path d="M80 32c-26 0-43 28-43 63 0 41 19 68 43 68V32z" fill="var(--a1)" opacity=".08"/>
+  <path d="M80 32c-26 0-43 28-43 63 0 41 19 68 43 68V32z" fill="var(--a1)" opacity=".1"/>
+  <path d="M104 52c9 13 14 29 14 45 0 27-8 48-21 59 17-9 26-32 26-61 0-17-7-33-19-43z" fill="#fff3d2" opacity=".5"/>
   <circle cx="62" cy="74" r="16.5" fill="var(--a3)"/>
   <circle cx="98" cy="74" r="16.5" fill="var(--a3)"/>
   <circle cx="62" cy="74" r="7.5" fill="var(--a1)"/>
@@ -292,8 +301,10 @@ p b{color:var(--paper)}
   <path d="M70 92 51 122l19 14 19-14z" fill="var(--a1)" opacity=".45"/>
   <rect x="20" y="156" width="100" height="9" rx="1" fill="var(--a1)" opacity=".4"/>
   <rect x="62" y="156" width="15" height="9" fill="var(--a3)" opacity=".5"/>
+  <path d="M106 134c0-27-20-42-36-42v106h32z" fill="#aeb6dd" opacity=".12"/>
   <circle cx="70" cy="64" r="16" fill="#8f96b8"/>
   <path d="M70 48a16 16 0 0 0 0 32z" fill="#0c0e17" opacity=".2"/>
+  <path d="M84 56a16 16 0 0 1-2 18" fill="none" stroke="#dfe4f7" stroke-width="2" opacity=".5"/>
   <path d="M54 50c0-19 32-19 32 0z" fill="var(--a1)"/>
   <rect x="53" y="44" width="34" height="7" rx="1" fill="#8f96b8" opacity=".28"/>
   <ellipse cx="70" cy="50" rx="33" ry="7.5" fill="var(--a1)"/>
@@ -309,7 +320,9 @@ p b{color:var(--paper)}
     <path d="M56 80v28"/><path d="M84 80v28"/>
   </g>
   <rect x="53" y="108" width="34" height="22" rx="3" fill="var(--a1)" opacity=".18"/>
+  <path d="M96 110c0-21-12-33-26-33v79h26z" fill="#e3e7f2" opacity=".1"/>
   <circle cx="70" cy="60" r="17" fill="var(--a2)"/>
+  <path d="M83 50a17 17 0 0 1 1 18" fill="none" stroke="#e3e7f2" stroke-width="2" opacity=".35"/>
   <path d="M52 47c1-15 36-15 37 0z" fill="var(--a1)"/>
   <path d="M88 44h19a4.5 4.5 0 0 1 0 9H88z" fill="var(--a1)"/>
   <rect x="49" y="156" width="17" height="22" fill="var(--a2)"/>
@@ -327,116 +340,222 @@ p b{color:var(--paper)}
   <path d="M105 136c0-10 17-10 17 0" fill="none" stroke="var(--a3)" stroke-width="3.6" opacity=".9"/>
 </symbol>
 
-<!-- ===== Scene 1: the window ===== -->
-<symbol id="a-window" viewBox="0 0 100 100">
-  <rect x="18" y="14" width="64" height="66" rx="3" fill="none" stroke="var(--a1)" stroke-width="4"/>
-  <path d="M50 14v66M18 47h64" stroke="var(--a1)" stroke-width="3.5"/>
-  <rect x="24" y="20" width="20" height="21" fill="var(--a3)"/>
-  <rect x="56" y="53" width="20" height="21" fill="var(--a3)"/>
-  <circle cx="50" cy="47" r="7" fill="none" stroke="var(--a2)" stroke-width="4"/>
-  <path d="M50 40v-6" stroke="var(--a2)" stroke-width="4" stroke-linecap="round"/>
-  <rect x="14" y="80" width="72" height="7" rx="2.5" fill="var(--a1)"/>
-  <g fill="var(--a2)" opacity=".8">
-    <circle cx="26" cy="92" r="2"/><circle cx="40" cy="94" r="1.6"/>
-    <circle cx="56" cy="92" r="2.2"/><circle cx="71" cy="94" r="1.6"/>
+<defs>
+  <linearGradient id="ph-bg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#171d3a"/><stop offset="1" stop-color="#0a0d1c"/>
+  </linearGradient>
+  <linearGradient id="ph-floor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#1b2140"/><stop offset="1" stop-color="#0d1124"/>
+  </linearGradient>
+  <linearGradient id="ph-shaft" x1="0" y1="0" x2="0.4" y2="1">
+    <stop offset="0" stop-color="#cfe0ff" stop-opacity=".30"/>
+    <stop offset="1" stop-color="#cfe0ff" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="ph-warm" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffd98a" stop-opacity=".42"/>
+    <stop offset="1" stop-color="#ffd98a" stop-opacity="0"/>
+  </linearGradient>
+  <radialGradient id="ph-glow"><stop offset="0" stop-color="#ffe9b8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9b8" stop-opacity="0"/></radialGradient>
+  <radialGradient id="ph-cool"><stop offset="0" stop-color="#bcd4ff" stop-opacity=".5"/><stop offset="1" stop-color="#bcd4ff" stop-opacity="0"/></radialGradient>
+  <clipPath id="ph-clip"><rect x="0" y="0" width="120" height="108" rx="2"/></clipPath>
+</defs>
+
+<!-- 1. the latched window -->
+<symbol id="a-window" viewBox="0 0 120 108">
+  <rect width="120" height="108" fill="url(#ph-bg)"/>
+  <circle cx="60" cy="40" r="42" fill="url(#ph-cool)" opacity=".5"/>
+  <path d="M34 16h52v60H34z" fill="#26325c"/>
+  <g fill="#3d4d84">
+    <rect x="37" y="19" width="21" height="25"/><rect x="62" y="19" width="21" height="25"/>
+    <rect x="37" y="48" width="21" height="25"/><rect x="62" y="48" width="21" height="25"/>
+  </g>
+  <circle cx="72" cy="28" r="7" fill="#f2f0dd" opacity=".9"/>
+  <path d="M30 12h60v6H30zM30 12h5v66h-5zM85 12h5v66h-5zM57 18h6v58h-6zM34 43h52v6H34z" fill="#080b18"/>
+  <path d="M86 76 116 108H60z" fill="url(#ph-shaft)"/>
+  <path d="M34 76 4 108h56z" fill="url(#ph-shaft)" opacity=".55"/>
+  <rect x="22" y="76" width="76" height="7" rx="1.5" fill="#0b0e1e"/>
+  <rect x="22" y="76" width="76" height="2" fill="#7f8bb8" opacity=".55"/>
+  <rect x="0" y="83" width="120" height="25" fill="url(#ph-floor)"/>
+  <g fill="#cfd8f5" opacity=".5">
+    <circle cx="33" cy="80" r=".9"/><circle cx="45" cy="79.5" r=".7"/><circle cx="58" cy="80" r="1"/>
+    <circle cx="70" cy="79.5" r=".8"/><circle cx="84" cy="80" r=".9"/><circle cx="92" cy="79.5" r=".6"/>
+  </g>
+  <circle cx="60" cy="46" r="9" fill="url(#ph-glow)"/>
+  <rect x="55" y="42" width="10" height="7" rx="1.5" fill="#e6b53f"/>
+  <rect x="58.5" y="35" width="3" height="8" rx="1.5" fill="#e6b53f"/>
+  <rect x="55" y="42" width="10" height="2" fill="#ffe9b8"/>
+</symbol>
+
+<!-- 2. the skylight in the rain -->
+<symbol id="a-skylight" viewBox="0 0 120 108">
+  <rect width="120" height="108" fill="url(#ph-bg)"/>
+  <path d="M0 0h120v46H0z" fill="#0a0d1c"/>
+  <path d="M34 10h56l10 34H26z" fill="#28345f"/>
+  <path d="M37 13h50l8 28H30z" fill="#4a5f9e"/>
+  <circle cx="74" cy="24" r="6" fill="#f2f0dd" opacity=".85"/>
+  <g fill="#7f97d8" opacity=".55">
+    <circle cx="44" cy="20" r="1"/><circle cx="56" cy="32" r=".8"/><circle cx="84" cy="34" r="1"/>
+  </g>
+  <g stroke="#bcd4ff" stroke-width="1.4" stroke-linecap="round" opacity=".5">
+    <path d="M40 14l-3 26M52 12l-3 28M64 12l-3 28M76 13l-3 26M88 15l-2 24"/>
+  </g>
+  <path d="M34 10h56l10 34H26z" fill="none" stroke="#080b18" stroke-width="4"/>
+  <path d="M60 10v34M26 30h84" stroke="#080b18" stroke-width="3"/>
+  <path d="M26 44h68l16 50H10z" fill="url(#ph-shaft)"/>
+  <rect x="0" y="82" width="120" height="26" fill="url(#ph-floor)"/>
+  <ellipse cx="60" cy="92" rx="42" ry="9" fill="#bcd4ff" opacity=".12"/>
+  <g stroke="#9fb4e8" stroke-width="1.2" stroke-linecap="round" opacity=".35">
+    <path d="M14 88h16M90 96h18M40 100h22"/>
   </g>
 </symbol>
 
-<!-- ===== Scene 2: the skylight ===== -->
-<symbol id="a-skylight" viewBox="0 0 100 100">
-  <g stroke="var(--a2)" stroke-width="4" stroke-linecap="round" opacity=".85">
-    <path d="M22 10l-5 12"/><path d="M42 6l-5 12"/><path d="M62 10l-5 12"/><path d="M82 6l-5 12"/>
+<!-- 3. the alarm panel -->
+<symbol id="a-alarm" viewBox="0 0 120 108">
+  <rect width="120" height="108" fill="url(#ph-bg)"/>
+  <circle cx="60" cy="50" r="44" fill="url(#ph-glow)" opacity=".35"/>
+  <rect x="36" y="12" width="48" height="84" rx="5" fill="#161c34"/>
+  <rect x="36" y="12" width="48" height="84" rx="5" fill="none" stroke="#39457a" stroke-width="2"/>
+  <rect x="38.5" y="14.5" width="43" height="79" rx="4" fill="none" stroke="#5d6ba8" stroke-width="1" opacity=".5"/>
+  <rect x="43" y="20" width="34" height="17" rx="2" fill="#0a1a16"/>
+  <rect x="43" y="20" width="34" height="17" rx="2" fill="#2ed3a0" opacity=".22"/>
+  <g stroke="#7ff0cc" stroke-width="2" stroke-linecap="round" opacity=".9">
+    <path d="M47 27h10M60 27h5M68 27h4M47 32h16"/>
   </g>
-  <path d="M16 62 32 30h44l14 32z" fill="var(--a3)" stroke="var(--a1)" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M48 30 40 62M64 30l10 32" stroke="var(--a1)" stroke-width="3"/>
-  <rect x="10" y="62" width="82" height="7" rx="2.5" fill="var(--a1)"/>
-  <path d="M20 84h60" stroke="var(--a2)" stroke-width="4" stroke-linecap="round" opacity=".5"/>
-  <path d="M28 92h44" stroke="var(--a2)" stroke-width="3" stroke-linecap="round" opacity=".3"/>
-</symbol>
-
-<!-- ===== Scene 3: the alarm panel ===== -->
-<symbol id="a-alarm" viewBox="0 0 100 100">
-  <rect x="24" y="10" width="52" height="80" rx="6" fill="none" stroke="var(--a1)" stroke-width="4"/>
-  <rect x="32" y="20" width="36" height="16" rx="2" fill="var(--a3)"/>
-  <path d="M37 28h26" stroke="var(--a1)" stroke-width="3" stroke-linecap="round"/>
-  <g fill="var(--a1)">
-    <circle cx="37" cy="50" r="4"/><circle cx="50" cy="50" r="4"/><circle cx="63" cy="50" r="4"/>
-    <circle cx="37" cy="64" r="4"/><circle cx="50" cy="64" r="4"/><circle cx="63" cy="64" r="4"/>
+  <g fill="#39457a">
+    <rect x="45" y="45" width="9" height="8" rx="1.5"/><rect x="56" y="45" width="9" height="8" rx="1.5"/>
+    <rect x="67" y="45" width="9" height="8" rx="1.5"/><rect x="45" y="57" width="9" height="8" rx="1.5"/>
+    <rect x="56" y="57" width="9" height="8" rx="1.5"/><rect x="67" y="57" width="9" height="8" rx="1.5"/>
+    <rect x="45" y="69" width="9" height="8" rx="1.5"/><rect x="56" y="69" width="9" height="8" rx="1.5"/>
+    <rect x="67" y="69" width="9" height="8" rx="1.5"/>
   </g>
-  <circle cx="50" cy="78" r="5" fill="var(--a2)"/>
-  <g stroke="var(--a1)" stroke-width="3" opacity=".55">
-    <path d="M27 14l-0 0"/><circle cx="28" cy="14" r="1.6" fill="var(--a1)"/>
-    <circle cx="72" cy="14" r="1.6" fill="var(--a1)"/>
-    <circle cx="28" cy="86" r="1.6" fill="var(--a1)"/>
-    <circle cx="72" cy="86" r="1.6" fill="var(--a1)"/>
+  <g fill="#8e9bd4" opacity=".6">
+    <rect x="45" y="45" width="9" height="2" rx="1"/><rect x="56" y="45" width="9" height="2" rx="1"/>
+    <rect x="67" y="45" width="9" height="2" rx="1"/>
   </g>
-</symbol>
-
-<!-- ===== Scene 4: the display case ===== -->
-<symbol id="a-case" viewBox="0 0 100 100">
-  <rect x="30" y="76" width="40" height="8" rx="2" fill="var(--a1)"/>
-  <rect x="36" y="58" width="28" height="18" fill="var(--a1)" opacity=".25"/>
-  <rect x="22" y="14" width="46" height="46" rx="3" fill="var(--a3)" stroke="var(--a1)" stroke-width="4"/>
-  <path d="M68 14l16 10v46l-16-10z" fill="none" stroke="var(--a2)" stroke-width="4" stroke-linejoin="round"/>
-  <circle cx="65" cy="38" r="3" fill="var(--a2)"/>
-  <path d="M34 34h10M34 42h16" stroke="var(--a1)" stroke-width="3" stroke-linecap="round" opacity=".3"/>
-  <rect x="24" y="86" width="52" height="7" rx="2.5" fill="var(--a1)"/>
-</symbol>
-
-<!-- ===== Scene 5: the floor / no tunnel ===== -->
-<symbol id="a-floor" viewBox="0 0 100 100">
-  <rect x="8" y="16" width="84" height="16" rx="2" fill="var(--a1)"/>
-  <g stroke="var(--a1)" stroke-width="2.6" opacity=".4" stroke-linecap="round">
-    <path d="M14 40l7-6M30 40l7-6M46 40l7-6M62 40l7-6M78 40l7-6"/>
-  </g>
-  <path d="M22 94V74a28 28 0 0 1 56 0v20" fill="none" stroke="var(--a1)" stroke-width="4"
-        stroke-dasharray="7 7" stroke-linecap="round" opacity=".55"/>
-  <path d="M34 60l32 32M66 60L34 92" stroke="var(--a2)" stroke-width="6" stroke-linecap="round"/>
-</symbol>
-
-<!-- ===== Scene 6: the footprints ===== -->
-<symbol id="a-prints" viewBox="0 0 100 100">
-  <path d="M86 12v78" stroke="var(--a2)" stroke-width="3" stroke-dasharray="5 7" stroke-linecap="round" opacity=".55"/>
-  <g fill="var(--a1)">
-    <ellipse cx="28" cy="20" rx="11" ry="13"/><ellipse cx="28" cy="38" rx="8.5" ry="6.5"/>
-    <ellipse cx="62" cy="46" rx="11" ry="13"/><ellipse cx="62" cy="64" rx="8.5" ry="6.5"/>
-    <ellipse cx="28" cy="72" rx="11" ry="13"/><ellipse cx="28" cy="90" rx="8.5" ry="6.5"/>
-  </g>
-  <g stroke="var(--a4,#f4ece0)" stroke-width="2.2" fill="none" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M21 14l7-4 7 4M21 21l7-4 7 4M21 28l7-4 7 4"/>
-    <path d="M55 40l7-4 7 4M55 47l7-4 7 4M55 54l7-4 7 4"/>
-    <path d="M21 66l7-4 7 4M21 73l7-4 7 4M21 80l7-4 7 4"/>
+  <circle cx="60" cy="87" r="4.5" fill="#e6b53f"/>
+  <circle cx="60" cy="87" r="8" fill="url(#ph-glow)"/>
+  <g fill="#6d7ab5">
+    <circle cx="40" cy="16" r="1.4"/><circle cx="80" cy="16" r="1.4"/>
+    <circle cx="40" cy="92" r="1.4"/><circle cx="80" cy="92" r="1.4"/>
   </g>
 </symbol>
 
-<!-- ===== Scene 7: one person, not a gang ===== -->
-<symbol id="a-crowd" viewBox="0 0 100 100">
-  <g opacity=".22" fill="var(--a1)">
-    <circle cx="26" cy="34" r="11"/><path d="M26 48c-11 0-19 11-19 24v14h38V72c0-13-8-24-19-24z"/>
-    <circle cx="76" cy="34" r="11"/><path d="M76 48c-11 0-19 11-19 24v14h38V72c0-13-8-24-19-24z"/>
-  </g>
-  <g fill="var(--a1)">
-    <circle cx="50" cy="28" r="14"/><path d="M50 46c-14 0-24 14-24 30v10h48V76c0-16-10-30-24-30z"/>
-  </g>
-  <circle cx="50" cy="28" r="14" fill="var(--a2)" opacity=".25"/>
-  <path d="M14 20l14 14M28 20L14 34M62 20l14 14M76 20L62 34" stroke="var(--a2)" stroke-width="3.4" stroke-linecap="round" opacity=".7"/>
+<!-- 4. the empty display case -->
+<symbol id="a-case" viewBox="0 0 120 108">
+  <rect width="120" height="108" fill="url(#ph-bg)"/>
+  <rect x="0" y="84" width="120" height="24" fill="url(#ph-floor)"/>
+  <path d="M28 20h48v64H28z" fill="#ffd98a" opacity=".10"/>
+  <rect x="24" y="84" width="56" height="8" rx="1.5" fill="#0b0e1e"/>
+  <rect x="30" y="62" width="44" height="22" fill="#141a33"/>
+  <rect x="30" y="62" width="44" height="3" fill="#5f6ea8" opacity=".6"/>
+  <rect x="44" y="68" width="16" height="16" rx="1" fill="#0a0d1c"/>
+  <rect x="28" y="18" width="48" height="46" rx="2" fill="#2a3560" opacity=".35"/>
+  <rect x="28" y="18" width="48" height="46" rx="2" fill="none" stroke="#7d8cc8" stroke-width="2"/>
+  <path d="M33 60 60 22M44 62 71 24" stroke="#cfe0ff" stroke-width="2" opacity=".2"/>
+  <path d="M76 18l22 12v46L76 64z" fill="#2a3560" opacity=".3"/>
+  <path d="M76 18l22 12v46L76 64z" fill="none" stroke="#e6b53f" stroke-width="2"/>
+  <path d="M80 24l14 9" stroke="#ffe9b8" stroke-width="1.6" opacity=".4"/>
+  <circle cx="73" cy="42" r="2.6" fill="#e6b53f"/>
+  <circle cx="73" cy="42" r="7" fill="url(#ph-glow)"/>
+  <ellipse cx="52" cy="92" rx="30" ry="5" fill="#000" opacity=".3"/>
 </symbol>
 
-<!-- ===== Scene 8: the key cabinet ===== -->
-<symbol id="a-keys" viewBox="0 0 100 100">
-  <rect x="14" y="14" width="72" height="72" rx="4" fill="none" stroke="var(--a1)" stroke-width="4"/>
-  <path d="M14 34h72" stroke="var(--a1)" stroke-width="3.5"/>
-  <g stroke="var(--a1)" stroke-width="3" fill="none">
-    <path d="M30 40v6M50 40v6M70 40v6"/>
-    <path d="M30 64v6M70 64v6"/>
+<!-- 5. the basement door, painted shut -->
+<symbol id="a-floor" viewBox="0 0 120 108">
+  <rect width="120" height="108" fill="url(#ph-bg)"/>
+  <rect x="0" y="88" width="120" height="20" fill="url(#ph-floor)"/>
+  <rect x="34" y="14" width="52" height="78" rx="2" fill="#141a33"/>
+  <rect x="34" y="14" width="52" height="78" rx="2" fill="none" stroke="#39457a" stroke-width="2.5"/>
+  <rect x="40" y="22" width="40" height="28" rx="1.5" fill="#1b2240" stroke="#2f3a68" stroke-width="1.5"/>
+  <rect x="40" y="56" width="40" height="28" rx="1.5" fill="#1b2240" stroke="#2f3a68" stroke-width="1.5"/>
+  <path d="M34 14h52v78" fill="none" stroke="#ffd98a" stroke-width="2" opacity=".5"/>
+  <path d="M86 92H34V14" fill="none" stroke="#ffd98a" stroke-width="1.2" opacity=".22"/>
+  <circle cx="60" cy="53" r="24" fill="url(#ph-glow)" opacity=".3"/>
+  <circle cx="79" cy="54" r="2.6" fill="#8e9bd4"/>
+  <g stroke="#e6b53f" stroke-width="2" stroke-linecap="round" opacity=".85">
+    <path d="M30 92h60"/>
   </g>
-  <g fill="var(--a1)">
-    <circle cx="30" cy="52" r="5"/><path d="M28 56h4v10h-4z"/><path d="M32 60h4M32 64h4"/>
-    <circle cx="70" cy="52" r="5"/><path d="M68 56h4v10h-4z"/><path d="M72 60h4M72 64h4"/>
-    <circle cx="30" cy="76" r="5"/><path d="M28 80h4v8h-4z"/>
+  <g fill="#e6b53f" opacity=".35">
+    <circle cx="36" cy="88" r="1.6"/><circle cx="60" cy="89" r="1.3"/><circle cx="84" cy="88" r="1.6"/>
   </g>
-  <circle cx="50" cy="56" r="10" fill="none" stroke="var(--a2)" stroke-width="3.5" stroke-dasharray="4 5"/>
-  <path d="M22 22h20" stroke="var(--a2)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M0 0h120v10H0z" fill="#080b18"/>
+</symbol>
+
+<!-- 6. the boot prints -->
+<symbol id="a-prints" viewBox="0 0 120 108">
+  <rect width="120" height="108" fill="url(#ph-bg)"/>
+  <rect x="0" y="22" width="120" height="86" fill="url(#ph-floor)"/>
+  <path d="M0 22h120v3H0z" fill="#39457a" opacity=".5"/>
+  <path d="M-10 22 30 108M40 22l10 86M80 22l-4 86M118 22l-30 86" stroke="#2a3560" stroke-width="1.2" opacity=".5"/>
+  <path d="M0 24 60 12l60 12v6L60 20 0 30z" fill="#ffd98a" opacity=".07"/>
+  <g fill="#0a0d1c">
+    <ellipse cx="34" cy="44" rx="8" ry="10"/><ellipse cx="34" cy="57" rx="6" ry="5"/>
+    <ellipse cx="62" cy="64" rx="9" ry="11.5"/><ellipse cx="62" cy="79" rx="7" ry="5.5"/>
+    <ellipse cx="36" cy="86" rx="10" ry="12.5"/><ellipse cx="36" cy="102" rx="8" ry="6"/>
+  </g>
+  <g stroke="#5f6ea8" stroke-width="1.1" fill="none" stroke-linejoin="round" opacity=".85">
+    <path d="M29 40l5-3 5 3M29 45l5-3 5 3M29 50l5-3 5 3"/>
+    <path d="M56 59l6-3.4 6 3.4M56 65l6-3.4 6 3.4M56 71l6-3.4 6 3.4"/>
+    <path d="M29 80l7-4 7 4M29 87l7-4 7 4M29 94l7-4 7 4"/>
+  </g>
+  <g fill="#cfd8f5" opacity=".22">
+    <ellipse cx="42" cy="44" rx="3" ry="10"/><ellipse cx="71" cy="64" rx="3" ry="11"/><ellipse cx="46" cy="86" rx="3" ry="12"/>
+  </g>
+  <g transform="rotate(-6 96 74)">
+    <path d="M88 60h18v22H88z" fill="#f2efe2"/>
+    <path d="M88 60h18v6H88z" fill="#c0304e"/>
+    <path d="M94 70h6v8h-6z" fill="#2b2636"/>
+  </g>
+</symbol>
+
+<!-- 7. one figure in the doorway -->
+<symbol id="a-crowd" viewBox="0 0 120 108">
+  <rect width="120" height="108" fill="url(#ph-bg)"/>
+  <rect x="0" y="84" width="120" height="24" fill="url(#ph-floor)"/>
+  <rect x="38" y="8" width="44" height="78" fill="#ffe9b8" opacity=".16"/>
+  <rect x="38" y="8" width="44" height="78" fill="none" stroke="#e6b53f" stroke-width="2" opacity=".55"/>
+  <path d="M38 86 14 108h92L82 86z" fill="url(#ph-warm)" opacity=".5"/>
+  <g fill="#070a16" opacity=".3">
+    <circle cx="26" cy="56" r="7"/><path d="M26 65c-8 0-13 8-13 17v10h26V82c0-9-5-17-13-17z"/>
+    <circle cx="96" cy="56" r="7"/><path d="M96 65c-8 0-13 8-13 17v10h26V82c0-9-5-17-13-17z"/>
+  </g>
+  <g stroke="#e6b53f" stroke-width="2" stroke-linecap="round" opacity=".5">
+    <path d="M18 44l14 14M32 44 18 58M88 44l14 14M102 44 88 58"/>
+  </g>
+  <path d="M60 86 44 108h32z" fill="#070a16" opacity=".55"/>
+  <g fill="#070a16">
+    <circle cx="60" cy="38" r="10"/>
+    <path d="M60 51c-11 0-18 11-18 24v11h36V75c0-13-7-24-18-24z"/>
+  </g>
+  <path d="M50 51c-5 4-8 13-8 24v11h6V75c0-10 1-19 2-24z" fill="#8e9bd4" opacity=".35"/>
+  <circle cx="60" cy="38" r="10" fill="none" stroke="#8e9bd4" stroke-width="1.4" opacity=".3"/>
+</symbol>
+
+<!-- 8. the key cabinet, one hook empty -->
+<symbol id="a-keys" viewBox="0 0 120 108">
+  <rect width="120" height="108" fill="url(#ph-bg)"/>
+  <rect x="16" y="10" width="88" height="88" rx="3" fill="#121831"/>
+  <rect x="16" y="10" width="88" height="88" rx="3" fill="none" stroke="#39457a" stroke-width="2.5"/>
+  <rect x="21" y="15" width="78" height="78" rx="2" fill="#0c1024"/>
+  <rect x="21" y="15" width="78" height="10" fill="#1d2542"/>
+  <path d="M27 20h34" stroke="#e6b53f" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+  <g stroke="#4c5896" stroke-width="2" stroke-linecap="round">
+    <path d="M32 34v4M52 34v4M72 34v4M92 34v4M32 64v4M72 64v4M92 64v4"/>
+  </g>
+  <g stroke="#2a3560" stroke-width="1.5"><path d="M24 38h72M24 68h72"/></g>
+  <g fill="#8e9bd4">
+    <g><circle cx="32" cy="45" r="4"/><rect x="30.5" y="48" width="3" height="9"/><rect x="33.5" y="51" width="4" height="2"/><rect x="33.5" y="55" width="4" height="2"/></g>
+    <g><circle cx="52" cy="45" r="4"/><rect x="50.5" y="48" width="3" height="9"/><rect x="53.5" y="51" width="4" height="2"/><rect x="53.5" y="55" width="4" height="2"/></g>
+    <g><circle cx="92" cy="45" r="4"/><rect x="90.5" y="48" width="3" height="9"/><rect x="93.5" y="51" width="4" height="2"/><rect x="93.5" y="55" width="4" height="2"/></g>
+    <g><circle cx="32" cy="75" r="4"/><rect x="30.5" y="78" width="3" height="9"/><rect x="33.5" y="81" width="4" height="2"/></g>
+    <g><circle cx="92" cy="75" r="4"/><rect x="90.5" y="78" width="3" height="9"/><rect x="93.5" y="81" width="4" height="2"/></g>
+  </g>
+  <circle cx="72" cy="48" r="17" fill="url(#ph-glow)"/>
+  <circle cx="72" cy="37" r="4.5" fill="none" stroke="#e6b53f" stroke-width="2.5"/>
+  <g transform="rotate(-4 72 56)">
+    <rect x="62" y="50" width="21" height="11" rx="1.5" fill="#f2efe2"/>
+    <path d="M66 54h13M66 57.5h9" stroke="#8a8199" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
 </symbol>
 
 
@@ -536,12 +655,16 @@ p b{color:var(--paper)}
   <g>
     <path d="M46 60a34 34 0 0 1 68 0v92H46z" fill="#0a0d1c"/>
     <path d="M556 60a34 34 0 0 1 68 0v92h-68z" fill="#0a0d1c"/>
+    <circle cx="80" cy="58" r="26" fill="#ffe9b0" opacity=".12" style="animation:halo 9s ease-in-out infinite"/>
     <circle cx="80" cy="58" r="16" fill="url(#g-moon2)"/>
     <circle cx="86" cy="51" r="3.2" fill="#cdbd8c" opacity=".6"/>
     <circle cx="74" cy="65" r="2" fill="#cdbd8c" opacity=".5"/>
-    <g fill="#f4ece0" opacity=".55">
-      <circle cx="62" cy="96" r="1.3"/><circle cx="104" cy="112" r="1"/>
-      <circle cx="572" cy="80" r="1.3"/><circle cx="604" cy="104" r="1.1"/><circle cx="590" cy="130" r="1"/>
+    <g fill="#f4ece0">
+      <circle cx="62" cy="96" r="1.3" style="animation:twinkle 4s ease-in-out infinite"/>
+      <circle cx="104" cy="112" r="1" style="animation:twinkle 5.5s ease-in-out infinite 1.1s"/>
+      <circle cx="572" cy="80" r="1.3" style="animation:twinkle 4.8s ease-in-out infinite .6s"/>
+      <circle cx="604" cy="104" r="1.1" style="animation:twinkle 6s ease-in-out infinite 2.2s"/>
+      <circle cx="590" cy="130" r="1" style="animation:twinkle 5s ease-in-out infinite 3s"/>
     </g>
     <path d="M46 60a34 34 0 0 1 68 0v92H46zM556 60a34 34 0 0 1 68 0v92h-68z"
           fill="none" stroke="#2b3050" stroke-width="5"/>
@@ -571,7 +694,8 @@ p b{color:var(--paper)}
   <rect x="250" y="40" width="100" height="112" rx="3" fill="none" stroke="#242a48" stroke-width="3"/>
 
   <!-- spotlight on an empty plinth -->
-  <path d="M258 18h84l64 190H194z" fill="url(#g-cone)"/>
+  <path d="M258 18h84l64 190H194z" fill="url(#g-cone)" style="animation:flicker 5.5s ease-in-out infinite"/>
+  <ellipse cx="300" cy="248" rx="70" ry="12" fill="#ffdc8a" opacity=".05"/>
   <ellipse cx="300" cy="212" rx="86" ry="16" fill="#ffdc8a" opacity=".07"/>
   <rect x="252" y="200" width="96" height="12" rx="2" fill="#2b3050"/>
   <rect x="266" y="166" width="68" height="34" rx="2" fill="#212640"/>
@@ -605,10 +729,24 @@ p b{color:var(--paper)}
   </g>
 
   <rect x="0" y="206" width="660" height="64" fill="url(#g-fog)"/>
-  <g fill="#ffe9b0" opacity=".25">
-    <circle cx="246" cy="96" r="1.6"/><circle cx="352" cy="132" r="1.3"/><circle cx="286" cy="74" r="1.1"/>
-    <circle cx="330" cy="176" r="1.5"/><circle cx="262" cy="150" r="1.2"/>
+  <g fill="#ffe9b0">
+    <circle cx="246" cy="120" r="1.6" style="animation:rise 7s ease-in-out infinite"/>
+    <circle cx="352" cy="150" r="1.3" style="animation:rise 9s ease-in-out infinite 1.4s"/>
+    <circle cx="286" cy="104" r="1.1" style="animation:rise 8s ease-in-out infinite 2.6s"/>
+    <circle cx="330" cy="186" r="1.5" style="animation:rise 10s ease-in-out infinite .7s"/>
+    <circle cx="262" cy="166" r="1.2" style="animation:rise 8.5s ease-in-out infinite 3.4s"/>
   </g>
+  <!-- drifting haze, and a barrier close to the lens for depth -->
+  <g opacity=".5" style="animation:drift 26s ease-in-out infinite">
+    <ellipse cx="200" cy="228" rx="190" ry="26" fill="#2b3050" opacity=".55"/>
+    <ellipse cx="470" cy="238" rx="200" ry="22" fill="#2b3050" opacity=".4"/>
+  </g>
+  <g fill="#05070f">
+    <rect x="86" y="196" width="13" height="74" rx="5"/><ellipse cx="92" cy="196" rx="11" ry="5"/>
+    <rect x="556" y="190" width="14" height="80" rx="5"/><ellipse cx="563" cy="190" rx="12" ry="5"/>
+  </g>
+  <path d="M97 206q170 42 460 8" fill="none" stroke="#05070f" stroke-width="7" stroke-linecap="round"/>
+  <path d="M97 204q170 42 460 8" fill="none" stroke="#3a4066" stroke-width="2" stroke-linecap="round" opacity=".5"/>
 </symbol>
 
 <!-- ===== The case board ===== -->
@@ -650,17 +788,25 @@ p b{color:var(--paper)}
   </g>
 
   <!-- evidence notes -->
-  <g transform="rotate(-5 104 120)">
-    <rect x="58" y="76" width="92" height="66" fill="#f6efdf"/>
-    <path d="M68 92h72M68 102h58M68 112h66M68 122h44" stroke="#9a9184" stroke-width="3" stroke-linecap="round"/>
+  <g transform="rotate(-6 104 122)">
+    <rect x="54" y="70" width="100" height="104" fill="#f8f4e8"/>
+    <g transform="translate(60 76)"><g clip-path="url(#ph-clip)">
+      <use href="#a-prints" x="0" y="0" width="88" height="79"/>
+      <rect width="88" height="79" fill="none" stroke="rgba(0,0,0,.5)" stroke-width="2"/>
+    </g></g>
+    <path d="M64 162h44" stroke="#bdb3a0" stroke-width="4" stroke-linecap="round"/>
   </g>
   <g transform="rotate(6 300 218)">
     <rect x="252" y="182" width="96" height="62" fill="#f6efdf"/>
     <path d="M262 198h76M262 208h56M262 218h70" stroke="#9a9184" stroke-width="3" stroke-linecap="round"/>
   </g>
-  <g transform="rotate(-4 566 216)">
-    <rect x="520" y="184" width="88" height="58" fill="#f6efdf"/>
-    <path d="M530 200h66M530 210h48M530 220h58" stroke="#9a9184" stroke-width="3" stroke-linecap="round"/>
+  <g transform="rotate(5 566 218)">
+    <rect x="516" y="176" width="100" height="104" fill="#f8f4e8"/>
+    <g transform="translate(522 182)"><g clip-path="url(#ph-clip)">
+      <use href="#a-keys" x="0" y="0" width="88" height="79"/>
+      <rect width="88" height="79" fill="none" stroke="rgba(0,0,0,.5)" stroke-width="2"/>
+    </g></g>
+    <path d="M526 268h44" stroke="#bdb3a0" stroke-width="4" stroke-linecap="round"/>
   </g>
   <g transform="rotate(7 110 232)">
     <rect x="66" y="200" width="84" height="56" fill="#f6efdf"/>
@@ -671,9 +817,9 @@ p b{color:var(--paper)}
   <g>
     <circle cx="300" cy="30" r="7" fill="#c0304e"/><circle cx="298" cy="28" r="2.4" fill="#f4a0b2"/>
     <circle cx="496" cy="70" r="7" fill="#e6b53f"/><circle cx="494" cy="68" r="2.4" fill="#fff0c2"/>
-    <circle cx="104" cy="80" r="7" fill="#3ed6a5"/><circle cx="102" cy="78" r="2.4" fill="#c8f7e8"/>
+    <circle cx="104" cy="74" r="7" fill="#3ed6a5"/><circle cx="102" cy="72" r="2.4" fill="#c8f7e8"/>
     <circle cx="300" cy="186" r="7" fill="#ac88ff"/><circle cx="298" cy="184" r="2.4" fill="#e4d6ff"/>
-    <circle cx="566" cy="188" r="7" fill="#c0304e"/><circle cx="564" cy="186" r="2.4" fill="#f4a0b2"/>
+    <circle cx="566" cy="180" r="7" fill="#c0304e"/><circle cx="564" cy="178" r="2.4" fill="#f4a0b2"/>
     <circle cx="110" cy="204" r="7" fill="#e6b53f"/><circle cx="108" cy="202" r="2.4" fill="#fff0c2"/>
   </g>
 
@@ -741,7 +887,6 @@ const THOUGHTS = [
     {t:"Maybe someone inside locked it behind them.", s:"I", sense:"mind", why:"“Maybe” invents a second person nobody has seen."}
   ],
   fact:"The thief used the back door, not the window.",
-  kind:"hypothesis",
   art:"window"
 },
 {
@@ -755,7 +900,6 @@ const THOUGHTS = [
     {t:"I've seen this exact move in a spy movie.", s:"I", sense:"mind", why:"A memory of a movie is not a clue in this room."}
   ],
   fact:"Nobody came through the roof.",
-  kind:"hypothesis",
   art:"skylight"
 },
 {
@@ -769,7 +913,6 @@ const THOUGHTS = [
     {t:"If they hacked this, they could hack anything.", s:"I", sense:"mind", why:"That's the doubt growing, not a new clue."}
   ],
   fact:"The alarm was turned off with a real staff code.",
-  kind:"doubt",
   art:"alarm"
 },
 {
@@ -783,7 +926,6 @@ const THOUGHTS = [
     {t:"Maybe they ground the glass into powder.", s:"I", sense:"mind", why:"Imagination working overtime."}
   ],
   fact:"The case was opened with its own key, and that key is missing.",
-  kind:"hypothesis",
   art:"case"
 },
 {
@@ -797,7 +939,6 @@ const THOUGHTS = [
     {t:"The really smart thieves use tunnels.", s:"I", sense:"mind", why:"A guess about smart thieves, not a clue."}
   ],
   fact:"The thief walked in the back door and straight to the case.",
-  kind:"doubt",
   art:"floor"
 },
 {
@@ -811,7 +952,6 @@ const THOUGHTS = [
     {t:"A fake trail is exactly what a mastermind would leave.", s:"I", sense:"mind", why:"This turns every clue into a trick. That's how doubt keeps itself going."}
   ],
   fact:"One person in size 9 zigzag work boots, with mud from the garden bed.",
-  kind:"doubt",
   art:"prints"
 },
 {
@@ -825,7 +965,6 @@ const THOUGHTS = [
     {t:"Whoever did this is probably part of something bigger.", s:"I", sense:"mind", why:"“Probably” is doing all the work here."}
   ],
   fact:"One person, carrying a 6-pound owl, one car.",
-  kind:"anxiety",
   art:"crowd"
 },
 {
@@ -839,22 +978,23 @@ const THOUGHTS = [
     {t:"Until I rule out every single person, I can't know.", s:"I", sense:"mind", why:"That's the doubt asking for certainty. The evidence already points one way."}
   ],
   fact:"Every clue points to the groundskeeper.",
-  kind:"anxiety",
   art:"keys"
 }
 ];
 
-const KIND={doubt:'A DOUBT',anxiety:'AN ANXIETY',hypothesis:'A HYPOTHESIS'};
 const SENSE={saw:'SAW IT',heard:'HEARD IT',touched:'TOUCHED IT',record:'ON RECORD',mind:'IMAGINED'};
 
-/* A scene sits in its own frame, like a photograph clipped to the file. */
-function vignette(name){
-  return '<svg class="art art--spot" viewBox="0 0 124 124" aria-hidden="true">'+
-    '<rect x="3" y="3" width="118" height="118" rx="12" fill="rgba(43,38,54,.07)"/>'+
-    '<rect x="3" y="3" width="118" height="118" rx="12" fill="none" stroke="rgba(43,38,54,.18)" stroke-width="1.5"/>'+
-    '<g stroke="#8a6612" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".7">'+
-      '<path d="M14 25V14h11M99 14h11v11M110 99v11H99M25 110H14V99"/></g>'+
-    '<g transform="translate(22 22) scale(.8)"><use href="#a-'+name+'"/></g>'+
+/* Each scene is an evidence photograph, printed and clipped into the file. */
+function photo(name){
+  return '<svg class="art art--spot" viewBox="0 0 132 152" aria-hidden="true">'+
+    '<rect x="1.5" y="1.5" width="129" height="149" rx="3" fill="#f8f4e8"/>'+
+    '<rect x="1.5" y="1.5" width="129" height="149" rx="3" fill="none" stroke="rgba(43,38,54,.22)" stroke-width="1.5"/>'+
+    '<g transform="translate(6 6)"><g clip-path="url(#ph-clip)">'+
+      '<use href="#a-'+name+'" x="0" y="0" width="120" height="108"/>'+
+      '<rect x="0" y="0" width="120" height="108" rx="2" fill="none" stroke="rgba(0,0,0,.5)" stroke-width="2"/>'+
+    '</g></g>'+
+    '<g stroke="#bdb3a0" stroke-width="3" stroke-linecap="round"><path d="M14 128h60M14 138h38"/></g>'+
+    '<circle cx="114" cy="133" r="6" fill="#c0304e"/><circle cx="112" cy="131" r="2" fill="#f2a6b6"/>'+
   '</svg>';
 }
 
@@ -867,6 +1007,11 @@ const ICON = {
   on:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9.5h3.2L12 5.2v13.6L7.2 14.5H4V9.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.6 9.2a4 4 0 0 1 0 5.6M18.2 6.6a7.6 7.6 0 0 1 0 10.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   off:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9.5h3.2L12 5.2v13.6L7.2 14.5H4V9.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m16.2 9.8 5 4.4m0-4.4-5 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
 };
+
+/* Inline animations live on the sprite originals, which <use> clones. Document
+   CSS cannot select into that shadow content, so honour the setting here. */
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)
+  document.querySelectorAll('.sprite [style*="animation"]').forEach(n=>n.style.animation='none');
 
 /* ---------- audio ---------- */
 let AC=null, muted=false;
@@ -966,7 +1111,7 @@ function intro(){
     '</div>'+
     '<svg class="art art--hero" viewBox="0 0 640 250" role="img" aria-label="The museum at night: the Golden Owl on its plinth under a spotlight, a detective arriving."><use href="#a-heist"/></svg>'+
     '<h1>Last night, the <em>Golden Owl</em> was stolen.</h1>'+
-    '<p>The Halloway Museum’s most famous treasure is gone. You’re the detective on the case.</p>'+'<p>As you work, <b>thoughts will keep arriving</b>. Some are doubts. Some are anxieties. Some are hypotheses worth testing. They all turn up sounding equally certain.</p>'+
+    '<p>The Halloway Museum’s most famous treasure is gone. You’re the detective on the case.</p>'+'<p>As you work, <b>thoughts will keep arriving</b> about what might have happened. Every one of them turns up sounding equally certain.</p>'+
     '<p>Your job is not to believe every thought, or to argue with it. Your job is to <b>sort it</b> — to separate what you actually know from what your mind has filled in.</p>'+
     '<div class="legend">'+
       '<div class="ev"><b>'+ICON.lens+' Evidence</b><p>Information you <b>gathered through your senses</b> \u2014 saw it, heard it, touched it \u2014 or read in the record. It is out there in the world.</p></div>'+
@@ -985,10 +1130,9 @@ function round(){
   stage.innerHTML=
   '<div class="thought">'+
     '<div class="thought__text">'+
-      '<div class="thought__meta"><span class="lbl">Thought No. '+(st.i+1)+'</span>'+
-        '<span class="kind kind--'+d.kind+'">'+KIND[d.kind]+'</span></div>'+
+      '<div class="lbl">Thought No. '+(st.i+1)+'</div>'+
       '<div class="q">“'+esc(d.thought)+'”</div></div>'+
-    vignette(d.art)+
+    photo(d.art)+
   '</div>'+
   '<div class="board">'+
     '<div class="bin ev" data-s="E" id="binE">'+
@@ -1213,7 +1357,13 @@ function final(){
     '<p><b>Imagination is everything your mind adds.</b> What could have happened, what usually happens, what it would mean if. Every thought in this case was imagination, and every one of them was <i>possible</i>. Possible is not the same as real.</p>'+
     '<p>Your mind does this all day, and it hands you the invented parts in the same confident voice it uses for the facts. A feeling can arrive so strongly that it seems like proof on its own. It isn’t. Feeling certain and having evidence are two different things.</p>'+
     '<p>So when a thought insists something is true, ask the detective’s question: <b>what did I actually observe?</b> If the honest answer is “nothing — I pictured it,” then you are holding a story, not a clue. That is how you tell what is real from what is imagined.</p>'+
-    '<p style="margin-top:26px;margin-bottom:0"><button class="btn" id="again">Play again</button></p>'+
+    '<p style="margin-top:26px"><button class="btn" id="again">Play again</button></p>'+
+    '<div class="footnote">'+
+      '<h3>A note on \u201cevidence\u201d</h3>'+
+      '<p>The distinction this game teaches \u2014 <b>evidence is information gathered through the senses; imagination is information created in the mind</b> \u2014 comes from <b>inference-based CBT (I-CBT)</b>, the model developed for OCD. It holds that obsessional doubt is generated by imagination rather than by anything in the here and now, so the remedy is to trust what the senses actually report.</p>'+
+      '<p>That is narrower than <b>classic (Beckian) CBT</b>, which asks \u201cwhat is the evidence for and against this thought?\u201d and counts past experience, base rates and other people\u2019s reports as evidence too. Both separate fact from interpretation; only I-CBT draws the line at the senses and frames the question as real versus imagined.</p>'+
+      '<p>The game deliberately teaches the I-CBT version without naming the model, so the idea stays about evidence rather than about a treatment.</p>'+
+    '</div>'+
   '</section>';
   window.scrollTo({top:0,behavior:'smooth'});
   requestAnimationFrame(()=>{ const b=document.getElementById('bar'); if(b) b.style.width=pct+'%'; });
