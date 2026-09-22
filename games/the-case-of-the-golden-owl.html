@@ -65,9 +65,9 @@ body{
 .iconbtn:hover{border-color:var(--brass);color:var(--brass)}
 .iconbtn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .iconbtn svg{display:block}
-.track{height:3px;background:var(--line-soft);margin-top:12px;overflow:hidden}
-.track i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brass-dk),var(--brass));
-  transition:width .5s var(--ease)}
+.track{display:flex;gap:4px;margin-top:13px;padding-bottom:1px}
+.track i{flex:1 1 0;height:4px;border-radius:2px;background:var(--line-soft);transition:background .45s var(--ease)}
+.track i.on{background:linear-gradient(90deg,var(--brass-dk),var(--brass))}
 
 /* ---------- surfaces ---------- */
 .panel{background:linear-gradient(180deg,var(--ink-800),var(--ink-700));border:1px solid var(--line);
@@ -100,9 +100,10 @@ p b{color:var(--paper)}
 .legend > div{border:1px solid;border-radius:var(--r-md);padding:18px;background:var(--ink-900)}
 .legend .ev{border-color:rgba(62,214,165,.45);box-shadow:inset 0 0 0 1px rgba(62,214,165,.08),0 0 28px -18px var(--ev)}
 .legend .im{border-color:rgba(172,136,255,.45);box-shadow:inset 0 0 0 1px rgba(172,136,255,.08),0 0 28px -18px var(--im)}
-.legend b{font-family:var(--disp);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+.legend>div>b{font-family:var(--disp);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
   display:flex;align-items:center;gap:9px;margin-bottom:9px}
-.legend .ev b{color:var(--ev)} .legend .im b{color:var(--im)}
+.legend p b{color:var(--paper);font-weight:700}
+.legend .ev>b{color:var(--ev)} .legend .im>b{color:var(--im)}
 .legend p{font-size:14px;line-height:1.6;margin:0;color:var(--muted)}
 
 /* ---------- story artwork ---------- */
@@ -110,27 +111,69 @@ p b{color:var(--paper)}
 .art{display:block}
 .art--hero{width:100%;height:auto;border-radius:var(--r-md);background:linear-gradient(180deg,#0a0c16,#131629);
   border:1px solid var(--line);margin:0 0 26px}
-.art--spot{width:104px;height:104px;flex:0 0 auto;
-  --a1:#2b2636; --a2:#8a6612; --a3:rgba(43,38,54,.13); --a4:#f4ece0}
-@media (max-width:600px){.art--spot{width:68px;height:68px}}
 .art--reveal{width:100%;max-width:420px;height:auto;border-radius:var(--r-md);
   background:linear-gradient(180deg,#0a0c16,#131629);border:1px solid var(--line);margin:0 0 22px}
 .art--owl{width:74px;height:92px;flex:0 0 auto;--a1:#3a2a05;--a2:var(--brass);--a3:#fbf3dd}
 .figure{display:flex;align-items:center;gap:18px;margin:0 0 18px}
 
-/* ---------- doubt banner ---------- */
-.doubt{position:relative;display:flex;align-items:center;gap:22px;
+/* ---------- atmosphere ---------- */
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(130% 100% at 50% 12%,transparent 46%,rgba(0,0,0,.42) 100%)}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:3;opacity:.045;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- thought banner ---------- */
+.thought__meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.kind{font-family:var(--disp);font-size:9.5px;letter-spacing:.14em;padding:4px 10px;border-radius:999px;
+  border:1.5px solid;white-space:nowrap}
+.kind--doubt{color:#8a5a12;border-color:#c9922a;background:rgba(201,146,42,.13)}
+.kind--anxiety{color:#9e3354;border-color:#d4708c;background:rgba(212,112,140,.13)}
+.kind--hypothesis{color:#2c6494;border-color:#6aa6d4;background:rgba(106,166,212,.13)}
+.thought::after{content:"";position:absolute;left:30px;bottom:-13px;width:17px;height:17px;border-radius:50%;
+  background:var(--paper-2);box-shadow:-19px 17px 0 -4.5px var(--paper-2)}
+
+/* ---------- scene vignettes ---------- */
+.art--spot{width:118px;height:118px;flex:0 0 auto;
+  --a1:#2b2636; --a2:#8a6612; --a3:rgba(43,38,54,.13); --a4:#f4ece0}
+@media (max-width:760px){.art--spot{width:88px;height:88px}}
+@media (max-width:480px){.art--spot{width:70px;height:70px}}
+
+/* ---------- bins ---------- */
+.bin__head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+/* Grid items default to min-width:auto, so the bin artwork would set a floor
+   on each column and push the board wider than the screen. */
+.board>*{min-width:0}
+.bin__head>div{min-width:0}
+.bin h3{flex-wrap:wrap}
+.art--bin{width:74px;height:56px;flex:0 0 auto;opacity:.9}
+.bin.ev .art--bin{--a1:var(--ev);--a2:var(--ev)}
+.bin.im .art--bin{--a1:var(--im);--a2:var(--im)}
+@media (max-width:860px){.art--bin{width:48px;height:36px}}
+@media (max-width:540px){.art--bin{display:none}}
+
+/* ---------- sense badge on a filed clue ---------- */
+.sense{display:inline-flex;align-items:center;gap:6px;font-family:var(--disp);font-size:9px;
+  letter-spacing:.13em;padding:4px 9px;border-radius:999px;margin-top:11px}
+.sense svg{width:13px;height:13px}
+.sense--ev{color:var(--ev-dk);background:rgba(21,133,95,.13)}
+.sense--im{color:var(--im-dk);background:rgba(108,63,208,.13)}
+
+/* ---------- case board ---------- */
+.art--board{width:100%;height:auto;border-radius:var(--r-md);margin:6px 0 22px;box-shadow:var(--sh-3)}
+
+/* ---------- thought banner ---------- */
+.thought{position:relative;display:flex;align-items:center;gap:22px;
   background:linear-gradient(180deg,var(--paper),var(--paper-2));color:var(--paper-ink);
   border-radius:var(--r-md);padding:22px 26px 24px;margin-top:24px;box-shadow:var(--sh-3);
   border-left:6px solid var(--brass);animation:slide .35s var(--ease)}
-.doubt__text{flex:1 1 auto;min-width:0}
-.doubt .lbl{font-family:var(--type);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+.thought__text{flex:1 1 auto;min-width:0}
+.thought .lbl{font-family:var(--type);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
   color:var(--paper-muted);margin-bottom:8px}
-.doubt .q{font-family:var(--disp);font-size:clamp(19px,3.2vw,29px);line-height:1.22;letter-spacing:-.005em;max-width:30ch}
+.thought .q{font-family:var(--disp);font-size:clamp(19px,3.2vw,29px);line-height:1.22;letter-spacing:-.005em;max-width:30ch}
 @keyframes slide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 
 /* ---------- board ---------- */
-.board{display:grid;gap:16px;margin-top:18px;align-items:start;
+.board{display:grid;gap:16px;margin-top:30px;align-items:start;
   grid-template-columns:1fr 1.1fr 1fr;grid-template-areas:"ev pile im"}
 @media (max-width:860px){
   .board{grid-template-columns:1fr 1fr;grid-template-areas:"pile pile" "ev im";gap:12px}
@@ -396,53 +439,7 @@ p b{color:var(--paper)}
   <path d="M22 22h20" stroke="var(--a2)" stroke-width="4" stroke-linecap="round"/>
 </symbol>
 
-<!-- ===== Hero: the museum, the night of the theft ===== -->
-<symbol id="a-heist" viewBox="0 0 640 250">
-  <defs>
-    <linearGradient id="g-beam" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffd977" stop-opacity=".22"/>
-      <stop offset="1" stop-color="#ffd977" stop-opacity="0"/>
-    </linearGradient>
-    <radialGradient id="g-moon">
-      <stop offset="0" stop-color="#fff6dc"/><stop offset="1" stop-color="#e9d9a6"/>
-    </radialGradient>
-  </defs>
-  <g fill="#f4ece0" opacity=".5">
-    <circle cx="96" cy="34" r="1.6"/><circle cx="168" cy="18" r="1.2"/><circle cx="238" cy="42" r="1.5"/>
-    <circle cx="404" cy="22" r="1.3"/><circle cx="470" cy="46" r="1.6"/><circle cx="330" cy="14" r="1.2"/>
-  </g>
-  <circle cx="566" cy="46" r="34" fill="#ffd977" opacity=".12"/>
-  <circle cx="566" cy="46" r="23" fill="url(#g-moon)"/>
-  <circle cx="574" cy="39" r="4" fill="#d9c894" opacity=".55"/>
-  <circle cx="559" cy="52" r="2.6" fill="#d9c894" opacity=".45"/>
-  <!-- museum facade -->
-  <g fill="#1a1e33">
-    <path d="M32 92 168 44l136 48z"/>
-    <rect x="44" y="92" width="248" height="10"/>
-    <rect x="58" y="102" width="20" height="104"/><rect x="104" y="102" width="20" height="104"/>
-    <rect x="150" y="102" width="20" height="104"/><rect x="196" y="102" width="20" height="104"/>
-    <rect x="242" y="102" width="20" height="104"/>
-    <rect x="36" y="206" width="264" height="12"/>
-  </g>
-  <g fill="#2b3050">
-    <rect x="84" y="126" width="16" height="48" rx="2"/><rect x="130" y="126" width="16" height="48" rx="2"/>
-    <rect x="176" y="126" width="16" height="48" rx="2"/><rect x="222" y="126" width="16" height="48" rx="2"/>
-  </g>
-  <rect x="176" y="126" width="16" height="48" rx="2" fill="#e6b53f" opacity=".5"/>
-  <!-- spotlight and plinth -->
-  <path d="M402 0h84l60 222H344z" fill="url(#g-beam)"/>
-  <rect x="396" y="206" width="104" height="12" rx="2" fill="#2b3050"/>
-  <rect x="410" y="176" width="76" height="30" rx="2" fill="#212640"/>
-  <g style="--a1:#3a2a05;--a2:#e6b53f;--a3:#fbf3dd">
-    <use href="#a-owl" x="0" y="0" width="160" height="200" transform="translate(405 87) scale(.53)"/>
-  </g>
-  <!-- the detective arrives -->
-  <g style="--a1:#0c0e17;--a2:#3b4066;--a3:#e6b53f" opacity=".95">
-    <use href="#a-detective" x="0" y="0" width="140" height="200" transform="translate(524 96) scale(.62)"/>
-  </g>
-  <rect x="0" y="218" width="640" height="32" fill="#0c0e17"/>
-  <path d="M0 218h640" stroke="#2b3050" stroke-width="2"/>
-</symbol>
+
 
 <!-- ===== Reveal: the potting shed ===== -->
 <symbol id="a-reveal" viewBox="0 0 420 230">
@@ -471,8 +468,227 @@ p b{color:var(--paper)}
   </g>
 </symbol>
 
+<!-- ===== Sense marks: how a piece of evidence reached you ===== -->
+<symbol id="s-saw" viewBox="0 0 24 24">
+  <path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="12" cy="12" r="3.2" fill="currentColor"/>
+</symbol>
+<symbol id="s-heard" viewBox="0 0 24 24">
+  <path d="M7 10a5.5 5.5 0 0 1 11 0c0 4-3.5 4.5-3.5 7.5a2.6 2.6 0 0 1-5 .6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <path d="M10.5 10a1.8 1.8 0 0 1 3.5.6c0 1.4-1.6 1.8-1.6 3.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</symbol>
+<symbol id="s-touched" viewBox="0 0 24 24">
+  <path d="M9 12V5.2a1.7 1.7 0 0 1 3.4 0V11m0-1.2a1.7 1.7 0 0 1 3.4 0V12m0-1a1.7 1.7 0 0 1 3.3 0v5.2c0 3.1-2.4 5.4-5.6 5.4-2.6 0-4.3-1-5.6-3L5 14.4a1.75 1.75 0 0 1 2.8-2z"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+</symbol>
+<symbol id="s-record" viewBox="0 0 24 24">
+  <path d="M6 2.5h8l4.5 4.5v14.5H6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M14 2.5V7h4.5M9 12h6M9 16h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+</symbol>
+<symbol id="s-mind" viewBox="0 0 24 24">
+  <path d="M6.5 16.5a4 4 0 0 1 .4-8 5 5 0 0 1 9.3.8 3.6 3.6 0 0 1 .4 7.2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="6" cy="20" r="1.5" fill="currentColor"/><circle cx="2.6" cy="22.2" r="1" fill="currentColor"/>
+</symbol>
+
+<!-- ===== Bin marks ===== -->
+<symbol id="a-bin-ev" viewBox="0 0 120 90">
+  <rect x="14" y="34" width="62" height="44" rx="4" fill="var(--a1)" opacity=".28"/>
+  <path d="M14 44h62" stroke="var(--a1)" stroke-width="2.5" opacity=".5"/>
+  <path d="M34 34V26a11 11 0 0 1 22 0v8" fill="none" stroke="var(--a1)" stroke-width="3"/>
+  <path d="M26 58h14M26 66h22" stroke="var(--a1)" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>
+  <circle cx="84" cy="40" r="17" fill="none" stroke="var(--a2)" stroke-width="5"/>
+  <circle cx="84" cy="40" r="17" fill="var(--a2)" opacity=".12"/>
+  <path d="M96 52l13 14" stroke="var(--a2)" stroke-width="5.5" stroke-linecap="round"/>
+</symbol>
+<symbol id="a-bin-im" viewBox="0 0 120 90">
+  <path d="M34 62a15 15 0 0 1 1.4-30 19 19 0 0 1 35.6 3 14 14 0 0 1 1.5 27z" fill="var(--a1)" opacity=".26"/>
+  <path d="M34 62a15 15 0 0 1 1.4-30 19 19 0 0 1 35.6 3 14 14 0 0 1 1.5 27z" fill="none" stroke="var(--a2)" stroke-width="3"/>
+  <circle cx="30" cy="72" r="4.5" fill="var(--a2)" opacity=".7"/>
+  <circle cx="22" cy="80" r="2.6" fill="var(--a2)" opacity=".5"/>
+  <path d="M92 26l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="var(--a2)" opacity=".8"/>
+  <path d="M104 54l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="var(--a2)" opacity=".55"/>
+</symbol>
+
+<!-- ===== Hero: the gallery, the morning after ===== -->
+<symbol id="a-heist" viewBox="0 0 660 270">
+  <defs>
+    <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#151a33"/><stop offset="1" stop-color="#0c0e1b"/>
+    </linearGradient>
+    <linearGradient id="g-cone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffdc8a" stop-opacity=".30"/>
+      <stop offset="1" stop-color="#ffdc8a" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g-torch" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffe9b0" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#ffe9b0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g-fog" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b3050" stop-opacity="0"/>
+      <stop offset="1" stop-color="#2b3050" stop-opacity=".5"/>
+    </linearGradient>
+    <radialGradient id="g-moon2"><stop offset="0" stop-color="#fff7e0"/><stop offset="1" stop-color="#e6d5a4"/></radialGradient>
+  </defs>
+
+  <rect width="660" height="270" fill="url(#g-sky)"/>
+
+  <!-- arched windows onto the night, clear of the plinth -->
+  <g>
+    <path d="M46 60a34 34 0 0 1 68 0v92H46z" fill="#0a0d1c"/>
+    <path d="M556 60a34 34 0 0 1 68 0v92h-68z" fill="#0a0d1c"/>
+    <circle cx="80" cy="58" r="16" fill="url(#g-moon2)"/>
+    <circle cx="86" cy="51" r="3.2" fill="#cdbd8c" opacity=".6"/>
+    <circle cx="74" cy="65" r="2" fill="#cdbd8c" opacity=".5"/>
+    <g fill="#f4ece0" opacity=".55">
+      <circle cx="62" cy="96" r="1.3"/><circle cx="104" cy="112" r="1"/>
+      <circle cx="572" cy="80" r="1.3"/><circle cx="604" cy="104" r="1.1"/><circle cx="590" cy="130" r="1"/>
+    </g>
+    <path d="M46 60a34 34 0 0 1 68 0v92H46zM556 60a34 34 0 0 1 68 0v92h-68z"
+          fill="none" stroke="#2b3050" stroke-width="5"/>
+    <path d="M80 26v126M46 106h68M590 26v126M556 106h68" stroke="#2b3050" stroke-width="4"/>
+  </g>
+
+  <!-- gallery wall, columns, cornice -->
+  <rect x="0" y="152" width="660" height="10" fill="#2b3050"/>
+  <g fill="#1a1e33">
+    <rect x="160" y="30" width="26" height="122"/><rect x="208" y="30" width="26" height="122"/>
+    <rect x="380" y="30" width="26" height="122"/><rect x="428" y="30" width="26" height="122"/>
+    <rect x="0" y="18" width="660" height="14"/>
+  </g>
+  <g fill="#212640">
+    <rect x="156" y="30" width="34" height="8"/><rect x="204" y="30" width="34" height="8"/>
+    <rect x="376" y="30" width="34" height="8"/><rect x="424" y="30" width="34" height="8"/>
+  </g>
+
+  <!-- floor -->
+  <rect x="0" y="162" width="660" height="108" fill="#11142a"/>
+  <g stroke="#1e2440" stroke-width="2">
+    <path d="M0 196h660M0 226h660"/>
+    <path d="M120 162 60 270M300 162l-40 108M420 162l60 108M560 162l70 108"/>
+  </g>
+
+  <rect x="250" y="40" width="100" height="112" rx="3" fill="#161a30"/>
+  <rect x="250" y="40" width="100" height="112" rx="3" fill="none" stroke="#242a48" stroke-width="3"/>
+
+  <!-- spotlight on an empty plinth -->
+  <path d="M258 18h84l64 190H194z" fill="url(#g-cone)"/>
+  <ellipse cx="300" cy="212" rx="86" ry="16" fill="#ffdc8a" opacity=".07"/>
+  <rect x="252" y="200" width="96" height="12" rx="2" fill="#2b3050"/>
+  <rect x="266" y="166" width="68" height="34" rx="2" fill="#212640"/>
+  <rect x="266" y="166" width="68" height="5" fill="#2b3050"/>
+
+  <!-- the owl that should be standing there -->
+  <g opacity=".55">
+    <path d="M300 96c-19 0-31 20-31 45 0 29 14 49 31 49s31-20 31-49c0-25-12-45-31-45z"
+          fill="none" stroke="#e6b53f" stroke-width="3" stroke-dasharray="7 7"/>
+    <path d="M281 104l-7-15 16 9M319 104l7-15-16 9" fill="none" stroke="#e6b53f" stroke-width="3" stroke-dasharray="6 6"/>
+    <circle cx="289" cy="128" r="9" fill="none" stroke="#e6b53f" stroke-width="3" stroke-dasharray="5 5"/>
+    <circle cx="311" cy="128" r="9" fill="none" stroke="#e6b53f" stroke-width="3" stroke-dasharray="5 5"/>
+  </g>
+  <g transform="rotate(-7 300 224)">
+    <rect x="266" y="216" width="68" height="17" rx="2" fill="#f4ece0"/>
+    <path d="M274 222h52M274 228h34" stroke="#8a8199" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+
+  <!-- police tape -->
+  <g transform="rotate(-5 330 244)">
+    <rect x="-20" y="236" width="700" height="20" fill="#e6b53f"/>
+    <g fill="#1a1400" opacity=".85">
+      <path d="M10 236h10l-14 20H-4zM70 236h10l-14 20H56zM130 236h10l-14 20h-10zM190 236h10l-14 20h-10zM250 236h10l-14 20h-10zM310 236h10l-14 20h-10zM370 236h10l-14 20h-10zM430 236h10l-14 20h-10zM490 236h10l-14 20h-10zM550 236h10l-14 20h-10zM610 236h10l-14 20h-10z"/>
+    </g>
+  </g>
+
+  <!-- the detective, torch out -->
+  <path d="M470 176l-120 52 120 26z" fill="url(#g-torch)"/>
+  <g style="--a1:#080a14;--a2:#333a5e;--a3:#e6b53f">
+    <use href="#a-detective" x="0" y="0" width="140" height="200" transform="translate(462 94) scale(.72)"/>
+  </g>
+
+  <rect x="0" y="206" width="660" height="64" fill="url(#g-fog)"/>
+  <g fill="#ffe9b0" opacity=".25">
+    <circle cx="246" cy="96" r="1.6"/><circle cx="352" cy="132" r="1.3"/><circle cx="286" cy="74" r="1.1"/>
+    <circle cx="330" cy="176" r="1.5"/><circle cx="262" cy="150" r="1.2"/>
+  </g>
+</symbol>
+
+<!-- ===== The case board ===== -->
+<symbol id="a-board" viewBox="0 0 660 300">
+  <defs>
+    <linearGradient id="g-cork" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a3a28"/><stop offset="1" stop-color="#372b1e"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="644" height="284" rx="6" fill="url(#g-cork)"/>
+  <rect x="8" y="8" width="644" height="284" rx="6" fill="none" stroke="#231b12" stroke-width="10"/>
+  <g fill="#5c4830" opacity=".5">
+    <circle cx="70" cy="60" r="2"/><circle cx="210" cy="40" r="1.6"/><circle cx="420" cy="70" r="2.2"/>
+    <circle cx="560" cy="45" r="1.6"/><circle cx="150" cy="250" r="2"/><circle cx="500" cy="255" r="1.7"/>
+    <circle cx="330" cy="30" r="1.5"/><circle cx="620" cy="180" r="2"/>
+  </g>
+
+  <!-- red string -->
+  <path d="M104 98 300 74 496 108 300 206 104 98" fill="none" stroke="#c0304e" stroke-width="2.6" opacity=".9"/>
+
+  <!-- the owl, recovered -->
+  <g transform="rotate(-3 300 74)">
+    <rect x="248" y="26" width="104" height="96" fill="#f4ece0"/>
+    <rect x="254" y="32" width="92" height="72" fill="#171a2e"/>
+    <g style="--a1:#3a2a05;--a2:#e6b53f;--a3:#fbf3dd">
+      <use href="#a-owl" x="0" y="0" width="160" height="200" transform="translate(272 34) scale(.34)"/>
+    </g>
+    <path d="M262 112h48" stroke="#8a8199" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- the suspect -->
+  <g transform="rotate(4 496 130)">
+    <rect x="450" y="66" width="92" height="98" fill="#f4ece0"/>
+    <rect x="456" y="72" width="80" height="72" fill="#171a2e"/>
+    <g style="--a1:#0c0e17;--a2:#7d895d;--a3:#e3e7f2">
+      <use href="#a-keeper" x="0" y="0" width="140" height="200" transform="translate(468 64) scale(.38)"/>
+    </g>
+    <path d="M464 154h46" stroke="#8a8199" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- evidence notes -->
+  <g transform="rotate(-5 104 120)">
+    <rect x="58" y="76" width="92" height="66" fill="#f6efdf"/>
+    <path d="M68 92h72M68 102h58M68 112h66M68 122h44" stroke="#9a9184" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g transform="rotate(6 300 218)">
+    <rect x="252" y="182" width="96" height="62" fill="#f6efdf"/>
+    <path d="M262 198h76M262 208h56M262 218h70" stroke="#9a9184" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g transform="rotate(-4 566 216)">
+    <rect x="520" y="184" width="88" height="58" fill="#f6efdf"/>
+    <path d="M530 200h66M530 210h48M530 220h58" stroke="#9a9184" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g transform="rotate(7 110 232)">
+    <rect x="66" y="200" width="84" height="56" fill="#f6efdf"/>
+    <path d="M76 216h62M76 226h44M76 236h56" stroke="#9a9184" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- pins -->
+  <g>
+    <circle cx="300" cy="30" r="7" fill="#c0304e"/><circle cx="298" cy="28" r="2.4" fill="#f4a0b2"/>
+    <circle cx="496" cy="70" r="7" fill="#e6b53f"/><circle cx="494" cy="68" r="2.4" fill="#fff0c2"/>
+    <circle cx="104" cy="80" r="7" fill="#3ed6a5"/><circle cx="102" cy="78" r="2.4" fill="#c8f7e8"/>
+    <circle cx="300" cy="186" r="7" fill="#ac88ff"/><circle cx="298" cy="184" r="2.4" fill="#e4d6ff"/>
+    <circle cx="566" cy="188" r="7" fill="#c0304e"/><circle cx="564" cy="186" r="2.4" fill="#f4a0b2"/>
+    <circle cx="110" cy="204" r="7" fill="#e6b53f"/><circle cx="108" cy="202" r="2.4" fill="#fff0c2"/>
+  </g>
+
+  <!-- solved -->
+  <g transform="rotate(-8 400 250)">
+    <rect x="336" y="232" width="128" height="34" rx="3" fill="none" stroke="#3ed6a5" stroke-width="4"/>
+    <path d="M352 249l9 9 18-18" fill="none" stroke="#3ed6a5" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M390 243h60M390 255h40" stroke="#3ed6a5" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</symbol>
+
 </svg>
 
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 <audio id="bgm" src="openmindaudio-mystery-clueprints-and-crooked-footsteps-529280.mp3" loop preload="auto"></audio>
 
@@ -489,14 +705,14 @@ p b{color:var(--paper)}
       </div>
       <div class="wordmark">
         <div class="name">THE CASE OF THE GOLDEN OWL</div>
-        <div class="sub">A case about evidence</div>
+        <div class="sub">Real vs imagined</div>
       </div>
       <div class="top__right">
         <div class="counter" id="counter"></div>
         <button class="iconbtn" id="mute" aria-label="Mute sound" aria-pressed="false"></button>
       </div>
     </div>
-    <div class="track"><i id="track"></i></div>
+    <div class="track" id="track" aria-hidden="true"></div>
   </header>
 
   <main id="stage"></main>
@@ -513,112 +729,134 @@ p b{color:var(--paper)}
 <script>
 /* E = evidence: what the senses and the facts at the scene show.
    I = imagination: what could have, might have, usually does happen. */
-const DOUBTS = [
+const THOUGHTS = [
 {
-  doubt:"The robber could have escaped through the window.",
+  thought:"The robber could have escaped through the window.",
   cards:[
-    {t:"I can see the window latch is locked from the inside.", s:"E", why:"You're looking right at it."},
-    {t:"There's a layer of dust on the windowsill with no marks in it.", s:"E", why:"Undisturbed dust is something you can see."},
-    {t:"The back door was standing open when we arrived.", s:"E", why:"You walked in and saw it."},
-    {t:"A skilled thief could relock a window from the outside.", s:"I", why:"“Could” is imagination. Nothing here shows it happened."},
-    {t:"Windows are the classic escape route in every heist movie.", s:"I", why:"Movies aren't this museum."},
-    {t:"Maybe someone inside locked it behind them.", s:"I", why:"“Maybe” invents a second person nobody has seen."}
+    {t:"I can see the window latch is locked from the inside.", s:"E", sense:"saw", why:"You're looking right at it."},
+    {t:"There's a layer of dust on the windowsill with no marks in it.", s:"E", sense:"saw", why:"Undisturbed dust is something you can see."},
+    {t:"The back door was standing open when we arrived.", s:"E", sense:"saw", why:"You walked in and saw it."},
+    {t:"A skilled thief could relock a window from the outside.", s:"I", sense:"mind", why:"“Could” is imagination. Nothing here shows it happened."},
+    {t:"Windows are the classic escape route in every heist movie.", s:"I", sense:"mind", why:"Movies aren't this museum."},
+    {t:"Maybe someone inside locked it behind them.", s:"I", sense:"mind", why:"“Maybe” invents a second person nobody has seen."}
   ],
   fact:"The thief used the back door, not the window.",
+  kind:"hypothesis",
   art:"window"
 },
 {
-  doubt:"They might have come in through the skylight.",
+  thought:"They might have come in through the skylight.",
   cards:[
-    {t:"The skylight glass is whole. No cracks, no cuts.", s:"E", why:"You can see the glass."},
-    {t:"It rained last night, and the floor under the skylight is bone dry.", s:"E", why:"Rain and a dry floor are both facts at the scene."},
-    {t:"The only ladder is still chained up in the supply closet.", s:"E", why:"You checked the closet and saw the chain."},
-    {t:"A pro could cut the glass and put it back perfectly.", s:"I", why:"A story about what a pro might do. The glass says nothing of the kind."},
-    {t:"Someone could have been lowered in by a drone.", s:"I", why:"Exciting. Also completely unsupported."},
-    {t:"I've seen this exact move in a spy movie.", s:"I", why:"A memory of a movie is not a clue in this room."}
+    {t:"The skylight glass is whole. No cracks, no cuts.", s:"E", sense:"saw", why:"You can see the glass."},
+    {t:"It rained last night, and the floor under the skylight is bone dry.", s:"E", sense:"touched", why:"Rain and a dry floor are both facts at the scene."},
+    {t:"The only ladder is still chained up in the supply closet.", s:"E", sense:"saw", why:"You checked the closet and saw the chain."},
+    {t:"A pro could cut the glass and put it back perfectly.", s:"I", sense:"mind", why:"A story about what a pro might do. The glass says nothing of the kind."},
+    {t:"Someone could have been lowered in by a drone.", s:"I", sense:"mind", why:"Exciting. Also completely unsupported."},
+    {t:"I've seen this exact move in a spy movie.", s:"I", sense:"mind", why:"A memory of a movie is not a clue in this room."}
   ],
   fact:"Nobody came through the roof.",
+  kind:"hypothesis",
   art:"skylight"
 },
 {
-  doubt:"The alarm might have been hacked.",
+  thought:"The alarm might have been hacked.",
   cards:[
-    {t:"The alarm log shows it was turned off at 11:52 pm with a staff code.", s:"E", why:"It's printed right on the log."},
-    {t:"The alarm panel cover is closed and the screws are untouched.", s:"E", why:"You can see the screws."},
-    {t:"The staff list shows only four people have alarm codes.", s:"E", why:"A fact about this museum, on paper."},
-    {t:"Good hackers can fake a log so it looks normal.", s:"I", why:"“Can” is about what's possible, not what happened here."},
-    {t:"This could be the work of an international cyber gang.", s:"I", why:"No part of the scene mentions a gang."},
-    {t:"If they hacked this, they could hack anything.", s:"I", why:"That's the doubt growing, not a new clue."}
+    {t:"The alarm log shows it was turned off at 11:52 pm with a staff code.", s:"E", sense:"record", why:"It's printed right on the log."},
+    {t:"The alarm panel cover is closed and the screws are untouched.", s:"E", sense:"saw", why:"You can see the screws."},
+    {t:"The staff list shows only four people have alarm codes.", s:"E", sense:"record", why:"A fact about this museum, on paper."},
+    {t:"Good hackers can fake a log so it looks normal.", s:"I", sense:"mind", why:"“Can” is about what's possible, not what happened here."},
+    {t:"This could be the work of an international cyber gang.", s:"I", sense:"mind", why:"No part of the scene mentions a gang."},
+    {t:"If they hacked this, they could hack anything.", s:"I", sense:"mind", why:"That's the doubt growing, not a new clue."}
   ],
   fact:"The alarm was turned off with a real staff code.",
+  kind:"doubt",
   art:"alarm"
 },
 {
-  doubt:"Maybe they smashed the glass case and swept up the pieces.",
+  thought:"Maybe they smashed the glass case and swept up the pieces.",
   cards:[
-    {t:"The display case door swings open on its hinges. The lock isn't damaged.", s:"E", why:"You can see and touch the lock."},
-    {t:"There's no glass in the trash or the vacuum bag.", s:"E", why:"You looked. None there."},
-    {t:"The key cabinet has one empty hook, labeled “Owl Case.”", s:"E", why:"An empty hook is something you can see."},
-    {t:"They could have brought a new pane of glass to replace it.", s:"I", why:"“Could have” again. The case shows no replacement."},
-    {t:"A real pro always takes the broken glass with them.", s:"I", why:"A rule about pros in general, not a fact about this case."},
-    {t:"Maybe they ground the glass into powder.", s:"I", why:"Imagination working overtime."}
+    {t:"The display case door swings open on its hinges. The lock isn't damaged.", s:"E", sense:"touched", why:"You can see and touch the lock."},
+    {t:"There's no glass in the trash or the vacuum bag.", s:"E", sense:"saw", why:"You looked. None there."},
+    {t:"The key cabinet has one empty hook, labeled “Owl Case.”", s:"E", sense:"saw", why:"An empty hook is something you can see."},
+    {t:"They could have brought a new pane of glass to replace it.", s:"I", sense:"mind", why:"“Could have” again. The case shows no replacement."},
+    {t:"A real pro always takes the broken glass with them.", s:"I", sense:"mind", why:"A rule about pros in general, not a fact about this case."},
+    {t:"Maybe they ground the glass into powder.", s:"I", sense:"mind", why:"Imagination working overtime."}
   ],
   fact:"The case was opened with its own key, and that key is missing.",
+  kind:"hypothesis",
   art:"case"
 },
 {
-  doubt:"There could be a secret tunnel under the museum.",
+  thought:"There could be a secret tunnel under the museum.",
   cards:[
-    {t:"The building plans show a solid concrete floor.", s:"E", why:"The plans are a fact about this building."},
-    {t:"The basement door is painted shut, and the paint isn't cracked.", s:"E", why:"You can see the paint seal."},
-    {t:"There's one trail of muddy footprints, from the back door to the owl case.", s:"E", why:"The footprints are right there on the floor."},
-    {t:"Old buildings always have secret tunnels.", s:"I", why:"“Always” is a story about buildings in general."},
-    {t:"Building plans can be faked.", s:"I", why:"Possible in theory, but nothing here shows it."},
-    {t:"The really smart thieves use tunnels.", s:"I", why:"A guess about smart thieves, not a clue."}
+    {t:"The building plans show a solid concrete floor.", s:"E", sense:"record", why:"The plans are a fact about this building."},
+    {t:"The basement door is painted shut, and the paint isn't cracked.", s:"E", sense:"saw", why:"You can see the paint seal."},
+    {t:"There's one trail of muddy footprints, from the back door to the owl case.", s:"E", sense:"saw", why:"The footprints are right there on the floor."},
+    {t:"Old buildings always have secret tunnels.", s:"I", sense:"mind", why:"“Always” is a story about buildings in general."},
+    {t:"Building plans can be faked.", s:"I", sense:"mind", why:"Possible in theory, but nothing here shows it."},
+    {t:"The really smart thieves use tunnels.", s:"I", sense:"mind", why:"A guess about smart thieves, not a clue."}
   ],
   fact:"The thief walked in the back door and straight to the case.",
+  kind:"doubt",
   art:"floor"
 },
 {
-  doubt:"The footprints could be a fake trail to fool us.",
+  thought:"The footprints could be a fake trail to fool us.",
   cards:[
-    {t:"The prints are size 9 work boots with a zigzag sole.", s:"E", why:"You measured them."},
-    {t:"The mud matches the garden bed by the back door, which was freshly watered.", s:"E", why:"You can see and touch the mud."},
-    {t:"The trail goes in and back out once. No second set of prints.", s:"E", why:"You followed the trail yourself."},
-    {t:"A clever thief would wear someone else's boots.", s:"I", why:"“Would” is a story about a clever thief. Not a clue."},
-    {t:"They might have walked backwards to trick us.", s:"I", why:"Nothing about the prints suggests it."},
-    {t:"A fake trail is exactly what a mastermind would leave.", s:"I", why:"This turns every clue into a trick. That's how doubt keeps itself going."}
+    {t:"The prints are size 9 work boots with a zigzag sole.", s:"E", sense:"saw", why:"You measured them."},
+    {t:"The mud matches the garden bed by the back door, which was freshly watered.", s:"E", sense:"touched", why:"You can see and touch the mud."},
+    {t:"The trail goes in and back out once. No second set of prints.", s:"E", sense:"saw", why:"You followed the trail yourself."},
+    {t:"A clever thief would wear someone else's boots.", s:"I", sense:"mind", why:"“Would” is a story about a clever thief. Not a clue."},
+    {t:"They might have walked backwards to trick us.", s:"I", sense:"mind", why:"Nothing about the prints suggests it."},
+    {t:"A fake trail is exactly what a mastermind would leave.", s:"I", sense:"mind", why:"This turns every clue into a trick. That's how doubt keeps itself going."}
   ],
   fact:"One person in size 9 zigzag work boots, with mud from the garden bed.",
+  kind:"doubt",
   art:"prints"
 },
 {
-  doubt:"Maybe it was a whole gang, not one person.",
+  thought:"Maybe it was a whole gang, not one person.",
   cards:[
-    {t:"There's only one set of footprints.", s:"E", why:"You counted."},
-    {t:"The night guard heard one car door close around midnight.", s:"E", why:"A witness heard it at the scene."},
-    {t:"The sign by the case says the owl weighs 6 pounds.", s:"E", why:"Easy for one person to carry. It's written right there."},
-    {t:"A heist this good needs a whole team.", s:"I", why:"A theory about heists, not a fact about this one."},
-    {t:"Gangs split up so they leave fewer clues.", s:"I", why:"A general rule, brought in from outside the scene."},
-    {t:"Whoever did this is probably part of something bigger.", s:"I", why:"“Probably” is doing all the work here."}
+    {t:"There's only one set of footprints.", s:"E", sense:"saw", why:"You counted."},
+    {t:"The night guard heard one car door close around midnight.", s:"E", sense:"heard", why:"A witness heard it at the scene."},
+    {t:"The sign by the case says the owl weighs 6 pounds.", s:"E", sense:"record", why:"Easy for one person to carry. It's written right there."},
+    {t:"A heist this good needs a whole team.", s:"I", sense:"mind", why:"A theory about heists, not a fact about this one."},
+    {t:"Gangs split up so they leave fewer clues.", s:"I", sense:"mind", why:"A general rule, brought in from outside the scene."},
+    {t:"Whoever did this is probably part of something bigger.", s:"I", sense:"mind", why:"“Probably” is doing all the work here."}
   ],
   fact:"One person, carrying a 6-pound owl, one car.",
+  kind:"anxiety",
   art:"crowd"
 },
 {
-  doubt:"It could have been anyone in the whole city.",
+  thought:"It could have been anyone in the whole city.",
   cards:[
-    {t:"The alarm was turned off with a staff code.", s:"E", why:"From the alarm log."},
-    {t:"The key cabinet sign-out sheet shows the groundskeeper took the owl case key yesterday.", s:"E", why:"His name is on the sheet."},
-    {t:"The groundskeeper wears size 9 zigzag work boots and watered the garden at 11 pm.", s:"E", why:"You can see his boots. The watering schedule is posted."},
-    {t:"Someone could have copied a key years ago.", s:"I", why:"Anything could have happened years ago. Nothing here shows it."},
-    {t:"Anyone could have seen a code over someone's shoulder.", s:"I", why:"Possible. Not shown by anything at the scene."},
-    {t:"Until I rule out every single person, I can't know.", s:"I", why:"That's the doubt asking for certainty. The evidence already points one way."}
+    {t:"The alarm was turned off with a staff code.", s:"E", sense:"record", why:"From the alarm log."},
+    {t:"The key cabinet sign-out sheet shows the groundskeeper took the owl case key yesterday.", s:"E", sense:"record", why:"His name is on the sheet."},
+    {t:"The groundskeeper wears size 9 zigzag work boots and watered the garden at 11 pm.", s:"E", sense:"saw", why:"You can see his boots. The watering schedule is posted."},
+    {t:"Someone could have copied a key years ago.", s:"I", sense:"mind", why:"Anything could have happened years ago. Nothing here shows it."},
+    {t:"Anyone could have seen a code over someone's shoulder.", s:"I", sense:"mind", why:"Possible. Not shown by anything at the scene."},
+    {t:"Until I rule out every single person, I can't know.", s:"I", sense:"mind", why:"That's the doubt asking for certainty. The evidence already points one way."}
   ],
   fact:"Every clue points to the groundskeeper.",
+  kind:"anxiety",
   art:"keys"
 }
 ];
+
+const KIND={doubt:'A DOUBT',anxiety:'AN ANXIETY',hypothesis:'A HYPOTHESIS'};
+const SENSE={saw:'SAW IT',heard:'HEARD IT',touched:'TOUCHED IT',record:'ON RECORD',mind:'IMAGINED'};
+
+/* A scene sits in its own frame, like a photograph clipped to the file. */
+function vignette(name){
+  return '<svg class="art art--spot" viewBox="0 0 124 124" aria-hidden="true">'+
+    '<rect x="3" y="3" width="118" height="118" rx="12" fill="rgba(43,38,54,.07)"/>'+
+    '<rect x="3" y="3" width="118" height="118" rx="12" fill="none" stroke="rgba(43,38,54,.18)" stroke-width="1.5"/>'+
+    '<g stroke="#8a6612" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".7">'+
+      '<path d="M14 25V14h11M99 14h11v11M110 99v11H99M25 110H14V99"/></g>'+
+    '<g transform="translate(22 22) scale(.8)"><use href="#a-'+name+'"/></g>'+
+  '</svg>';
+}
 
 /* ---------- icons ---------- */
 const ICON = {
@@ -708,7 +946,11 @@ const live=document.getElementById('live');
 const st={i:0,right:0,total:0};
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function setProgress(done){ track.style.width=Math.round(100*done/DOUBTS.length)+'%'; }
+function setProgress(done){
+  if(!track.children.length)
+    track.innerHTML=THOUGHTS.map(()=>'<i></i>').join('');
+  [...track.children].forEach((n,i)=>n.classList.toggle('on',i<done));
+}
 function say(msg){ live.textContent=msg; }
 
 function intro(){
@@ -724,35 +966,43 @@ function intro(){
     '</div>'+
     '<svg class="art art--hero" viewBox="0 0 640 250" role="img" aria-label="The museum at night: the Golden Owl on its plinth under a spotlight, a detective arriving."><use href="#a-heist"/></svg>'+
     '<h1>Last night, the <em>Golden Owl</em> was stolen.</h1>'+
-    '<p>The Halloway Museum’s most famous treasure is gone. You’re the detective. Your job is to find out what really happened.</p>'+
-    '<p>Your mind is going to keep handing you doubts: <i>the robber could have…</i>, <i>maybe they…</i>. Anything is possible. But a good detective only believes what the evidence shows.</p>'+
+    '<p>The Halloway Museum’s most famous treasure is gone. You’re the detective on the case.</p>'+'<p>As you work, <b>thoughts will keep arriving</b>. Some are doubts. Some are anxieties. Some are hypotheses worth testing. They all turn up sounding equally certain.</p>'+
+    '<p>Your job is not to believe every thought, or to argue with it. Your job is to <b>sort it</b> — to separate what you actually know from what your mind has filled in.</p>'+
     '<div class="legend">'+
-      '<div class="ev"><b>'+ICON.lens+' Evidence</b><p>What your senses actually pick up \u2014 what you can see, hear, touch, or smell at the scene \u2014 plus the facts of the situation.</p></div>'+
-      '<div class="im"><b>'+ICON.cloud+' Imagination</b><p>What could have, might have, or usually happens. Movies, rules, guesses, and “what if.”</p></div>'+
+      '<div class="ev"><b>'+ICON.lens+' Evidence</b><p>Information you <b>gathered through your senses</b> \u2014 saw it, heard it, touched it \u2014 or read in the record. It is out there in the world.</p></div>'+
+      '<div class="im"><b>'+ICON.cloud+' Imagination</b><p>Information your mind <b>created</b> — could have, might have, usually does. Guesses, movie scenes, and “what if.” It is in here.</p></div>'+
     '</div>'+
-    '<p>For each doubt, sort every clue into <b>Evidence</b> or <b>Imagination</b>. Drag it, or tap it and then tap a bin.</p>'+
+    '<p>For each thought, sort every clue into <b>Evidence</b> or <b>Imagination</b>. Drag it, or tap it and then tap a bin.</p>'+
     '<p style="margin-top:24px;margin-bottom:0"><button class="btn" id="go">Start the investigation '+ICON.arrow+'</button></p>'+
   '</section>';
   document.getElementById('go').onclick=()=>{ ac(); startMusic(); S.whoosh(); round(); };
 }
 
 function round(){
-  const d=DOUBTS[st.i];
-  counter.textContent='Doubt '+(st.i+1)+' of '+DOUBTS.length;
+  const d=THOUGHTS[st.i];
+  counter.textContent='Thought '+(st.i+1)+' of '+THOUGHTS.length;
   setProgress(st.i);
   stage.innerHTML=
-  '<div class="doubt">'+
-    '<div class="doubt__text"><div class="lbl">Doubt No. '+(st.i+1)+'</div>'+
-      '<div class="q">“'+esc(d.doubt)+'”</div></div>'+
-    '<svg class="art art--spot" viewBox="0 0 100 100" aria-hidden="true"><use href="#a-'+d.art+'"/></svg>'+
+  '<div class="thought">'+
+    '<div class="thought__text">'+
+      '<div class="thought__meta"><span class="lbl">Thought No. '+(st.i+1)+'</span>'+
+        '<span class="kind kind--'+d.kind+'">'+KIND[d.kind]+'</span></div>'+
+      '<div class="q">“'+esc(d.thought)+'”</div></div>'+
+    vignette(d.art)+
   '</div>'+
   '<div class="board">'+
-    '<div class="bin ev" data-s="E" id="binE"><h3>'+ICON.lens+' EVIDENCE</h3>'+
-      '<p class="def">Seen, heard, touched, or a fact at the scene.</p><div class="stack" id="stackE"></div></div>'+
+    '<div class="bin ev" data-s="E" id="binE">'+
+      '<div class="bin__head"><div><h3>'+ICON.lens+' EVIDENCE</h3>'+
+        '<p class="def">Gathered through your senses, or on the record.</p></div>'+
+        '<svg class="art art--bin" viewBox="0 0 120 90" aria-hidden="true"><use href="#a-bin-ev"/></svg></div>'+
+      '<div class="stack" id="stackE"></div></div>'+
     '<div class="col-pile"><p class="pilelabel">Clues to sort</p><div class="stack" id="pile"></div>'+
       '<p class="hint" id="hint">'+HINT+'</p></div>'+
-    '<div class="bin im" data-s="I" id="binI"><h3>'+ICON.cloud+' IMAGINATION</h3>'+
-      '<p class="def">Could, might, maybe, usually, what if.</p><div class="stack" id="stackI"></div></div>'+
+    '<div class="bin im" data-s="I" id="binI">'+
+      '<div class="bin__head"><div><h3>'+ICON.cloud+' IMAGINATION</h3>'+
+        '<p class="def">Created in your mind. Could, might, usually.</p></div>'+
+        '<svg class="art art--bin" viewBox="0 0 120 90" aria-hidden="true"><use href="#a-bin-im"/></svg></div>'+
+      '<div class="stack" id="stackI"></div></div>'+
   '</div>'+
   '<div id="after"></div>';
   const pile=document.getElementById('pile');
@@ -887,14 +1137,17 @@ function wire(el){
 
 function file(el,side){
   if(el.classList.contains('filed'))return;
-  const d=DOUBTS[st.i], c=d.cards[+el.dataset.idx], ok=c.s===side;
+  const d=THOUGHTS[st.i], c=d.cards[+el.dataset.idx], ok=c.s===side;
   st.total++; if(ok) st.right++;
   el.classList.remove('sel'); clearArm();
   el.classList.add('filed', ok?'ok':'bad');
   const label = c.s==='E' ? 'EVIDENCE' : 'IMAGINATION';
   el.removeAttribute('role'); el.removeAttribute('aria-label'); el.tabIndex=-1;
   el.innerHTML='<span class="mark">'+(ok?'CORRECT':'ACTUALLY '+label)+'</span>'+esc(c.t)+
-               '<span class="why">'+esc(c.why)+'</span>';
+               '<span class="why">'+esc(c.why)+'</span>'+
+               '<span class="sense sense--'+(c.s==='E'?'ev':'im')+'">'+
+                 '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#s-'+c.sense+'"/></svg>'+
+                 SENSE[c.sense]+'</span>';
   document.getElementById(c.s==='E'?'stackE':'stackI').appendChild(el);
   setHint(HINT);
   ok?S.good():S.bad();
@@ -905,20 +1158,20 @@ function file(el,side){
 }
 
 function ruledOut(){
-  const d=DOUBTS[st.i];
+  const d=THOUGHTS[st.i];
   document.getElementById('hint').textContent='';
   const ev=d.cards.filter(c=>c.s==='E').map(c=>'<li>'+esc(c.t)+'</li>').join('');
-  const last = st.i===DOUBTS.length-1;
+  const last = st.i===THOUGHTS.length-1;
   setProgress(st.i+1);
   document.getElementById('after').innerHTML=
     '<div class="ruled">'+
-      '<div class="tag">'+ICON.check+' DOUBT RULED OUT</div>'+
+      '<div class="tag">'+ICON.check+' THOUGHT CHECKED</div>'+
       '<p style="margin-bottom:0"><b>What the evidence shows:</b> '+esc(d.fact)+'</p>'+
       '<ul>'+ev+'</ul>'+
-      '<button class="btn" id="next">'+(last?'Solve the case':'Next doubt')+' '+ICON.arrow+'</button>'+
+      '<button class="btn" id="next">'+(last?'Solve the case':'Next thought')+' '+ICON.arrow+'</button>'+
     '</div>';
   S.solved(); confetti(40);
-  say('Doubt ruled out. '+d.fact);
+  say('Thought checked. '+d.fact);
   const btn=document.getElementById('next');
   btn.focus({preventScroll:true});
   document.getElementById('after').scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -927,7 +1180,7 @@ function ruledOut(){
 
 function final(){
   counter.textContent='Case closed';
-  setProgress(DOUBTS.length);
+  setProgress(THOUGHTS.length);
   const pct=Math.round(100*st.right/st.total);
   const msg = pct>=90 ? 'Sharp work. You didn’t let a single “what if” run the investigation.'
            : pct>=70 ? 'Solid detective work. A few “what ifs” sounded convincing. That’s how they work.'
@@ -944,8 +1197,10 @@ function final(){
     '<h1>The groundskeeper took the <em>Golden Owl</em>.</h1>'+
     '<p>He signed out the key, turned off the alarm with his code, walked in the back door in his muddy size 9 boots, and carried the owl out to his car. It was found this morning in the potting shed, under a bag of mulch.</p>'+
     '<p><b>Your case notes:</b></p>'+
-    '<ol class="notebook">'+DOUBTS.map(d=>'<li>'+esc(d.fact)+'</li>').join('')+'</ol>'+
-    '<p>No secret tunnel. No drone. No hacker. No gang. Every one of those doubts was <i>possible</i>. None of them was in the evidence.</p>'+
+    '<ol class="notebook">'+THOUGHTS.map(d=>'<li>'+esc(d.fact)+'</li>').join('')+'</ol>'+
+    '<p><b>The case board:</b></p>'+
+    '<svg class="art art--board" viewBox="0 0 660 300" role="img" aria-label="The case board: the recovered owl and the groundskeeper pinned up, linked by red string to the evidence notes."><use href="#a-board"/></svg>'+
+    '<p>No secret tunnel. No drone. No hacker. No gang. Every one of those thoughts was <i>possible</i>. Not one of them was ever in the evidence.</p>'+
     '<hr class="rule">'+
     '<div class="scorecard">'+
       '<div><div class="n">'+pct+'%</div><div class="small">Sorting accuracy</div></div>'+
@@ -955,7 +1210,7 @@ function final(){
     '<p>'+msg+'</p>'+
     '<h2 style="margin-top:28px">What counts as evidence</h2>'+
     '<p><b>Evidence is what your senses pick up.</b> What you saw, heard, touched, smelled, or tasted — plus the plain facts of the situation. The locked latch. The dry floor. The name on the sign-out sheet. You can point at it.</p>'+
-    '<p><b>Imagination is everything your mind adds.</b> What could have happened, what usually happens, what it would mean if. Every doubt in this case was imagination, and every one of them was <i>possible</i>. Possible is not the same as real.</p>'+
+    '<p><b>Imagination is everything your mind adds.</b> What could have happened, what usually happens, what it would mean if. Every thought in this case was imagination, and every one of them was <i>possible</i>. Possible is not the same as real.</p>'+
     '<p>Your mind does this all day, and it hands you the invented parts in the same confident voice it uses for the facts. A feeling can arrive so strongly that it seems like proof on its own. It isn’t. Feeling certain and having evidence are two different things.</p>'+
     '<p>So when a thought insists something is true, ask the detective’s question: <b>what did I actually observe?</b> If the honest answer is “nothing — I pictured it,” then you are holding a story, not a clue. That is how you tell what is real from what is imagined.</p>'+
     '<p style="margin-top:26px;margin-bottom:0"><button class="btn" id="again">Play again</button></p>'+
