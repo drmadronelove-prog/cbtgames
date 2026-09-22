@@ -12,6 +12,18 @@
   --cyan-rgb: 0, 229, 255;
   --yellow: #ffe14d;
   --yellow-rgb: 255, 225, 77;
+  --coral: #ff5c5c;
+  --coral-rgb: 255, 92, 92;
+  --orange: #ff9633;
+  --orange-rgb: 255, 150, 51;
+  --lime: #b8f34a;
+  --lime-rgb: 184, 243, 74;
+  --mint: #2fffb0;
+  --mint-rgb: 47, 255, 176;
+  --blue: #5b8cff;
+  --blue-rgb: 91, 140, 255;
+  --violet: #b56cff;
+  --violet-rgb: 181, 108, 255;
 
   --font-display: "Silkscreen", "Courier New", monospace;
   --font-mono: "Space Mono", "Courier New", monospace;
@@ -270,43 +282,35 @@ a {
   transform: translateX(4px);
 }
 
-/* Accent variants (cycled pink / cyan / yellow) */
+/* Accent variants -- one hue per card, spaced round the colour wheel so no
+   two neighbours in the grid share a family. Each modifier sets only the
+   accent; the styling below is shared. */
 
-.game-card--pink {
-  border-color: var(--pink);
-  box-shadow: 0 0 0 1px rgba(var(--pink-rgb), 0.2), 0 0 24px rgba(var(--pink-rgb), 0.15);
-}
-.game-card--pink:hover {
-  box-shadow: 0 0 0 1px rgba(var(--pink-rgb), 0.35), 0 0 34px rgba(var(--pink-rgb), 0.3);
-}
-.game-card--pink .card-number,
-.game-card--pink .card-cta {
-  color: var(--pink);
+.game-card {
+  --accent: var(--pink);
+  --accent-rgb: var(--pink-rgb);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.2), 0 0 24px rgba(var(--accent-rgb), 0.15);
 }
 
-.game-card--cyan {
-  border-color: var(--cyan);
-  box-shadow: 0 0 0 1px rgba(var(--cyan-rgb), 0.2), 0 0 24px rgba(var(--cyan-rgb), 0.15);
-}
-.game-card--cyan:hover {
-  box-shadow: 0 0 0 1px rgba(var(--cyan-rgb), 0.35), 0 0 34px rgba(var(--cyan-rgb), 0.3);
-}
-.game-card--cyan .card-number,
-.game-card--cyan .card-cta {
-  color: var(--cyan);
+.game-card:hover {
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.35), 0 0 34px rgba(var(--accent-rgb), 0.3);
 }
 
-.game-card--yellow {
-  border-color: var(--yellow);
-  box-shadow: 0 0 0 1px rgba(var(--yellow-rgb), 0.2), 0 0 24px rgba(var(--yellow-rgb), 0.15);
+.game-card .card-number,
+.game-card .card-cta {
+  color: var(--accent);
 }
-.game-card--yellow:hover {
-  box-shadow: 0 0 0 1px rgba(var(--yellow-rgb), 0.35), 0 0 34px rgba(var(--yellow-rgb), 0.3);
-}
-.game-card--yellow .card-number,
-.game-card--yellow .card-cta {
-  color: var(--yellow);
-}
+
+.game-card--pink   { --accent: var(--pink);   --accent-rgb: var(--pink-rgb); }
+.game-card--coral  { --accent: var(--coral);  --accent-rgb: var(--coral-rgb); }
+.game-card--orange { --accent: var(--orange); --accent-rgb: var(--orange-rgb); }
+.game-card--yellow { --accent: var(--yellow); --accent-rgb: var(--yellow-rgb); }
+.game-card--lime   { --accent: var(--lime);   --accent-rgb: var(--lime-rgb); }
+.game-card--mint   { --accent: var(--mint);   --accent-rgb: var(--mint-rgb); }
+.game-card--cyan   { --accent: var(--cyan);   --accent-rgb: var(--cyan-rgb); }
+.game-card--blue   { --accent: var(--blue);   --accent-rgb: var(--blue-rgb); }
+.game-card--violet { --accent: var(--violet); --accent-rgb: var(--violet-rgb); }
 
 /* About */
 
